@@ -19,6 +19,9 @@ var testDB bob.Transactor[bob.Tx]
 // Make sure the type Customer runs hooks after queries
 var _ bob.HookableType = &Customer{}
 
+// Make sure the type DimDate runs hooks after queries
+var _ bob.HookableType = &DimDate{}
+
 // Make sure the type Discount runs hooks after queries
 var _ bob.HookableType = &Discount{}
 

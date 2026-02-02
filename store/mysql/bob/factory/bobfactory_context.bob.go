@@ -12,6 +12,9 @@ var (
 	customerWithParentsCascadingCtx = newContextual[bool]("customerWithParentsCascading")
 	customerRelOrdersCtx            = newContextual[bool]("customers.orders.orders_ibfk_1")
 
+	// Relationship Contexts for dim_date
+	dimDateWithParentsCascadingCtx = newContextual[bool]("dimDateWithParentsCascading")
+
 	// Relationship Contexts for discounts
 	discountWithParentsCascadingCtx = newContextual[bool]("discountWithParentsCascading")
 	discountRelOrderItemsCtx        = newContextual[bool]("discounts.order_items.order_items_ibfk_3")

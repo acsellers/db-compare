@@ -81,6 +81,18 @@ create table payment_names (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+create table dim_date (
+    date DATE PRIMARY KEY,
+    month int NOT NULL,
+    year int NOT NULL,
+    quarter int NOT NULL,
+    day_of_week int NOT NULL,
+    day_of_month int NOT NULL,
+    day_of_year int NOT NULL,
+    week_of_year int NOT NULL,
+    week_of_month int NOT NULL
+);
+
 CREATE VIEW item_summaries as 
 select p.id, p.name, p.category, o.order_type, o.order_date,
     sum(oi.quantity) as total_quantity,

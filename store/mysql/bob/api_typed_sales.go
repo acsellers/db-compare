@@ -39,12 +39,15 @@ func TypedSales(w http.ResponseWriter, r *http.Request) {
 		order by ro.report_order, t.name;
 	*/
 	join := sm.InnerJoin("reporting_order")
+	join2 := sm.InnerJoin("dim_date")
 	lines, err := bob.All(
 		r.Context(),
 		db,
 
 		models.ItemSummaries.Query(
 			sm.Columns(
+				models.DimDates.Columns.Year,
+				models.DimDates.Columns.WeekOfYear,
 				models.ReportingOrders.Columns.Title,
 				models.ReportingOrders.Columns.ReportOrder,
 				models.ItemSummaries.Columns.Name.As("item_name"),
@@ -52,15 +55,17 @@ func TypedSales(w http.ResponseWriter, r *http.Request) {
 				mysql.Raw("sum(item_summaries.total_quantity) as quantity"),
 				mysql.Raw("sum(item_summaries.total_sales) as total_sales"),
 			),
-			sm.GroupBy("reporting_order.title, reporting_order.report_order, item_summaries.name"),
-			sm.OrderBy("reporting_order.report_order, item_summaries.name"),
+			sm.GroupBy("dim_date.year, dim_date.week_of_year, reporting_order.title, reporting_order.report_order, item_summaries.name"),
+			sm.OrderBy("dim_date.year, dim_date.week_of_year, reporting_order.report_order, item_summaries.name"),
 			models.SelectWhere.ItemSummaries.OrderDate.GTE(startDate),
 			models.SelectWhere.ItemSummaries.OrderDate.LTE(endDate),
 			sm.Where(mysql.Raw("reporting_order.order_type = item_summaries.order_type")),
 			sm.Where(mysql.Raw("reporting_order.category = item_summaries.category")),
+			sm.Where(mysql.Raw("dim_date.date = item_summaries.order_date")),
 			join,
+			join2,
 		),
-		scan.StructMapper[common.SaleReportLine](),
+		scan.StructMapper[common.WeeklySaleReport](),
 	)
 	if err != nil {
 		fmt.Println(err)

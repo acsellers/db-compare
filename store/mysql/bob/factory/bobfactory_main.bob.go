@@ -16,6 +16,7 @@ import (
 
 type Factory struct {
 	baseCustomerMods       CustomerModSlice
+	baseDimDateMods        DimDateModSlice
 	baseDiscountMods       DiscountModSlice
 	baseItemSummaryMods    ItemSummaryModSlice
 	baseOrderItemMods      OrderItemModSlice
@@ -61,6 +62,38 @@ func (f *Factory) FromExistingCustomer(m *models.Customer) *CustomerTemplate {
 	if len(m.R.Orders) > 0 {
 		CustomerMods.AddExistingOrders(m.R.Orders...).Apply(ctx, o)
 	}
+
+	return o
+}
+
+func (f *Factory) NewDimDate(mods ...DimDateMod) *DimDateTemplate {
+	return f.NewDimDateWithContext(context.Background(), mods...)
+}
+
+func (f *Factory) NewDimDateWithContext(ctx context.Context, mods ...DimDateMod) *DimDateTemplate {
+	o := &DimDateTemplate{f: f}
+
+	if f != nil {
+		f.baseDimDateMods.Apply(ctx, o)
+	}
+
+	DimDateModSlice(mods).Apply(ctx, o)
+
+	return o
+}
+
+func (f *Factory) FromExistingDimDate(m *models.DimDate) *DimDateTemplate {
+	o := &DimDateTemplate{f: f, alreadyPersisted: true}
+
+	o.Date = func() time.Time { return m.Date }
+	o.Month = func() int32 { return m.Month }
+	o.Year = func() int32 { return m.Year }
+	o.Quarter = func() int32 { return m.Quarter }
+	o.DayOfWeek = func() int32 { return m.DayOfWeek }
+	o.DayOfMonth = func() int32 { return m.DayOfMonth }
+	o.DayOfYear = func() int32 { return m.DayOfYear }
+	o.WeekOfYear = func() int32 { return m.WeekOfYear }
+	o.WeekOfMonth = func() int32 { return m.WeekOfMonth }
 
 	return o
 }
@@ -358,6 +391,14 @@ func (f *Factory) ClearBaseCustomerMods() {
 
 func (f *Factory) AddBaseCustomerMod(mods ...CustomerMod) {
 	f.baseCustomerMods = append(f.baseCustomerMods, mods...)
+}
+
+func (f *Factory) ClearBaseDimDateMods() {
+	f.baseDimDateMods = nil
+}
+
+func (f *Factory) AddBaseDimDateMod(mods ...DimDateMod) {
+	f.baseDimDateMods = append(f.baseDimDateMods, mods...)
 }
 
 func (f *Factory) ClearBaseDiscountMods() {
