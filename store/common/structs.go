@@ -89,3 +89,13 @@ type SaleReportLine struct {
 	Quantity    int64   `json:"quantity"`
 	TotalSales  float64 `json:"total_sales"`
 }
+type WeeklySaleReport struct {
+	Year        int64   `json:"year"`
+	WeekOfYear  int64   `json:"week_of_year"`
+	Title       string  `json:"title"`
+	ReportOrder int64   `json:"report_order"`
+	ItemName    string  `json:"item_name"`
+	OrderCount  int64   `json:"order_count"`
+	Quantity    int64   `json:"quantity"`
+	TotalSales  float64 `json:"total_sales"`
+}

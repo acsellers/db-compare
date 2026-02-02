@@ -37,13 +37,13 @@ shows off the ability to use a view in the mapper library.
 This uses the item summaries view and a oddly-joined table called reporting_order to calculate the total
 quantity sold and total sales for each item. It then joins the item information to the reporting_order table
 to format the data in a way that is easy to display. It demonstrates the use of a view and a join in the
-mapper library.
+mapper library. Ideally, the join is able to have an on clause, but it can fallback to adding
+where clauses to specify the join conditions.
 
 ### Typed Sales
 
 This is very similar to the general sales report, but it joins on category and order type instead of just
-order type like General Sales. Ideally, the join is able to have an on clause, but it can fallback to adding
-where clauses to specify the join conditions.
+order type like General Sales. In addition, it joins to a dim_date table to get the week and year.
 
 ## Mapper Libraries
 
@@ -53,11 +53,13 @@ Bob is a schema-generated mapper libary. It passes all the requirements, though 
 fallback to using where clauses to specify the join conditions. It also does not have a Bulk Insert helper beyond
 a multi-insert helper. No Copy into or load data infile helpers are available.
 
+Mysql version available. Postgres and sqlite next to be added.
+
 ### Ent
 
 TODO
 
-### sqlx
+### sqlc
 
 TODO
 
