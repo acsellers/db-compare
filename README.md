@@ -22,7 +22,7 @@ Given an uploaded file, load the customers into the database in the most efficie
 this is done through the mapper library, even if a more efficient way is possible by dropping down to the
 database/sql library.
 
-### Daily Revenue'
+### Daily Revenue
 
 This groups the Orders table by date and type, then calculates the sums of totals. It demonstrates a GROUP BY
 clause in the mapper library.
