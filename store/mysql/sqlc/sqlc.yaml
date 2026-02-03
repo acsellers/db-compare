@@ -1,0 +1,11 @@
+version: "2"
+sql:
+  - engine: "mysql"
+    queries: "queries.sql"
+    schema: "schema.sql"
+    gen:
+      go:
+        package: "models"
+        out: "models"
+        sql_package: "database/sql"
+        sql_driver: "github.com/go-sql-driver/mysql"
