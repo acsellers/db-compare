@@ -6,12 +6,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/acsellers/golang-db-compare/store/common"
-	"github.com/acsellers/golang-db-compare/store/mysql/bob/models"
-	"github.com/stephenafamo/bob"
-	"github.com/stephenafamo/bob/dialect/mysql"
-	"github.com/stephenafamo/bob/dialect/mysql/sm"
-	"github.com/stephenafamo/scan"
+	"github.com/acsellers/golang-db-compare/store/mysql/sqlc/models"
 )
 
 func DailyRevenue(w http.ResponseWriter, r *http.Request) {
@@ -27,22 +22,11 @@ func DailyRevenue(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Query().Get("start_date") != "" {
 		startDate, _ = time.Parse("2006-01-02", r.URL.Query().Get("start_date"))
 	}
-
-	revenues, err := bob.All(
-		r.Context(),
-		db,
-		models.Orders.Query(
-			models.SelectWhere.Orders.OrderDate.GTE(startDate),
-			models.SelectWhere.Orders.OrderDate.LTE(endDate),
-			sm.Columns(
-				models.Orders.Columns.OrderType,
-				models.Orders.Columns.OrderDate,
-				mysql.Raw("SUM(`orders`.`total`) as total_revenue"),
-			),
-			sm.GroupBy("orders.order_type, orders.order_date"),
-		),
-		scan.StructMapper[common.DailyRevenue](),
-	)
+	args := models.DailyRevenueParams{
+		StartDate: startDate,
+		EndDate:   endDate,
+	}
+	revenues, err := db.DailyRevenue(r.Context(), args)
 	if err != nil {
 		fmt.Println(err)
 		http.Error(w, "Invalid date", http.StatusBadRequest)

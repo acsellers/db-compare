@@ -9,6 +9,7 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
+	"strings"
 	"time"
 )
 
@@ -101,8 +102,8 @@ order by total_sales desc
 `
 
 type CustomerSalesParams struct {
-	OrderDate   time.Time
-	OrderDate_2 time.Time
+	StartDate time.Time
+	EndDate   time.Time
 }
 
 type CustomerSalesRow struct {
@@ -113,7 +114,7 @@ type CustomerSalesRow struct {
 }
 
 func (q *Queries) CustomerSales(ctx context.Context, arg CustomerSalesParams) ([]CustomerSalesRow, error) {
-	rows, err := q.db.QueryContext(ctx, customerSales, arg.OrderDate, arg.OrderDate_2)
+	rows, err := q.db.QueryContext(ctx, customerSales, arg.StartDate, arg.EndDate)
 	if err != nil {
 		return nil, err
 	}
@@ -148,8 +149,8 @@ group by order_type
 `
 
 type DailyRevenueParams struct {
-	OrderDate   time.Time
-	OrderDate_2 time.Time
+	StartDate time.Time
+	EndDate   time.Time
 }
 
 type DailyRevenueRow struct {
@@ -158,7 +159,7 @@ type DailyRevenueRow struct {
 }
 
 func (q *Queries) DailyRevenue(ctx context.Context, arg DailyRevenueParams) ([]DailyRevenueRow, error) {
-	rows, err := q.db.QueryContext(ctx, dailyRevenue, arg.OrderDate, arg.OrderDate_2)
+	rows, err := q.db.QueryContext(ctx, dailyRevenue, arg.StartDate, arg.EndDate)
 	if err != nil {
 		return nil, err
 	}
@@ -181,7 +182,9 @@ func (q *Queries) DailyRevenue(ctx context.Context, arg DailyRevenueParams) ([]D
 }
 
 const dailySoldItems = `-- name: DailySoldItems :many
-select id, name, category, sum(total_quantity) as total_quantity, sum(total_sales) as total_sales
+select id, name, category, 
+cast(sum(total_quantity) as signed) as total_quantity, 
+cast(sum(total_sales) as double) as total_sales
 from item_summaries
 where order_date = ?
 group by id, name, category
@@ -192,8 +195,8 @@ type DailySoldItemsRow struct {
 	ID            int64
 	Name          string
 	Category      string
-	TotalQuantity interface{}
-	TotalSales    interface{}
+	TotalQuantity int64
+	TotalSales    float64
 }
 
 func (q *Queries) DailySoldItems(ctx context.Context, orderDate time.Time) ([]DailySoldItemsRow, error) {
@@ -232,9 +235,15 @@ sum(t.total_quantity) as quantity,
 sum(t.total_sales) as total_sales
 from item_summaries t 
 inner join reporting_order ro on ro.order_type = 'general' and ro.category = t.category
+where t.order_date >= ? and t.order_date <= ?
 group by ro.title, ro.report_order, t.name 
 order by ro.report_order, t.name
 `
+
+type GeneralSalesParams struct {
+	StartDate time.Time
+	EndDate   time.Time
+}
 
 type GeneralSalesRow struct {
 	Title       string
@@ -245,8 +254,8 @@ type GeneralSalesRow struct {
 	TotalSales  interface{}
 }
 
-func (q *Queries) GeneralSales(ctx context.Context) ([]GeneralSalesRow, error) {
-	rows, err := q.db.QueryContext(ctx, generalSales)
+func (q *Queries) GeneralSales(ctx context.Context, arg GeneralSalesParams) ([]GeneralSalesRow, error) {
+	rows, err := q.db.QueryContext(ctx, generalSales, arg.StartDate, arg.EndDate)
 	if err != nil {
 		return nil, err
 	}
@@ -276,11 +285,21 @@ func (q *Queries) GeneralSales(ctx context.Context) ([]GeneralSalesRow, error) {
 }
 
 const getDiscount = `-- name: GetDiscount :many
-SELECT id, name, category, discount_type, discount, created_at, updated_at FROM discounts WHERE id IN (?)
+SELECT id, name, category, discount_type, discount, created_at, updated_at FROM discounts WHERE id IN (/*SLICE:ids*/?)
 `
 
-func (q *Queries) GetDiscount(ctx context.Context, id int64) ([]Discount, error) {
-	rows, err := q.db.QueryContext(ctx, getDiscount, id)
+func (q *Queries) GetDiscount(ctx context.Context, ids []int64) ([]Discount, error) {
+	query := getDiscount
+	var queryParams []interface{}
+	if len(ids) > 0 {
+		for _, v := range ids {
+			queryParams = append(queryParams, v)
+		}
+		query = strings.Replace(query, "/*SLICE:ids*/?", strings.Repeat(",?", len(ids))[1:], 1)
+	} else {
+		query = strings.Replace(query, "/*SLICE:ids*/?", "NULL", 1)
+	}
+	rows, err := q.db.QueryContext(ctx, query, queryParams...)
 	if err != nil {
 		return nil, err
 	}
@@ -311,11 +330,21 @@ func (q *Queries) GetDiscount(ctx context.Context, id int64) ([]Discount, error)
 }
 
 const getProducts = `-- name: GetProducts :many
-SELECT id, name, category, price, created_at, updated_at FROM products WHERE id IN (?)
+SELECT id, name, category, price, created_at, updated_at FROM products WHERE id IN (/*SLICE:ids*/?)
 `
 
-func (q *Queries) GetProducts(ctx context.Context, id int64) ([]Product, error) {
-	rows, err := q.db.QueryContext(ctx, getProducts, id)
+func (q *Queries) GetProducts(ctx context.Context, ids []int64) ([]Product, error) {
+	query := getProducts
+	var queryParams []interface{}
+	if len(ids) > 0 {
+		for _, v := range ids {
+			queryParams = append(queryParams, v)
+		}
+		query = strings.Replace(query, "/*SLICE:ids*/?", strings.Repeat(",?", len(ids))[1:], 1)
+	} else {
+		query = strings.Replace(query, "/*SLICE:ids*/?", "NULL", 1)
+	}
+	rows, err := q.db.QueryContext(ctx, query, queryParams...)
 	if err != nil {
 		return nil, err
 	}
@@ -488,6 +517,70 @@ type InsertCustomersParams struct {
 	Phone sql.NullString
 }
 
+const searchSales = `-- name: SearchSales :many
+select orders.id, orders.order_date, orders.customer_id, orders.discount_id, orders.order_type, orders.subtotal, orders.discount_amount, orders.tax_amount, orders.total, orders.created_at, orders.updated_at, customers.name
+from orders 
+left join customers on orders.customer_id = customers.id
+where (customers.name like @name or @name = '')
+and (orders.order_date >= @order_start or @order_start = '')
+and (orders.order_date <= @order_end or @order_end = '')
+and (orders.order_type = @order_type or @order_type = '')
+and (orders.total >= @total_start or @total_start = 0)
+and (orders.total <= @total_end or @total_end = 0)
+order by orders.order_date desc
+`
+
+type SearchSalesRow struct {
+	ID             int64
+	OrderDate      time.Time
+	CustomerID     sql.NullInt64
+	DiscountID     sql.NullInt64
+	OrderType      string
+	Subtotal       string
+	DiscountAmount string
+	TaxAmount      string
+	Total          string
+	CreatedAt      sql.NullTime
+	UpdatedAt      sql.NullTime
+	Name           sql.NullString
+}
+
+func (q *Queries) SearchSales(ctx context.Context) ([]SearchSalesRow, error) {
+	rows, err := q.db.QueryContext(ctx, searchSales)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []SearchSalesRow
+	for rows.Next() {
+		var i SearchSalesRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.OrderDate,
+			&i.CustomerID,
+			&i.DiscountID,
+			&i.OrderType,
+			&i.Subtotal,
+			&i.DiscountAmount,
+			&i.TaxAmount,
+			&i.Total,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+			&i.Name,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const weeklyTypedSales = `-- name: WeeklyTypedSales :many
 select dim_date.year, dim_date.WEEK_OF_YEAR, ro.title, ro.report_order, t.name, 
 sum(t.order_count) as order_count,
@@ -496,9 +589,15 @@ sum(t.total_sales) as total_sales
 from item_summaries t 
 inner join reporting_order ro on ro.order_type = t.order_type and ro.category = t.category
 inner join dim_date on dim_date.date = t.order_date
+where t.order_date >= ? and t.order_date <= ?
 group by dim_date.year, dim_date.WEEK_OF_YEAR,ro.title, ro.report_order, t.name 
 order by dim_date.year, dim_date.WEEK_OF_YEAR, ro.report_order, t.name
 `
+
+type WeeklyTypedSalesParams struct {
+	StartDate time.Time
+	EndDate   time.Time
+}
 
 type WeeklyTypedSalesRow struct {
 	Year        int32
@@ -511,8 +610,8 @@ type WeeklyTypedSalesRow struct {
 	TotalSales  interface{}
 }
 
-func (q *Queries) WeeklyTypedSales(ctx context.Context) ([]WeeklyTypedSalesRow, error) {
-	rows, err := q.db.QueryContext(ctx, weeklyTypedSales)
+func (q *Queries) WeeklyTypedSales(ctx context.Context, arg WeeklyTypedSalesParams) ([]WeeklyTypedSalesRow, error) {
+	rows, err := q.db.QueryContext(ctx, weeklyTypedSales, arg.StartDate, arg.EndDate)
 	if err != nil {
 		return nil, err
 	}

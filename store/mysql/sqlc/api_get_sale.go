@@ -1,16 +1,56 @@
 package main
 
 import (
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/acsellers/golang-db-compare/store/common"
-	"github.com/acsellers/golang-db-compare/store/mysql/bob/models"
-	"github.com/stephenafamo/bob/dialect/mysql"
 )
 
+func toIntPtr(v sql.NullInt64) *int64 {
+	if v.Valid {
+		return &v.Int64
+	}
+	return nil
+}
+func toTimePtr(v sql.NullTime) *time.Time {
+	if v.Valid {
+		return &v.Time
+	}
+	return nil
+}
+func toStringPtr(v sql.NullString) *string {
+	if v.Valid {
+		return &v.String
+	}
+	return nil
+}
+func toStringOrZero(v sql.NullString) string {
+	if v.Valid {
+		return v.String
+	}
+	return ""
+}
+func toBoolPtr(v sql.NullBool) *bool {
+	if v.Valid {
+		return &v.Bool
+	}
+	return nil
+}
+func parseStringFloat(v string) float64 {
+	fv, _ := strconv.ParseFloat(v, 64)
+	return fv
+}
+func parseNullStringFloat(v sql.NullString) float64 {
+	if v.Valid {
+		return parseStringFloat(v.String)
+	}
+	return 0
+}
 func GetSale(w http.ResponseWriter, r *http.Request) {
 	sid := r.PathValue("id")
 	id, err := strconv.ParseInt(sid, 10, 64)
@@ -19,18 +59,7 @@ func GetSale(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid sale ID", http.StatusBadRequest)
 		return
 	}
-	order, err := models.Orders.Query(
-		models.SelectWhere.Orders.ID.EQ(id),
-		models.Preload.Order.Customer(
-			mysql.PreloadOnly("name"),
-		),
-		models.SelectThenLoad.Order.OrderItems(
-			models.Preload.OrderItem.Product(
-				mysql.PreloadOnly("name", "category"),
-			),
-		),
-		models.SelectThenLoad.Order.OrderPayments(),
-	).One(r.Context(), db)
+	order, err := db.GetSale(r.Context(), id)
 	if err != nil {
 		fmt.Println("Query: ", err)
 		http.Error(w, "Invalid sale ID", http.StatusBadRequest)
@@ -39,47 +68,55 @@ func GetSale(w http.ResponseWriter, r *http.Request) {
 	sale := common.Sale{
 		ID:             order.ID,
 		OrderDate:      order.OrderDate,
-		CustomerID:     order.CustomerID.Ptr(),
-		DiscountID:     order.DiscountID.Ptr(),
+		CustomerID:     toIntPtr(order.CustomerID),
+		CustomerName:   toStringOrZero(order.Name),
+		DiscountID:     toIntPtr(order.DiscountID),
 		OrderType:      order.OrderType,
-		Subtotal:       order.Subtotal.InexactFloat64(),
-		DiscountAmount: order.DiscountAmount.InexactFloat64(),
-		TaxAmount:      order.TaxAmount.InexactFloat64(),
-		Total:          order.Total.InexactFloat64(),
-		CreatedAt:      order.CreatedAt.GetOrZero(),
-		UpdatedAt:      order.UpdatedAt.GetOrZero(),
+		Subtotal:       parseStringFloat(order.Subtotal),
+		DiscountAmount: parseStringFloat(order.DiscountAmount),
+		TaxAmount:      parseStringFloat(order.TaxAmount),
+		Total:          parseStringFloat(order.Total),
+		CreatedAt:      order.CreatedAt.Time,
+		UpdatedAt:      order.UpdatedAt.Time,
 	}
-	if order.CustomerID.IsValue() && order.R.Customer != nil {
-		sale.CustomerName = order.R.Customer.Name
+	items, err := db.GetSaleItems(r.Context(), id)
+	if err != nil {
+		fmt.Println("Query: ", err)
+		http.Error(w, "Invalid sale ID", http.StatusBadRequest)
+		return
 	}
-	for _, oi := range order.R.OrderItems {
+	for _, oi := range items {
 		sale.Items = append(sale.Items, common.SaleItem{
 			ID:              oi.ID,
 			OrderID:         oi.OrderID,
 			ProductID:       oi.ProductID,
-			ProductName:     oi.R.Product.Name,
-			ProductCategory: oi.R.Product.Category,
-			DiscountID:      oi.DiscountID.Ptr(),
+			ProductName:     toStringOrZero(oi.Name),
+			ProductCategory: toStringOrZero(oi.Category),
+			DiscountID:      toIntPtr(oi.DiscountID),
 			Quantity:        int64(oi.Quantity),
-			Price:           oi.Price.InexactFloat64(),
-			DiscountAmount:  oi.DiscountAmount.InexactFloat64(),
-			CreatedAt:       oi.CreatedAt.GetOrZero(),
-			UpdatedAt:       oi.UpdatedAt.GetOrZero(),
+			Price:           parseStringFloat(oi.Price),
+			DiscountAmount:  parseStringFloat(oi.DiscountAmount),
+			CreatedAt:       oi.CreatedAt.Time,
+			UpdatedAt:       oi.UpdatedAt.Time,
 		})
 	}
-	for _, op := range order.R.OrderPayments {
+	payments, err := db.GetSalePayments(r.Context(), id)
+	if err != nil {
+		fmt.Println("Query: ", err)
+		http.Error(w, "Invalid sale ID", http.StatusBadRequest)
+		return
+	}
+	for _, op := range payments {
 		info := map[string]any{}
-		if op.PaymentInfo.IsValue() {
-			json.Unmarshal(op.PaymentInfo.GetOrZero().Val, &info)
-		}
+		json.Unmarshal(op.PaymentInfo, &info)
 		sale.Payments = append(sale.Payments, common.SalePayment{
 			ID:          op.ID,
 			OrderID:     op.OrderID,
 			PaymentType: op.PaymentType,
-			Amount:      op.Amount.InexactFloat64(),
+			Amount:      parseStringFloat(op.Amount),
 			PaymentInfo: info,
-			CreatedAt:   op.CreatedAt.GetOrZero(),
-			UpdatedAt:   op.UpdatedAt.GetOrZero(),
+			CreatedAt:   op.CreatedAt.Time,
+			UpdatedAt:   op.UpdatedAt.Time,
 		})
 	}
 

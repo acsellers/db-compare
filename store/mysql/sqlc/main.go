@@ -8,13 +8,12 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/acsellers/golang-db-compare/store/mysql/sqlc/models"
 	_ "github.com/go-sql-driver/mysql"
-	"github.com/stephenafamo/bob"
-	"github.com/stephenafamo/scan"
 )
 
 var (
-	db   bob.Executor
+	db   *models.Queries
 	conn *sql.DB
 )
 
@@ -25,7 +24,7 @@ func init() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	db = QueryLogger(bob.NewDB(conn))
+	db = models.New(QueryLogger(conn))
 }
 
 func main() {
@@ -49,23 +48,35 @@ func main() {
 
 var logQueries = false
 
-func QueryLogger(db bob.DB) bob.Executor {
+func QueryLogger(db *sql.DB) models.DBTX {
 	return &QueryLoggerExecutor{db: db}
 }
 
 type QueryLoggerExecutor struct {
-	db bob.DB
+	db *sql.DB
 }
 
-func (qle *QueryLoggerExecutor) QueryContext(ctx context.Context, query string, args ...any) (scan.Rows, error) {
+func (qle *QueryLoggerExecutor) QueryContext(ctx context.Context, query string, args ...any) (*sql.Rows, error) {
 	if logQueries {
 		log.Println(query)
 	}
 	return qle.db.QueryContext(ctx, query, args...)
+}
+func (qle *QueryLoggerExecutor) QueryRowContext(ctx context.Context, query string, args ...any) *sql.Row {
+	if logQueries {
+		log.Println(query)
+	}
+	return qle.db.QueryRowContext(ctx, query, args...)
 }
 func (qle *QueryLoggerExecutor) ExecContext(ctx context.Context, query string, args ...any) (sql.Result, error) {
 	if logQueries {
 		log.Println(query)
 	}
 	return qle.db.ExecContext(ctx, query, args...)
+}
+func (qle *QueryLoggerExecutor) PrepareContext(ctx context.Context, query string) (*sql.Stmt, error) {
+	if logQueries {
+		log.Println(query)
+	}
+	return qle.db.PrepareContext(ctx, query)
 }

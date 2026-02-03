@@ -45,6 +45,11 @@ where clauses to specify the join conditions.
 This is very similar to the general sales report, but it joins on category and order type instead of just
 order type like General Sales. In addition, it joins to a dim_date table to get the week and year.
 
+### Sale Search (COMING SOON)
+
+This is a search function that allows you to search for sales by customer name, email, phone number, order
+date range, or total range. This exercises the ability to use optional parameters in the mapper library.
+
 ## Mapper Libraries
 
 ### Bob
@@ -55,11 +60,11 @@ a multi-insert helper. No Copy into or load data infile helpers are available.
 
 Mysql version available. Postgres and sqlite next to be added.
 
+### sqlc (IN PROGRESS)
+
+sqlc is a query file generated mapper library. 
+
 ### Ent
-
-TODO
-
-### sqlc
 
 TODO
 

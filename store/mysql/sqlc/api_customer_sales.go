@@ -6,12 +6,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/acsellers/golang-db-compare/store/common"
-	"github.com/acsellers/golang-db-compare/store/mysql/bob/models"
-	"github.com/stephenafamo/bob"
-	"github.com/stephenafamo/bob/dialect/mysql"
-	"github.com/stephenafamo/bob/dialect/mysql/sm"
-	"github.com/stephenafamo/scan"
+	"github.com/acsellers/golang-db-compare/store/mysql/sqlc/models"
 )
 
 func CustomerSales(w http.ResponseWriter, r *http.Request) {
@@ -32,24 +27,11 @@ func CustomerSales(w http.ResponseWriter, r *http.Request) {
 		startDate, _ = time.Parse("2006-01-02", r.URL.Query().Get("start_date"))
 	}
 
-	query := models.Customers.Query(
-		sm.Columns(
-			models.Customers.Columns.ID,
-			models.Customers.Columns.Name,
-			mysql.Raw("SUM(`orders`.`total`) as total_sales"),
-			mysql.Raw("COUNT(`orders`.`id`) as total_orders"),
-		),
-		models.SelectJoins.Customers.InnerJoin.Orders,
-		models.SelectWhere.Orders.OrderDate.GTE(startDate),
-		models.SelectWhere.Orders.OrderDate.LTE(endDate),
-		sm.GroupBy("customers.id, customers.name"),
-	)
-	totals, err := bob.All(
-		r.Context(),
-		db,
-		query,
-		scan.StructMapper[common.CustomerTotals](),
-	)
+	args := models.CustomerSalesParams{
+		StartDate: startDate,
+		EndDate:   endDate,
+	}
+	totals, err := db.CustomerSales(r.Context(), args)
 
 	if err != nil {
 		http.Error(w, "Invalid date", http.StatusBadRequest)

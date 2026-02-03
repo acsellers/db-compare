@@ -1,13 +1,15 @@
 package main
 
 import (
+	"database/sql"
 	"encoding/json"
+	"math/big"
 	"net/http"
 
 	"github.com/aarondl/opt/omit"
 	"github.com/aarondl/opt/omitnull"
 	"github.com/acsellers/golang-db-compare/store/common"
-	"github.com/acsellers/golang-db-compare/store/mysql/bob/models"
+	"github.com/acsellers/golang-db-compare/store/mysql/sqlc/models"
 	"github.com/shopspring/decimal"
 	"github.com/stephenafamo/bob/types"
 )
@@ -21,7 +23,7 @@ func CreateSale(w http.ResponseWriter, r *http.Request) {
 	json.NewDecoder(r.Body).Decode(&order)
 
 	// get discounts
-	discounts := map[int64]*models.Discount{}
+	discounts := map[int64]models.Discount{}
 	discountIds := []int64{}
 	if order.DiscountID != nil {
 		discountIds = append(discountIds, *order.DiscountID)
@@ -32,9 +34,7 @@ func CreateSale(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	if len(discounts) > 0 {
-		discs, err := models.Discounts.Query(
-			models.SelectWhere.Discounts.ID.In(discountIds...),
-		).All(r.Context(), db)
+		discs, err := db.GetDiscount(r.Context(), discountIds)
 		if err != nil {
 			http.Error(w, "Invalid discount ID", http.StatusBadRequest)
 			return
@@ -45,7 +45,7 @@ func CreateSale(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// get products
-	products := map[int64]*models.Product{}
+	products := map[int64]models.Product{}
 	productIds := []int64{}
 	for _, oi := range order.Items {
 		productIds = append(productIds, oi.ProductID)
@@ -55,9 +55,7 @@ func CreateSale(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if len(productIds) > 0 {
-		prods, err := models.Products.Query(
-			models.SelectWhere.Products.ID.In(productIds...),
-		).All(r.Context(), db)
+		prods, err := db.GetProducts(r.Context(), productIds)
 		if err != nil {
 			http.Error(w, "Invalid product ID", http.StatusBadRequest)
 			return
@@ -68,18 +66,18 @@ func CreateSale(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// calculate totals
-	subtotal := decimal.Zero
-	discountAmount := decimal.Zero
-	taxAmount := decimal.Zero
-	total := decimal.Zero
-	items := []*models.OrderItemSetter{}
+	subtotal := big.NewFloat(0)
+	discountAmount := big.NewFloat(0)
+	taxAmount := big.NewFloat(0)
+	total := big.NewFloat(0)
+	items := []models.CreateSaleItemsParams{}
 
 	for _, oi := range order.Items {
-		item := &models.OrderItemSetter{
-			ProductID:  omit.From(oi.ProductID),
-			Quantity:   omit.From(int32(oi.Quantity)),
+		item := models.CreateSaleItemsParams{
+			ProductID:  oi.ProductID,
+			Quantity:   int32(oi.Quantity),
 			Price:      omit.From(products[oi.ProductID].Price),
-			DiscountID: omitnull.FromPtr(oi.DiscountID),
+			DiscountID: sql.NullInt64(oi.DiscountID),
 		}
 		itemSubtotal := decimal.Zero
 		itemDiscountAmount := decimal.Zero
