@@ -507,7 +507,7 @@ func (q *Queries) GetSalePayments(ctx context.Context, orderID int64) ([]OrderPa
 	return items, nil
 }
 
-const insertCustomers = `-- name: InsertCustomers :copyfrom
+const insertCustomers = `-- name: InsertCustomers :exec
 INSERT INTO customers (name, email, phone) VALUES (?, ?, ?)
 `
 
@@ -515,6 +515,22 @@ type InsertCustomersParams struct {
 	Name  string
 	Email sql.NullString
 	Phone sql.NullString
+}
+
+func (q *Queries) InsertCustomers(ctx context.Context, arg InsertCustomersParams) error {
+	_, err := q.db.ExecContext(ctx, insertCustomers, arg.Name, arg.Email, arg.Phone)
+	return err
+}
+
+const insertCustomersBulk = `-- name: InsertCustomersBulk :copyfrom
+INSERT INTO customers  (name, phone, email)  
+VALUES (?, ?, ?)
+`
+
+type InsertCustomersBulkParams struct {
+	Name  string
+	Phone sql.NullString
+	Email sql.NullString
 }
 
 const searchSales = `-- name: SearchSales :many

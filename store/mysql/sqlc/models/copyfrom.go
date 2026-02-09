@@ -15,19 +15,19 @@ import (
 	"github.com/hexon/mysqltsv"
 )
 
-var readerHandlerSequenceForInsertCustomers uint32 = 1
+var readerHandlerSequenceForInsertCustomersBulk uint32 = 1
 
-func convertRowsForInsertCustomers(w *io.PipeWriter, arg []InsertCustomersParams) {
+func convertRowsForInsertCustomersBulk(w *io.PipeWriter, arg []InsertCustomersBulkParams) {
 	e := mysqltsv.NewEncoder(w, 3, nil)
 	for _, row := range arg {
 		e.AppendString(row.Name)
-		e.AppendValue(row.Email)
 		e.AppendValue(row.Phone)
+		e.AppendValue(row.Email)
 	}
 	w.CloseWithError(e.Close())
 }
 
-// InsertCustomers uses MySQL's LOAD DATA LOCAL INFILE and is not atomic.
+// InsertCustomersBulk uses MySQL's LOAD DATA LOCAL INFILE and is not atomic.
 //
 // Errors and duplicate keys are treated as warnings and insertion will
 // continue, even without an error for some cases.  Use this in a transaction
@@ -35,16 +35,16 @@ func convertRowsForInsertCustomers(w *io.PipeWriter, arg []InsertCustomersParams
 //
 // Check the documentation for more information:
 // https://dev.mysql.com/doc/refman/8.0/en/load-data.html#load-data-error-handling
-func (q *Queries) InsertCustomers(ctx context.Context, arg []InsertCustomersParams) (int64, error) {
+func (q *Queries) InsertCustomersBulk(ctx context.Context, arg []InsertCustomersBulkParams) (int64, error) {
 	pr, pw := io.Pipe()
 	defer pr.Close()
-	rh := fmt.Sprintf("InsertCustomers_%d", atomic.AddUint32(&readerHandlerSequenceForInsertCustomers, 1))
+	rh := fmt.Sprintf("InsertCustomersBulk_%d", atomic.AddUint32(&readerHandlerSequenceForInsertCustomersBulk, 1))
 	mysql.RegisterReaderHandler(rh, func() io.Reader { return pr })
 	defer mysql.DeregisterReaderHandler(rh)
-	go convertRowsForInsertCustomers(pw, arg)
+	go convertRowsForInsertCustomersBulk(pw, arg)
 	// The string interpolation is necessary because LOAD DATA INFILE requires
 	// the file name to be given as a literal string.
-	result, err := q.db.ExecContext(ctx, fmt.Sprintf("LOAD DATA LOCAL INFILE '%s' INTO TABLE `customers` %s (name, email, phone)", "Reader::"+rh, mysqltsv.Escaping))
+	result, err := q.db.ExecContext(ctx, fmt.Sprintf("LOAD DATA LOCAL INFILE '%s' INTO TABLE `customers` %s (name, phone, email)", "Reader::"+rh, mysqltsv.Escaping))
 	if err != nil {
 		return 0, err
 	}

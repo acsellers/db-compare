@@ -6,4 +6,7 @@ sales, but products and discounts are loaded from the database and calculations 
 server-side, then compared the expected total. 
 
 This example demonstrates pulling records by id and inserting one record along with multiple
-child records.
+child records. Some mapper libraries could allow the 
+developer to insert the parent and children in a single 
+call, while some libaries on the other side require
+setting the parent id on each child record individually.

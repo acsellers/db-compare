@@ -1,15 +1,13 @@
 package main
 
 import (
+	"database/sql"
 	"encoding/csv"
 	"encoding/json"
 	"io"
 	"net/http"
 
-	"github.com/acsellers/golang-db-compare/store/mysql/bob/models"
-	"github.com/stephenafamo/bob"
-	"github.com/stephenafamo/bob/dialect/mysql"
-	"github.com/stephenafamo/bob/dialect/mysql/im"
+	"github.com/acsellers/golang-db-compare/store/mysql/sqlc/models"
 )
 
 func BulkLoadCustomers(w http.ResponseWriter, r *http.Request) {
@@ -21,11 +19,15 @@ func BulkLoadCustomers(w http.ResponseWriter, r *http.Request) {
 	}
 	defer file.Close()
 
-	args := []bob.Expression{}
+	args := []models.InsertCustomersBulkParams{}
 	cr := csv.NewReader(file)
 	row, err := cr.Read()
 	for err == nil {
-		args = append(args, mysql.Arg(row[0], row[1], row[2]))
+		args = append(args, models.InsertCustomersBulkParams{
+			Name:  row[0],
+			Phone: sql.NullString{String: row[1], Valid: row[1] != ""},
+			Email: sql.NullString{String: row[2], Valid: row[2] != ""},
+		})
 		row, err = cr.Read()
 	}
 	if err != io.EOF {
@@ -33,21 +35,12 @@ func BulkLoadCustomers(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	result, err := mysql.Insert(
-		im.Into(
-			models.Customers.Name().String(),
-			models.Customers.Columns.Name.String(),
-			models.Customers.Columns.Email.String(),
-			models.Customers.Columns.Phone.String(),
-		),
-		im.Values(args...),
-	).Exec(r.Context(), db)
+	cnt, err := db.InsertCustomersBulk(r.Context(), args)
 	if err != nil {
 		http.Error(w, "Invalid file", http.StatusBadRequest)
 		return
 	}
 
 	w.WriteHeader(http.StatusCreated)
-	rows, _ := result.RowsAffected()
-	json.NewEncoder(w).Encode(rows)
+	json.NewEncoder(w).Encode(cnt)
 }

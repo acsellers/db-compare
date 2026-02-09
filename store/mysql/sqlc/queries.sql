@@ -32,8 +32,12 @@ values (?, ?, ?, ?, ?, ?);
 insert into order_payments (order_id, payment_type, amount, payment_info)
 values (?, ?, ?, ?);
 
--- name: InsertCustomers :copyfrom
+-- name: InsertCustomers :exec
 INSERT INTO customers (name, email, phone) VALUES (?, ?, ?);
+
+-- name: InsertCustomersBulk :copyfrom
+INSERT INTO customers  (name, phone, email)  
+VALUES (?, ?, ?);
 
 -- name: DailySoldItems :many
 select id, name, category, 

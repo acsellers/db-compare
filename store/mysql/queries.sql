@@ -73,3 +73,20 @@ inner join reporting_order ro on ro.order_type = t.order_type and ro.category = 
 inner join dim_date on dim_date.date = t.order_date
 group by dim_date.year, dim_date.WEEK_OF_YEAR,ro.title, ro.report_order, t.name 
 order by dim_date.year, dim_date.WEEK_OF_YEAR, ro.report_order, t.name;
+
+-- sale search
+select orders.*, customers.name
+from orders 
+left join customers on orders.customer_id = customers.id
+where customers.name like ?
+and orders.order_date >= ?
+and orders.order_date <= ?
+and orders.order_type = ?
+and orders.total >= ?
+and orders.total <= ?
+order by orders.order_date desc;
+
+-- customer update
+update customers
+set name = ?, phone = ?, email = ?, marketing_opt_in = ?
+where id = ?;
