@@ -13,7 +13,7 @@ import (
 	"time"
 )
 
-const createSale = `-- name: CreateSale :exec
+const createSale = `-- name: CreateSale :execresult
 insert into orders (order_date, customer_id, discount_id, order_type, subtotal, discount_amount, tax_amount, total)
 values (?, ?, ?, ?, ?, ?, ?, ?)
 `
@@ -29,8 +29,8 @@ type CreateSaleParams struct {
 	Total          string
 }
 
-func (q *Queries) CreateSale(ctx context.Context, arg CreateSaleParams) error {
-	_, err := q.db.ExecContext(ctx, createSale,
+func (q *Queries) CreateSale(ctx context.Context, arg CreateSaleParams) (sql.Result, error) {
+	return q.db.ExecContext(ctx, createSale,
 		arg.OrderDate,
 		arg.CustomerID,
 		arg.DiscountID,
@@ -40,7 +40,6 @@ func (q *Queries) CreateSale(ctx context.Context, arg CreateSaleParams) error {
 		arg.TaxAmount,
 		arg.Total,
 	)
-	return err
 }
 
 const createSaleItems = `-- name: CreateSaleItems :exec
@@ -89,6 +88,17 @@ func (q *Queries) CreateSalePayments(ctx context.Context, arg CreateSalePayments
 		arg.PaymentInfo,
 	)
 	return err
+}
+
+const customerExists = `-- name: CustomerExists :one
+select count(*) from customers where id = ?
+`
+
+func (q *Queries) CustomerExists(ctx context.Context, id int64) (int64, error) {
+	row := q.db.QueryRowContext(ctx, customerExists, id)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
 }
 
 const customerSales = `-- name: CustomerSales :many

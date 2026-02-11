@@ -89,4 +89,5 @@ order by orders.order_date desc;
 -- customer update
 update customers
 set name = ?, phone = ?, email = ?, marketing_opt_in = ?
-where id = ?;
+where external_id = ?;
+

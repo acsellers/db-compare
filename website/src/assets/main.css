@@ -1,0 +1,46 @@
+@import "tailwindcss";
+@import "tailwindcss-primeui";
+
+
+
+.layout-wrapper {
+    padding: 1rem;
+}
+
+.navbar {
+    margin: 0 auto;
+    width: 100%;
+}
+
+@media (min-width: 1600px) {
+    .navbar {
+        max-width: 1400px;
+        width: unset;
+    }
+}
+
+.normal-container.no-bg {
+    background-color: transparent;
+}
+
+body {
+    background-color: var(--p-surface-300);
+}
+
+.normal-container {
+    margin: 0 auto;
+    max-width: 1200px;
+    padding: 2rem;
+    background-color: var(--p-surface-100);
+    border-radius: 1em;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+a {
+    text-decoration: underline;
+}

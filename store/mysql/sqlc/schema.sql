@@ -21,6 +21,7 @@ CREATE TABLE customers (
     phone VARCHAR(24),
     email varchar(255),
     marketing_opt_in boolean DEFAULT false,
+    external_id varchar(12),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

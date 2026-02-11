@@ -1,0 +1,56 @@
+{
+    "name": "bob",
+    "website": "https://bob.stephenafamo.com/",
+    "repo": "https://github.com/stephenafamo/bob",
+    "description": "SQL query builder and ORM/Factory generator for Go with support for PostgreSQL, MySQL and SQLite",
+    "databases": [
+        "postgres",
+        "mysql",
+        "sqlite"
+    ],
+    "license": "MIT",
+    "features": [
+        "ORM",
+        "Mapper",
+        "Query Builder",
+        "Factory"
+    ],
+    "grades": {
+        "get_sale": {
+            "level": "gold",
+            "notes": "Able to eagerly load sub-records in one call"
+        },
+        "create_sale": {
+            "level": "silver",
+            "notes": "Unable to insert sale with sub-records, but able to insert sub-records using a helper after creating the sale"
+        },
+        "customer_update": {
+            "level": "gold",
+            "notes": "Able to update only modified fields"
+        },
+        "customer_sales": {
+            "level": "gold",
+            "notes": "Able to use foreign key relationships for joins, also maps to arbitrary structs"
+        },
+        "daily_reports": {
+            "level": "gold",
+            "notes": "Able to group and specify columns easily, would like to see a way to alias a function to a name"
+        },
+        "sales_reports": {
+            "level": "gold",
+            "notes": "Able to specify arbitrary joins, would like to see a way to alias a function to a name"
+        },
+        "sale_search": {
+            "level": "gold",
+            "notes": "Able to specify individual filters as needed"
+        },
+        "bulk_customers": {
+            "level": "silver",
+            "notes": "Unable to use Load Data Infile, but able to use regular insert with many rows"
+        },
+        "json": {
+            "level": "bronze",
+            "notes": "No auto-marshalling/unmarshalling of JSON columns or json query helpers, json columns are recognized as json types"
+        }
+    }
+}

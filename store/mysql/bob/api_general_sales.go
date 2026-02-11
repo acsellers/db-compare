@@ -38,7 +38,6 @@ func GeneralSales(w http.ResponseWriter, r *http.Request) {
 		group by ro.title, ro.report_order, t.name
 		order by ro.report_order, t.name;
 	*/
-	join := sm.InnerJoin("reporting_order")
 	lines, err := bob.All(
 		r.Context(),
 		db,
@@ -52,13 +51,14 @@ func GeneralSales(w http.ResponseWriter, r *http.Request) {
 				mysql.Raw("sum(item_summaries.total_quantity) as quantity"),
 				mysql.Raw("sum(item_summaries.total_sales) as total_sales"),
 			),
-			sm.GroupBy("reporting_order.title, reporting_order.report_order, item_summaries.name"),
-			sm.OrderBy("reporting_order.report_order, item_summaries.name"),
+			sm.InnerJoin("reporting_order").On(
+				mysql.Raw("reporting_order.order_type = 'general'"),
+				mysql.Raw("reporting_order.category = item_summaries.category"),
+			),
 			models.SelectWhere.ItemSummaries.OrderDate.GTE(startDate),
 			models.SelectWhere.ItemSummaries.OrderDate.LTE(endDate),
-			sm.Where(mysql.Raw("reporting_order.order_type = 'general'")),
-			sm.Where(mysql.Raw("reporting_order.category = item_summaries.category")),
-			join,
+			sm.GroupBy("reporting_order.title, reporting_order.report_order, item_summaries.name"),
+			sm.OrderBy("reporting_order.report_order, item_summaries.name"),
 		),
 		scan.StructMapper[common.SaleReportLine](),
 	)

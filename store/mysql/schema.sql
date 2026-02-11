@@ -26,9 +26,12 @@ CREATE TABLE customers (
     phone VARCHAR(24),
     email varchar(255),
     marketing_opt_in boolean DEFAULT false,
+    external_id varchar(12),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+ALTER TABLE customers ADD UNIQUE (external_id);
+
 CREATE TABLE orders (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     order_date DATE NOT NULL,
@@ -58,7 +61,7 @@ CREATE TABLE order_payments (
     order_id BIGINT NOT NULL,
     payment_type varchar(12) NOT NULL,
     amount DECIMAL(10,2) NOT NULL,
-    payment_info json,
+    payment_info json COMMENT 'payments.Info',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

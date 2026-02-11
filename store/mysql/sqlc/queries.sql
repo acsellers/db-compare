@@ -4,6 +4,9 @@ SELECT * FROM discounts WHERE id IN (sqlc.slice('ids'));
 -- name: GetProducts :many
 SELECT * FROM products WHERE id IN (sqlc.slice('ids'));
 
+-- name: CustomerExists :one
+select count(*) from customers where id = ?;
+
 -- name: GetSale :one
 select orders.*, customers.name
 from orders 
@@ -20,7 +23,7 @@ where order_items.order_id = ?;
 -- name: GetSalePayments :many
 select * from order_payments where order_id = ?;
 
--- name: CreateSale :exec
+-- name: CreateSale :execresult
 insert into orders (order_date, customer_id, discount_id, order_type, subtotal, discount_amount, tax_amount, total)
 values (?, ?, ?, ?, ?, ?, ?, ?);
 
@@ -38,6 +41,9 @@ INSERT INTO customers (name, email, phone) VALUES (?, ?, ?);
 -- name: InsertCustomersBulk :copyfrom
 INSERT INTO customers  (name, phone, email)  
 VALUES (?, ?, ?);
+
+-- name: UpdateCustomerByExternalID :exec
+update customers set name = ?, email = ?, phone = ? where external_id = ?;
 
 -- name: DailySoldItems :many
 select id, name, category, 

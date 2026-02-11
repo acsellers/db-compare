@@ -3,15 +3,12 @@ package main
 import (
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"math/big"
 	"net/http"
 
-	"github.com/aarondl/opt/omit"
-	"github.com/aarondl/opt/omitnull"
 	"github.com/acsellers/golang-db-compare/store/common"
 	"github.com/acsellers/golang-db-compare/store/mysql/sqlc/models"
-	"github.com/shopspring/decimal"
-	"github.com/stephenafamo/bob/types"
 )
 
 // CreateSale creates a new sale from an Order struct. This involves
@@ -76,102 +73,123 @@ func CreateSale(w http.ResponseWriter, r *http.Request) {
 		item := models.CreateSaleItemsParams{
 			ProductID:  oi.ProductID,
 			Quantity:   int32(oi.Quantity),
-			Price:      omit.From(products[oi.ProductID].Price),
-			DiscountID: sql.NullInt64(oi.DiscountID),
+			Price:      products[oi.ProductID].Price,
+			DiscountID: sql.NullInt64{Valid: oi.DiscountID != nil},
 		}
-		itemSubtotal := decimal.Zero
-		itemDiscountAmount := decimal.Zero
+		if oi.DiscountID != nil {
+			item.DiscountID.Int64 = *oi.DiscountID
+		}
+		itemSubtotal := big.NewFloat(0.0)
+		itemDiscountAmount := big.NewFloat(0.0)
 
-		price := products[oi.ProductID].Price
-		quantity := decimal.NewFromInt(oi.Quantity)
-		itemSubtotal = price.Mul(quantity)
-		subtotal = subtotal.Add(itemSubtotal)
+		price := big.NewFloat(0.0)
+		price.Parse(products[oi.ProductID].Price, 10)
+		quantity := big.NewFloat(float64(oi.Quantity))
+		itemSubtotal.Mul(price, quantity)
+		subtotal.Add(subtotal, itemSubtotal)
 
 		if oi.DiscountID != nil {
-			discAmt := discounts[*oi.DiscountID].Discount
+			discAmt := big.NewFloat(0.0)
+			discAmt.Parse(discounts[*oi.DiscountID].Discount, 10)
 			switch discounts[*oi.DiscountID].DiscountType {
 			case "percentage":
-				itemDiscountAmount = price.Mul(quantity).Mul(discAmt)
+				itemDiscountAmount.Mul(itemSubtotal, discAmt)
 			case "fixed":
 				itemDiscountAmount = discAmt
 			}
 		}
-		discountAmount = discountAmount.Add(itemDiscountAmount)
-		item.DiscountAmount = omit.From(itemDiscountAmount)
+		discountAmount.Add(discountAmount, itemDiscountAmount)
+		item.DiscountAmount = itemDiscountAmount.String()
 
 		items = append(items, item)
 	}
 
 	if order.DiscountID != nil {
-		discAmt := discounts[*order.DiscountID].Discount
+		discAmt := big.NewFloat(0.0)
+		discAmt.Parse(discounts[*order.DiscountID].Discount, 10)
 		switch discounts[*order.DiscountID].DiscountType {
 		case "percentage":
-			discountAmount = discountAmount.Add(subtotal.Mul(discAmt))
+			temp := big.NewFloat(0.0)
+			discountAmount.Add(discountAmount, temp.Mul(subtotal, discAmt))
 		case "fixed":
-			discountAmount = discountAmount.Add(discAmt)
+			discountAmount.Add(discountAmount, discAmt)
 		}
 	}
 
-	total = subtotal.Sub(discountAmount)
-	taxAmount = total.Mul(decimal.NewFromFloat(common.TaxRate))
-	total = total.Add(taxAmount)
+	total.Sub(subtotal, discountAmount)
+	taxAmount.Mul(total, big.NewFloat(common.TaxRate))
+	total.Add(total, taxAmount)
 
-	if !total.Equal(decimal.NewFromFloat(order.ExpectedTotal)) {
+	if total.Text('f', 2) != fmt.Sprintf("%0.2f", order.ExpectedTotal) {
 		http.Error(w, "Invalid total", http.StatusBadRequest)
 		return
 	}
 
-	paymentSetters := []*models.OrderPaymentSetter{}
-	paymentAmount := decimal.Zero
+	paymentSetters := []models.CreateSalePaymentsParams{}
+	paymentAmount := big.NewFloat(0.0)
 	for _, payment := range order.Payments {
-		paymentAmount = paymentAmount.Add(decimal.NewFromFloat(payment.Amount))
+		paymentAmount.Add(paymentAmount, big.NewFloat(payment.Amount))
 		b, _ := json.Marshal(payment.PaymentInfo)
-		paymentSetters = append(paymentSetters, &models.OrderPaymentSetter{
-			PaymentType: omit.From(payment.PaymentType),
-			Amount:      omit.From(decimal.NewFromFloat(payment.Amount)),
-			PaymentInfo: omitnull.From(types.JSON[json.RawMessage]{Val: b}),
+		paymentSetters = append(paymentSetters, models.CreateSalePaymentsParams{
+			PaymentType: payment.PaymentType,
+			Amount:      fmt.Sprintf("%0.2f", payment.Amount),
+			PaymentInfo: b,
 		})
 	}
-	if !total.Equal(paymentAmount) {
+	if total.Cmp(paymentAmount) != 0 {
 		http.Error(w, "Invalid payment amount", http.StatusBadRequest)
 		return
 	}
 
 	orderType := "non-members"
 	if order.CustomerID != nil {
-		if exists, _ := models.CustomerExists(r.Context(), db, *order.CustomerID); !exists {
+		if exists, _ := db.CustomerExists(r.Context(), *order.CustomerID); exists == 0 {
 			http.Error(w, "Invalid customer ID", http.StatusBadRequest)
 			return
 		}
 		orderType = "members"
 	}
 
-	orderSetter := &models.OrderSetter{
-		CustomerID:     omitnull.FromPtr(order.CustomerID),
-		DiscountID:     omitnull.FromPtr(order.DiscountID),
-		OrderType:      omit.From(orderType),
-		Subtotal:       omit.From(subtotal),
-		DiscountAmount: omit.From(discountAmount),
-		TaxAmount:      omit.From(taxAmount),
-		Total:          omit.From(total),
+	orderSetter := models.CreateSaleParams{
+		CustomerID:     NullInt64FromPtr(order.CustomerID),
+		DiscountID:     NullInt64FromPtr(order.DiscountID),
+		OrderType:      orderType,
+		Subtotal:       subtotal.Text('f', 2),
+		DiscountAmount: discountAmount.Text('f', 2),
+		TaxAmount:      taxAmount.Text('f', 2),
+		Total:          total.Text('f', 2),
 	}
 
-	orderRecord, err := models.Orders.Insert(orderSetter).One(r.Context(), db)
+	result, err := db.CreateSale(r.Context(), orderSetter)
 	if err != nil {
 		http.Error(w, "Invalid order", http.StatusBadRequest)
 		return
 	}
-	err = orderRecord.InsertOrderItems(r.Context(), db, items...)
-	if err != nil {
-		http.Error(w, "Invalid order items", http.StatusBadRequest)
-		return
+	orderId, _ := result.LastInsertId()
+	for _, item := range items {
+		item.OrderID = orderId
+		err = db.CreateSaleItems(r.Context(), item)
+		if err != nil {
+			http.Error(w, "Invalid order items", http.StatusBadRequest)
+			return
+		}
 	}
-	err = orderRecord.InsertOrderPayments(r.Context(), db, paymentSetters...)
-	if err != nil {
-		http.Error(w, "Invalid order payments", http.StatusBadRequest)
-		return
+	for _, payment := range paymentSetters {
+		payment.OrderID = orderId
+		err = db.CreateSalePayments(r.Context(), payment)
+		if err != nil {
+			http.Error(w, "Invalid order payments", http.StatusBadRequest)
+			return
+		}
 	}
 
 	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(orderRecord.ID)
+	json.NewEncoder(w).Encode(orderId)
+}
+
+func NullInt64FromPtr(i *int64) sql.NullInt64 {
+	if i == nil {
+		return sql.NullInt64{}
+	}
+	return sql.NullInt64{Valid: true, Int64: *i}
 }
