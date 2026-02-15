@@ -1,4 +1,4 @@
-# JSON Fields
+### JSON Support
 
 Ever since document databases became popular, developers have realized the power of 
 stuffing json objects into columns. When you have a bunch of attributes that don't

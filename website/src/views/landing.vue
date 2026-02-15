@@ -44,7 +44,7 @@ const router = useRouter();
                     <div class="p-3">
                         <div class="shadow-2 bg-white p-4 border-round h-full text-center">
                             <i class="pi pi-list text-primary text-5xl mb-3"></i>
-                            <h3 class="text-xl font-bold text-primary-800 mb-2"><RouterLink to="/features">Feature Matrix</RouterLink></h3>
+                            <h3 class="text-xl font-bold text-primary-800 mb-2"><RouterLink to="/matrix">Feature Matrix</RouterLink></h3>
                             <p class="text-600 line-height-3 m-0">
                                 Side-by-side comparison of features, support, and ecosystem compatibility.
                             </p>

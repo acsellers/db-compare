@@ -15,6 +15,13 @@
         "Query Builder",
         "Factory"
     ],
+    "types": [
+        "generated_orm",
+        "generated_mapper",
+        "mapper",
+        "query_builder"
+    ],
+    "popularity": 1600,
     "grades": {
         "get_sale": {
             "level": "gold",

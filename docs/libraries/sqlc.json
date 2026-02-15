@@ -13,6 +13,10 @@
         "Mapper",
         "Query Builder"
     ],
+    "types": [
+        "generated_mapper"
+    ],
+    "popularity": 16900,
     "grades": {
         "get_sale": {
             "level": "bronze",

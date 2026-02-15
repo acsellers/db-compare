@@ -1,4 +1,4 @@
-# Create Sale
+### Create Sale
 
 This example demonstrates a semi-secure solution for creating a sale record, along with the associated
 items and payment records. I say semi-secure because there isn't any verification of discount to 

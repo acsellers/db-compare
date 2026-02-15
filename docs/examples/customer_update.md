@@ -1,4 +1,4 @@
-# Update Customer
+### Update Customer
 
 While the customer record in this schema doesn't have 
 many columns, most customer tables will have plenty of

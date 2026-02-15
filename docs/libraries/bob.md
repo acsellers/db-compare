@@ -1,7 +1,8 @@
 # Bob
 
-Bob is a library that generates a custom query library
-from the live schema of the database. 
+Bob is a set of libraries that can be as simple as a query builder, but is most
+often used as a Code Generation ORM tool. At the same time, it can be used as a
+query builder, a generic mapper, or even a query-based generated mapper.
 
 ## Pros
 

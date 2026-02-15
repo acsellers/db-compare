@@ -1,4 +1,4 @@
-# General Sales & Typed Sales Reports
+### General Sales & Typed Sales Reports
 
 These are two group by queries that need to be joined
 on fields that are not foreign keys. 

@@ -47,6 +47,11 @@ const router = createRouter({
       path: '/features',
       name: 'features',
       component: () => import('../views/features.vue')
+    },
+    {
+      path: '/matrix',
+      name: 'matrix',
+      component: () => import('../views/matrix.vue')
     }
   ],
 })
