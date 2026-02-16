@@ -49,7 +49,8 @@ func main() {
 		if info.IsDir() {
 			return nil
 		}
-		if filepath.Ext(path) == ".md" {
+		switch {
+		case filepath.Ext(path) == ".md":
 			content, err := os.ReadFile(path)
 			if err != nil {
 				return err
@@ -58,8 +59,9 @@ func main() {
 			fmt.Println("Found: ", filename)
 			filename = filename[:len(filename)-len(filepath.Ext(filename))]
 			markdowns[filename] = string(content)
-		}
-		if filepath.Ext(path) == ".json" {
+		case strings.HasSuffix(path, "_samples.json"):
+			// todo: create sample data from files and lines
+		case filepath.Ext(path) == ".json":
 			content, err := os.ReadFile(path)
 			if err != nil {
 				return err
@@ -135,18 +137,18 @@ type ReportCard struct {
 			Level string `json:"level"`
 			Notes string `json:"notes"`
 		} `json:"customer_update"`
-		CustomerSales struct {
+		BasicGrouping struct {
 			Level string `json:"level"`
 			Notes string `json:"notes"`
-		} `json:"customer_sales"`
-		DailyReports struct {
+		} `json:"basic_grouping"`
+		AdvancedGrouping struct {
 			Level string `json:"level"`
 			Notes string `json:"notes"`
-		} `json:"daily_reports"`
-		SalesReports struct {
+		} `json:"advanced_grouping"`
+		WithQueries struct {
 			Level string `json:"level"`
 			Notes string `json:"notes"`
-		} `json:"sales_reports"`
+		} `json:"with_queries"`
 		SaleSearch struct {
 			Level string `json:"level"`
 			Notes string `json:"notes"`

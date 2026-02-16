@@ -9,7 +9,10 @@ written.
 ### Docs (initial)
 
 - [x] Examples format
+- [x] Samples format
+- [x] Report Card format
 - [x] Examples Draft
+- [ ] CTE Example
 - [ ] Examples Final
 - [x] Bob Description Draft
 - [ ] Bob Description Final
@@ -18,7 +21,7 @@ written.
 - [x] sqlc Description Draft
 - [ ] sqlc Description Final
 - [x] sqlc Report Card
-- [x] sqlc Sample Mapping
+- [ ] sqlc Sample Mapping
 
 ### Bob (mysql)
 
@@ -35,6 +38,7 @@ written.
 - [x] Bulk Customers
 - [ ] JSON Marshal/Unmarshal
 - [ ] JSON Query
+- [ ] CTE Example
 
 ### sqlc (mysql)
 
@@ -51,6 +55,7 @@ written.
 - [x] Bulk Customers
 - [ ] JSON Marshal/Unmarshal
 - [ ] JSON Query
+- [ ] CTE Example
 
 ### Tests (mysql)
 
@@ -67,6 +72,7 @@ written.
 - [ ] Bulk Customers
 - [ ] JSON Marshal/Unmarshal
 - [ ] JSON Query
+- [ ] CTE Example
 
 ### Postgres 
 
@@ -88,6 +94,7 @@ written.
 
 ### Website
 
+- [x] Setup everything
 - [x] Theme
 - [x] Markdown Rendering
 - [x] Source Code Highlighting
@@ -95,6 +102,7 @@ written.
 - [x] Libraries Page
 - [ ] Better Library Infoboxes
 - [ ] Library Search and Sorting
+- [x] Library Report Cards
 - [x] Criteria Page
 - [ ] Criteria Page Mobile View (source code wide issue)
 - [ ] Samples Page

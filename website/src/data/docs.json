@@ -37,7 +37,7 @@
         }
       ]
     },
-    "bulk_update": {
+    "bulk_customers": {
       "title": "Bulk Customer Load",
       "description": "Most applications will need some way to load mass amounts of data into the database. \n\nThis example is limited to whatever the mapper supports. The simplest solution is to just\nrun a bunch of insert statements, using a prepared statement. A better solution is to have\nmultiple rows per insert statement.\n\nThe gold standard is for the mapper to support the special bulk load statements, like LOAD DATA\nINFILE for Mysql or COPY INTO for Postgres. \n\nThis example has three sub-tests: a 10,000 row test, a 1,000,000 row test, and a 100,000,000 row test.\n\n\n### Example Implementation\n\n```go\nrows := make([]db.Input)\nfor _, inputRow := range inputRows {\n    rows = append(rows, db.Input{\n        db.StringValue(inputRow.Name),\n        db.NullStringValue(inputRow.Phone),\n        db.NullStringValue(inputRow.Email),\n    })\n}\n\n_, err := db.Customers.BulkInsert(\n    db.Columns(db.Customers.Name, db.Customers.Email, db.Customers.Phone),\n    rows,\n)\n```",
       "sub_examples": null
@@ -49,7 +49,7 @@
     },
     "customer_update": {
       "title": "Update Customer",
-      "description": "While the customer record in this schema doesn't have \nmany columns, most customer tables will have plenty of\ndifferent columns to update. This example demonstrates\nhow the mapping library handles updating specific \ncolumns.\n\nDoes the mapping library really only have single column\nor all column upates? Or can the mapping library update\ncolumns dynamically?\n\n### Example Implementation\n\n```go\nfor _, row := range inputRows {\n    if row[0] == \"\" {\n        continue\n    }\n    changes := []db.CustomerUpdateParams{}\n    if row[1] != \"\" {\n        changes = append(changes, db.Customers.Columns.Name.Set(row[1]))\n    }\n    if row[2] != \"\" {\n        changes = append(changes, db.Customers.Columns.Email.Set(row[2]))\n    }\n    if row[3] != \"\" {\n        changes = append(changes, db.Customers.Columns.Phone.Set(row[3]))\n    }\n    db.Customers.Update(\n        db.Where(db.Customers.ExternalID.EQ(row[0])),\n        changes...,\n    ).Exec(r.Context())\n}\n```",
+      "description": "This subject has two sub-examples, demonstrating two different\nways to update a bunch of customer records.\n\n\n\n### Example Implementation\n\n```go\nfor _, row := range inputRows {\n    if row[0] == \"\" {\n        continue\n    }\n    changes := []db.CustomerUpdateParams{}\n    if row[1] != \"\" {\n        changes = append(changes, db.Customers.Columns.Name.Set(row[1]))\n    }\n    if row[2] != \"\" {\n        changes = append(changes, db.Customers.Columns.Email.Set(row[2]))\n    }\n    if row[3] != \"\" {\n        changes = append(changes, db.Customers.Columns.Phone.Set(row[3]))\n    }\n    db.Customers.Update(\n        db.Where(db.Customers.ExternalID.EQ(row[0])),\n        changes...,\n    ).Exec(r.Context())\n}\n```",
       "sub_examples": null
     },
     "get_sale": {
@@ -161,20 +161,20 @@
           "notes": "Unable to insert sale with sub-records, but able to insert sub-records using a helper after creating the sale"
         },
         "customer_update": {
-          "level": "gold",
-          "notes": "Able to update only modified fields"
+          "level": "silver",
+          "notes": "Able to update only modified fields, but doesn't bulk import records to temporary table."
         },
-        "customer_sales": {
+        "basic_grouping": {
           "level": "gold",
           "notes": "Able to use foreign key relationships for joins, also maps to arbitrary structs"
         },
-        "daily_reports": {
+        "advanced_grouping": {
           "level": "gold",
-          "notes": "Able to group and specify columns easily, would like to see a way to alias a function to a name"
+          "notes": "Able to use custom join clauses or fall back to query files for especially complex queries"
         },
-        "sales_reports": {
-          "level": "gold",
-          "notes": "Able to specify arbitrary joins, would like to see a way to alias a function to a name"
+        "with_queries": {
+          "level": "todo",
+          "notes": "Need to write the example first, but expected to do fine"
         },
         "sale_search": {
           "level": "gold",
@@ -187,55 +187,6 @@
         "json": {
           "level": "bronze",
           "notes": "No auto-marshalling/unmarshalling of JSON columns or json query helpers, json columns are recognized as json types"
-        }
-      }
-    },
-    "bob_samples": {
-      "key": "bob_samples",
-      "name": "",
-      "website": "",
-      "repo": "",
-      "description": "",
-      "databases": null,
-      "license": "",
-      "features": null,
-      "popularity": 0,
-      "grades": {
-        "get_sale": {
-          "level": "",
-          "notes": ""
-        },
-        "create_sale": {
-          "level": "",
-          "notes": ""
-        },
-        "customer_update": {
-          "level": "",
-          "notes": ""
-        },
-        "customer_sales": {
-          "level": "",
-          "notes": ""
-        },
-        "daily_reports": {
-          "level": "",
-          "notes": ""
-        },
-        "sales_reports": {
-          "level": "",
-          "notes": ""
-        },
-        "sale_search": {
-          "level": "",
-          "notes": ""
-        },
-        "bulk_customers": {
-          "level": "",
-          "notes": ""
-        },
-        "json": {
-          "level": "",
-          "notes": ""
         }
       }
     },
@@ -266,20 +217,20 @@
           "notes": "Unable to insert sale with sub-records, and needed to iterate over the sub-records to insert them after setting the parent sale id"
         },
         "customer_update": {
-          "level": "bronze",
+          "level": "silver",
           "notes": "Needed to use multiple queries or a query that updates all the fields to update customers"
         },
-        "customer_sales": {
+        "basic_grouping": {
           "level": "gold",
           "notes": "Able to use foreign key relationships for joins, also maps to arbitrary structs"
         },
-        "daily_reports": {
+        "advanced_grouping": {
           "level": "gold",
           "notes": "Able to group and specify columns easily, would like to see a way to alias a function to a name"
         },
-        "sales_reports": {
-          "level": "gold",
-          "notes": "Able to specify arbitrary joins, would like to see a way to alias a function to a name"
+        "with_queries": {
+          "level": "todo",
+          "notes": "Need to write the example first, but expected to do fine"
         },
         "sale_search": {
           "level": "gold",

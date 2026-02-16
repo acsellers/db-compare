@@ -1,14 +1,9 @@
 # Update Customer
 
-While the customer record in this schema doesn't have 
-many columns, most customer tables will have plenty of
-different columns to update. This example demonstrates
-how the mapping library handles updating specific 
-columns.
+This subject has two sub-examples, demonstrating two different
+ways to update a bunch of customer records.
 
-Does the mapping library really only have single column
-or all column upates? Or can the mapping library update
-columns dynamically?
+
 
 ### Example Implementation
 

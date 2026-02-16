@@ -27,20 +27,20 @@
             "notes": "Unable to insert sale with sub-records, and needed to iterate over the sub-records to insert them after setting the parent sale id"
         },
         "customer_update": {
-            "level": "bronze",
+            "level": "silver",
             "notes": "Needed to use multiple queries or a query that updates all the fields to update customers"
         },
-        "customer_sales": {
+        "basic_grouping": {
             "level": "gold",
             "notes": "Able to use foreign key relationships for joins, also maps to arbitrary structs"
         },
-        "daily_reports": {
+        "advanced_grouping": {
             "level": "gold",
             "notes": "Able to group and specify columns easily, would like to see a way to alias a function to a name"
         },
-        "sales_reports": {
-            "level": "gold",
-            "notes": "Able to specify arbitrary joins, would like to see a way to alias a function to a name"
+        "with_queries": {
+            "level": "todo",
+            "notes": "Need to write the example first, but expected to do fine"
         },
         "sale_search": {
             "level": "gold",
