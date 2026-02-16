@@ -44,7 +44,7 @@ const subjects = [
     name: 'Advanced',
     subjects: [
       'sale_search',
-      'bulk_update',
+      'bulk_customers',
       'json'
     ]
   }

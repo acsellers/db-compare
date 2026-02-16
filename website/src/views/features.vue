@@ -6,8 +6,8 @@ const store = useDataStore();
 
 
 function toKey(s: any) {
-  console.log(s)
-  return s.title.toLowerCase().
+  let key = s['title'] || s['name'];
+  return key.toLowerCase().
     replaceAll(' ', '_').
     replaceAll('/', '_')
 
