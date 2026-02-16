@@ -1,0 +1,115 @@
+{
+    "store": {
+        "mysql": {
+            "get_sale": {
+                "file": "store/mysql/sqlc/api_get_sale.go",
+                "query": "store/mysql/sqlc/queries.sql[10:24]"
+            },
+            "create_sale": {
+                "file": "store/mysql/sqlc/api_create_sale.go",
+                "query": "store/mysql/sqlc/queries.sql[1:8,26:36]"
+            },
+            "customer_update": {
+                "sub_examples": {
+                    "updates": {
+                        "file": "store/mysql/sqlc/api_customer_update.go",
+                        "query": "store/mysql/sqlc/queries.sql[35:46]"
+                    },
+                    "temporary_table": {
+                        "file": "store/mysql/sqlc/api_customer_update2.go",
+                        "query": "store/mysql/sqlc/queries.sql[48:69]"
+                    }
+                }
+            },
+            "basic_grouping": {
+                "sub_examples": {
+                    "daily_revenue": {
+                        "file": "store/mysql/sqlc/api_daily_revenue.go",
+                        "query": "store/mysql/sqlc/queries.sql[80:84]"
+                    },
+                    "customer_sales": {
+                        "file": "store/mysql/sqlc/api_customer_sales.go",
+                        "query": "store/mysql/sqlc/queries.sql[86:93]"
+                    },
+                    "daily_sold_items": {
+                        "file": "store/mysql/sqlc/api_daily_sold_items.go",
+                        "query": "store/mysql/sqlc/queries.sql[71:78]"
+                    }
+                }
+            },
+            "advanced_grouping": {
+                "sub_examples": {
+                    "general_sales_report": {
+                        "file": "store/mysql/sqlc/api_general_sales_report.go",
+                        "query": "store/mysql/sqlc/queries.sql[95:104]"
+                    },
+                    "weekly_sales_report": {
+                        "file": "store/mysql/sqlc/api_weekly_sales_report.go",
+                        "query": "store/mysql/sqlc/queries.sql[106:116]"
+                    }
+                }
+            },
+            "sale_search": {
+                "file": "store/mysql/sqlc/api_sale_search.go",
+                "query": "store/mysql/sqlc/queries.sql[118:128]"
+            },
+            "bulk_update": {
+                "file": "store/mysql/sqlc/api_bulk_customers.go",
+                "query": "store/mysql/sqlc/queries.sql[38:39]"
+            },
+            "json": {
+                "file": "store/mysql/sqlc/api_json.go"
+            }
+        },
+        "postgres": {
+            "get_sale": {
+                "file": "store/postgres/sqlc/api_get_sale.go"
+            },
+            "create_sale": {
+                "file": "store/postgres/sqlc/api_create_sale.go"
+            },
+            "customer_update": {
+                "sub_examples": {
+                    "updates": {
+                        "file": "store/postgres/sqlc/api_customer_update.go"
+                    },
+                    "temporary_table": {
+                        "file": "store/postgres/sqlc/api_customer_update2.go"
+                    }
+                }
+            },
+            "basic_grouping": {
+                "sub_examples": {
+                    "daily_revenue": {
+                        "file": "store/postgres/sqlc/api_daily_revenue.go"
+                    },
+                    "customer_sales": {
+                        "file": "store/postgres/sqlc/api_customer_sales.go"
+                    },
+                    "daily_sold_items": {
+                        "file": "store/postgres/sqlc/api_daily_sold_items.go"
+                    }
+                }
+            },
+            "advanced_grouping": {
+                "sub_examples": {
+                    "general_sales_report": {
+                        "file": "store/postgres/sqlc/api_general_sales_report.go"
+                    },
+                    "weekly_sales_report": {
+                        "file": "store/postgres/sqlc/api_weekly_sales_report.go"
+                    }
+                }
+            },
+            "sale_search": {
+                "file": "store/postgres/sqlc/api_sale_search.go"
+            },
+            "bulk_update": {
+                "file": "store/postgres/sqlc/api_bulk_customers.go"
+            },
+            "json": {
+                "file": "store/postgres/sqlc/api_json.go"
+            }
+        }
+    }
+}

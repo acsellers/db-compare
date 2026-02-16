@@ -13,7 +13,13 @@ const subjects = [
       'get_sale',
       'create_sale',
       'customer_update'
-    ]
+    ],
+    sub_examples: {
+      customer_update: [
+        'updates',
+        'temporary_table'
+      ]
+    }
   },
   {
     name: 'Grouping and Joining',
@@ -21,17 +27,34 @@ const subjects = [
       'basic_grouping',
       'advanced_grouping',
       'with_queries'
-    ]
+    ],
+    sub_examples: {
+      basic_grouping: [
+        'daily_revenue',
+        'customer_sales',
+        'daily_sold_items'
+      ],
+      advanced_grouping: [
+        'general_sales_report',
+        'weekly_sales_report'
+      ]
+    }
   },
   {
     name: 'Advanced',
     subjects: [
       'sale_search',
-      'bulk_customers',
+      'bulk_update',
       'json'
     ]
   }
 ]
+
+export interface Sample {
+  file?: string;
+  query?: string;
+  sub_examples?: Record<string, Example>;
+}
 
 export interface Library {
   name: string;
@@ -98,7 +121,7 @@ export const useDataStore = defineStore('data', () => {
     })
   )
   const md = markdownit();
-  const highlighter = createHighlighterCore({
+  createHighlighterCore({
     themes: [
       import('@shikijs/themes/catppuccin-latte'),
       import('@shikijs/themes/catppuccin-macchiato')

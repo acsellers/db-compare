@@ -1,8 +1,13 @@
 # Bob
 
-Bob is a set of libraries that can be as simple as a query builder, but is most
-often used as a Code Generation ORM tool. At the same time, it can be used as a
-query builder, a generic mapper, or even a query-based generated mapper.
+Bob has a bit of everything as far as a database library goes. You give it
+the database connection to load the schema, then it will generate a set of 
+models for you. But you could also just use the query builder and the generic 
+mapper code without using the model generation. It even has a query-based 
+generated mapper, which is used in the Weekly Sales Report example.
+
+On one hand, it's more Go code than sqlc, but you get some flexibility that 
+isn't possible with sqlc. 
 
 ## Pros
 

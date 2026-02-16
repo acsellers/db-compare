@@ -22,17 +22,6 @@ func TypedSales(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Query().Get("start_date") != "" {
 		startDate, _ = time.Parse("2006-01-02", r.URL.Query().Get("start_date"))
 	}
-	/*
-			-- typed sales report
-		select ro.title, ro.report_order, t.name,
-		sum(t.order_count) as order_count,
-		sum(t.total_quantity) as quantity,
-		sum(t.total_sales) as total_sales
-		from item_summaries t
-		inner join reporting_order ro on ro.order_type = t.order_type and ro.category = t.category
-		group by ro.title, ro.report_order, t.name
-		order by ro.report_order, t.name;
-	*/
 	args := models.WeeklyTypedSalesParams{
 		StartDate: startDate,
 		EndDate:   endDate,

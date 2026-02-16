@@ -45,6 +45,29 @@ VALUES (?, ?, ?);
 -- name: UpdateCustomerByExternalID :exec
 update customers set name = ?, email = ?, phone = ? where external_id = ?;
 
+-- name: CreateCustomerTempTable :exec
+CREATE TEMPORARY TABLE customer_temp (
+  external_id VARCHAR(12),
+  name VARCHAR(255),
+  email VARCHAR(255),
+  phone VARCHAR(24)
+);
+
+-- name: InsertCustomersTemp :copyfrom
+INSERT INTO customer_temp (external_id, name, email, phone) VALUES (?, ?, ?, ?);
+
+-- name: UpdateCustomerNamesFromTemp :exec
+update customers c join customer_temp ct on c.external_id = ct.external_id
+set c.name = ct.name;
+
+-- name: UpdateCustomerEmailsFromTemp :exec
+update customers c join customer_temp ct on c.external_id = ct.external_id
+set c.email = ct.email;
+
+-- name: UpdateCustomerPhonesFromTemp :exec
+update customers c join customer_temp ct on c.external_id = ct.external_id
+set c.phone = ct.phone;
+
 -- name: DailySoldItems :many
 select id, name, category, 
 cast(sum(total_quantity) as signed) as total_quantity, 

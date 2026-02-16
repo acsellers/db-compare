@@ -37,7 +37,7 @@
         }
       ]
     },
-    "bulk_customers": {
+    "bulk_update": {
       "title": "Bulk Customer Load",
       "description": "Most applications will need some way to load mass amounts of data into the database. \n\nThis example is limited to whatever the mapper supports. The simplest solution is to just\nrun a bunch of insert statements, using a prepared statement. A better solution is to have\nmultiple rows per insert statement.\n\nThe gold standard is for the mapper to support the special bulk load statements, like LOAD DATA\nINFILE for Mysql or COPY INTO for Postgres. \n\nThis example has three sub-tests: a 10,000 row test, a 1,000,000 row test, and a 100,000,000 row test.\n\n\n### Example Implementation\n\n```go\nrows := make([]db.Input)\nfor _, inputRow := range inputRows {\n    rows = append(rows, db.Input{\n        db.StringValue(inputRow.Name),\n        db.NullStringValue(inputRow.Phone),\n        db.NullStringValue(inputRow.Email),\n    })\n}\n\n_, err := db.Customers.BulkInsert(\n    db.Columns(db.Customers.Name, db.Customers.Email, db.Customers.Phone),\n    rows,\n)\n```",
       "sub_examples": null
@@ -93,7 +93,7 @@
     "bob": {
       "key": "bob",
       "name": "bob",
-      "markdown_desc": "# Bob\n\nBob is a set of libraries that can be as simple as a query builder, but is most\noften used as a Code Generation ORM tool. At the same time, it can be used as a\nquery builder, a generic mapper, or even a query-based generated mapper.\n\n## Pros\n\n* Table mapping is generated for the columns and does\nnot require reflection.\n* Map tables and views, with relationships and type-specific query helpers.\n* Has a fallback reflection-based struct mapper.\n* Select specific columns, preload related tables, \n\n## Cons\n\n* Need to be careful about generating the models when\nfeature branches have introduced new columns.",
+      "markdown_desc": "# Bob\n\nBob has a bit of everything as far as a database library goes. You give it\nthe database connection to load the schema, then it will generate a set of \nmodels for you. But you could also just use the query builder and the generic \nmapper code without using the model generation. It even has a query-based \ngenerated mapper, which is used in the Weekly Sales Report example.\n\nOn one hand, it's more Go code than sqlc, but you get some flexibility that \nisn't possible with sqlc. \n\n## Pros\n\n* Table mapping is generated for the columns and does\nnot require reflection.\n* Map tables and views, with relationships and type-specific query helpers.\n* Has a fallback reflection-based struct mapper.\n* Select specific columns, preload related tables, \n\n## Cons\n\n* Need to be careful about generating the models when\nfeature branches have introduced new columns.",
       "website": "https://bob.stephenafamo.com/",
       "repo": "https://github.com/stephenafamo/bob",
       "description": "SQL query builder and ORM/Factory generator for Go with support for PostgreSQL, MySQL and SQLite",
@@ -114,7 +114,7 @@
     "sqlc": {
       "key": "sqlc",
       "name": "sqlc",
-      "markdown_desc": "# SQLC\n\nLet's be honest, this was the simplest library to setup\nfor this project. Every table and query was fully \nspecified before implementation as part of planning.\nThe only changes I had to make was to add the names for\nthe query parameters.\n\n## Pros\n\n* If you're good at writing SQL, this is going to provide\na simple way to generate a good query library.\n* Type specific query structs per query.\n* Share structs within queries.\n\n## Cons\n\n* You're writing every single query, even the simple ones.\n* You might need to write a lot of update queries or commit to updating all the columns.\n* Some queries might need to be written in a fall-back\nmanner to handle optional parameters.\n",
+      "markdown_desc": "# SQLC\n\nsqlc is a query mapper tool that generates Go code from SQL queries\nand schema files. It's well-supported and has a strong set of features.\n\nIt was also one of the easier libraries to setup for this project, since\nI start by creating a schema and queries file. I just had to add the parameter\nnames to the queries to create the code.\n\n## Pros\n\n* If you're good at writing SQL, this is going to provide\na simple way to generate a good query library.\n* Type specific query structs per query.\n* Share structs within queries.\n\n## Cons\n\n* You're writing every single query, even the simple ones.\n* You might need to write a lot of update queries or commit to updating all the columns.\n* Some queries might need to be written in a fall-back\nmanner to handle optional parameters.\n",
       "website": "https://sqlc.dev/",
       "repo": "https://github.com/sqlc-dev/sqlc",
       "description": "Compile SQL to type-safe code; catch failures before they happen.",
@@ -187,6 +187,55 @@
         "json": {
           "level": "bronze",
           "notes": "No auto-marshalling/unmarshalling of JSON columns or json query helpers, json columns are recognized as json types"
+        }
+      }
+    },
+    "bob_samples": {
+      "key": "bob_samples",
+      "name": "",
+      "website": "",
+      "repo": "",
+      "description": "",
+      "databases": null,
+      "license": "",
+      "features": null,
+      "popularity": 0,
+      "grades": {
+        "get_sale": {
+          "level": "",
+          "notes": ""
+        },
+        "create_sale": {
+          "level": "",
+          "notes": ""
+        },
+        "customer_update": {
+          "level": "",
+          "notes": ""
+        },
+        "customer_sales": {
+          "level": "",
+          "notes": ""
+        },
+        "daily_reports": {
+          "level": "",
+          "notes": ""
+        },
+        "sales_reports": {
+          "level": "",
+          "notes": ""
+        },
+        "sale_search": {
+          "level": "",
+          "notes": ""
+        },
+        "bulk_customers": {
+          "level": "",
+          "notes": ""
+        },
+        "json": {
+          "level": "",
+          "notes": ""
         }
       }
     },

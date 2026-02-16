@@ -4,70 +4,132 @@ This is a set of common database operations that might be needed for a database 
 Currently, it does not have a website, but that is the next step after I get more than one implementation
 written. 
 
-## Example Actions
+## TODO
 
-### Create Sale
+### Docs (initial)
 
-This takes in a sale and must retrieve products and discounts from the database to calculate the proper
-total. Once the total is validated against the user-provided data, the sale is then created in the database
-along with the sale items and discounts.
+- [x] Examples format
+- [x] Examples Draft
+- [ ] Examples Final
+- [x] Bob Description Draft
+- [ ] Bob Description Final
+- [x] Bob Report Card
+- [ ] Bob Sample Mapping
+- [x] sqlc Description Draft
+- [ ] sqlc Description Final
+- [x] sqlc Report Card
+- [x] sqlc Sample Mapping
 
-### Get Sale
+### Bob (mysql)
 
-Retrieve a sale record alongside some customer information and the order items and discounts.
+- [x] Get Sale
+- [x] Create Sale
+- [ ] Customer Update (individual statements)
+- [ ] Customer Update (temporary table)
+- [x] Daily Revenue
+- [x] Customer Sales
+- [x] Daily Sold Items
+- [x] General Sales Report
+- [x] Weekly Sales Report
+- [ ] Sale Search
+- [x] Bulk Customers
+- [ ] JSON Marshal/Unmarshal
+- [ ] JSON Query
 
-### Bulk Load Customers
+### sqlc (mysql)
 
-Given an uploaded file, load the customers into the database in the most efficient way possible. Note that
-this is done through the mapper library, even if a more efficient way is possible by dropping down to the
-database/sql library.
+- [x] Get Sale
+- [x] Create Sale
+- [ ] Customer Update (individual statements)
+- [ ] Customer Update (temporary table)
+- [x] Daily Revenue
+- [x] Customer Sales
+- [x] Daily Sold Items
+- [x] General Sales Report
+- [x] Weekly Sales Report
+- [ ] Sale Search
+- [x] Bulk Customers
+- [ ] JSON Marshal/Unmarshal
+- [ ] JSON Query
 
-### Daily Revenue
+### Tests (mysql)
 
-This groups the Orders table by date and type, then calculates the sums of totals. It demonstrates a GROUP BY
-clause in the mapper library.
+- [x] Get Sale
+- [ ] Create Sale
+- [ ] Customer Update (individual statements)
+- [ ] Customer Update (temporary table)
+- [x] Daily Revenue
+- [x] Customer Sales
+- [x] Daily Sold Items
+- [x] General Sales Report
+- [x] Weekly Sales Report
+- [ ] Sale Search
+- [ ] Bulk Customers
+- [ ] JSON Marshal/Unmarshal
+- [ ] JSON Query
 
-### Daily Sold Items
+### Postgres 
 
-This uses an Item Summaries view to calculate the total quantity sold and total sales for each item. It 
-shows off the ability to use a view in the mapper library.
+- [ ] Schema.sql
+- [ ] Queries.sql
+- [ ] Initial Data
 
-### General Sales
+### Bob (postgres)
 
-This uses the item summaries view and a oddly-joined table called reporting_order to calculate the total
-quantity sold and total sales for each item. It then joins the item information to the reporting_order table
-to format the data in a way that is easy to display. It demonstrates the use of a view and a join in the
-mapper library. Ideally, the join is able to have an on clause, but it can fallback to adding
-where clauses to specify the join conditions.
+- [ ] Everything
 
-### Typed Sales
+### sqlc (postgres)
 
-This is very similar to the general sales report, but it joins on category and order type instead of just
-order type like General Sales. In addition, it joins to a dim_date table to get the week and year.
+- [ ] Everything
 
-### Sale Search (COMING SOON)
+### Tests (postgres)
 
-This is a search function that allows you to search for sales by customer name, email, phone number, order
-date range, or total range. This exercises the ability to use optional parameters in the mapper library.
+- [ ] Everything
 
-## Mapper Libraries
+### Website
 
-### Bob
+- [x] Theme
+- [x] Markdown Rendering
+- [x] Source Code Highlighting
+- [x] Landing Page
+- [x] Libraries Page
+- [ ] Better Library Infoboxes
+- [ ] Library Search and Sorting
+- [x] Criteria Page
+- [ ] Criteria Page Mobile View (source code wide issue)
+- [ ] Samples Page
+- [ ] Benchmark Page
+- [x] Coming Soon Page
+- [ ] Github Pages Setup
 
-Bob is a schema-generated mapper libary. It passes all the requirements, though the General/Typed Sales has to
-fallback to using where clauses to specify the join conditions. It also does not have a Bulk Insert helper beyond
-a multi-insert helper. No Copy into or load data infile helpers are available.
+### Bun (mysql/postgres)
 
-Mysql version available. Postgres and sqlite next to be added.
+- [ ] Everything
 
-### sqlc (IN PROGRESS)
+### Ent (mysql/postgres)
 
-sqlc is a query file generated mapper library. 
+- [ ] Everything
 
-### Ent
+### GORM (mysql/postgres)
 
-TODO
+- [ ] Everything
 
-### GORM
+### Jet (mysql/postgres)
 
-TODO
+- [ ] Everything
+
+### SQLBoiler (mysql/postgres)
+
+- [ ] Everything
+
+### sqlx (mysql/postgres)
+
+- [ ] Everything
+
+### Upper DB (mysql/postgres)
+
+- [ ] Everything
+
+### XORM (mysql/postgres)
+
+- [ ] Everything

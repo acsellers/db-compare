@@ -1,10 +1,11 @@
 # SQLC
 
-Let's be honest, this was the simplest library to setup
-for this project. Every table and query was fully 
-specified before implementation as part of planning.
-The only changes I had to make was to add the names for
-the query parameters.
+sqlc is a query mapper tool that generates Go code from SQL queries
+and schema files. It's well-supported and has a strong set of features.
+
+It was also one of the easier libraries to setup for this project, since
+I start by creating a schema and queries file. I just had to add the parameter
+names to the queries to create the code.
 
 ## Pros
 
