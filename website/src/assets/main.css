@@ -1,6 +1,7 @@
 @import "tailwindcss";
 @import "tailwindcss-primeui";
 @reference "tailwindcss";
+@import "highlight.js/styles/github.css";
 
 
 .layout-wrapper {
@@ -54,21 +55,31 @@ a {
 }
 
 .markdown h3 {
-    @apply text-lg font-bold mt-2 mb-2;
+    @apply text-lg font-semibold mt-2 mb-2;
 }
 
 .markdown h4 {
-    @apply text-base font-bold mb-2;
+    @apply text-base font-semibold mb-2;
 }
 
 .markdown h5 {
-    @apply text-sm font-bold mb-2;
+    @apply text-sm font-semibold mb-2;
 }
 
 .markdown h6 {
-    @apply text-xs font-bold mb-2;
+    @apply text-xs font-semibold mb-2;
 }
 
 .markdown li {
     @apply list-disc list-inside;
+}
+
+.markdown pre {
+    font-size: 0.8em;
+    padding: 0.7em;
+    border-radius: 0.5em;
+}
+
+.markdown p {
+    margin-bottom: 0.7em;
 }

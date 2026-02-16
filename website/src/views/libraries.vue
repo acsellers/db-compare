@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue';
 import Button from 'primevue/button';
-import docs from '@/data/docs.json';
+import { useDataStore } from '@/stores/data';
 import Dialog from 'primevue/dialog';
 import ReportCard from '@/components/ReportCard.vue';
 import InfoCard from '@/components/InfoCard.vue';
@@ -12,30 +12,31 @@ interface Library {
   description: string;
   popularity: number;
 }
+const store = useDataStore();
 const databases = ref('any');
 const databaseOptions = [
-  {label: 'Any Database', value: 'any'},
-  {label: 'Postgres', value: 'postgres'},
-  {label: 'MySQL', value: 'mysql'},
-  {label: 'Sqlite', value: 'sqlite'}
+  { label: 'Any Database', value: 'any' },
+  { label: 'Postgres', value: 'postgres' },
+  { label: 'MySQL', value: 'mysql' },
+  { label: 'Sqlite', value: 'sqlite' }
 ]
 const sortBy = ref('popularity');
 const sortOptions = [
-  {label: 'Github Stars', value: 'popularity'},
-  {label: 'Name', value: 'name'},
-  {label: 'Activity', value: 'activity'}
+  { label: 'Github Stars', value: 'popularity' },
+  { label: 'Name', value: 'name' },
+  { label: 'Activity', value: 'activity' }
 ]
 const libType = ref('all');
 const libTypeOptions = [
-  {label: 'All', value: 'all'},
-  {label: 'ORM', value: 'orm'},
-  {label: 'Query Builder', value: 'query_builder'},
-  {label: 'Generic Mapper', value: 'mapper'},
-  {label: 'Generated Mapper', value: 'generated_mapper'},
-  {label: 'Generated ORM', value: 'generated_orm'}
+  { label: 'All', value: 'all' },
+  { label: 'ORM', value: 'orm' },
+  { label: 'Query Builder', value: 'query_builder' },
+  { label: 'Generic Mapper', value: 'mapper' },
+  { label: 'Generated Mapper', value: 'generated_mapper' },
+  { label: 'Generated ORM', value: 'generated_orm' }
 ]
 const libs = computed(() => {
-  let list = Object.values(docs.Libraries);
+  let list = Object.values(store.libraries);
   if (databases.value !== 'any') {
     list = list.filter((lib: any) => lib.databases.includes(databases.value));
   }
@@ -51,23 +52,13 @@ const libs = computed(() => {
   }
   return list;
 })
-onMounted(() => {
-  Object.keys(docs.Libraries).forEach((key:string) => {
-    libs.value.push({
-      id: key,
-      name: docs.ReportCards[key].name,
-      description: docs.Libraries[key],
-      popularity: docs.ReportCards[key].popularity
-    })
-  })
-})
 
 function viewReportCard(library: any) {
-  reportCard.value = docs.ReportCards[library.id];
+  reportCard.value = library.key;
   showReportCard.value = true;
 }
 
-const reportCard = ref<any>(null);
+const reportCard = ref<string | null>(null);
 const showReportCard = ref(false);
 </script>
 
@@ -79,13 +70,14 @@ const showReportCard = ref(false);
       </div>
     </div>
     <div class="flex flex-col gap-3">
-      <InfoCard v-for="library in libs" :key="library.id" :library="library" @view-report-card="viewReportCard" />
+      <InfoCard v-for="library in libs" :key="library.key" :library="library" @view-report-card="viewReportCard" />
     </div>
   </div>
-  <Dialog v-model:visible="showReportCard" modal pt:root:class="!border-0 !bg-transparent" pt:mask:class="backdrop-blur-sm">
+  <Dialog v-model:visible="showReportCard" modal pt:root:class="!border-0 !bg-transparent"
+    pt:mask:class="backdrop-blur-sm">
     <template #container="{ closeCallback }">
       <div class="bg-white max-h-[90vh] overflow-y-auto">
-        <ReportCard :card="reportCard" />
+        <ReportCard v-if="reportCard" :library="reportCard" />
       </div>
       <div class="close-button fixed -right-4 -top-4">
         <Button @click="closeCallback" icon="pi pi-times" rounded severity="secondary" />
@@ -95,6 +87,6 @@ const showReportCard = ref(false);
 </template>
 <style scoped>
 a {
-    text-decoration: none;
+  text-decoration: none;
 }
 </style>

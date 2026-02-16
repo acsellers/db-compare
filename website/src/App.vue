@@ -14,6 +14,13 @@ const items = ref([
         }
     },
     {
+        label: 'Criteria',
+        icon: 'pi pi-list',
+        command: () => {
+            router.push('/features');
+        }
+    },
+    {
         label: 'Samples',
         icon: 'pi pi-code',
         command: () => {
@@ -27,28 +34,31 @@ const items = ref([
             router.push('/benchmarks');
         }
     },
+
     {
         label: 'Coming Soon',
         icon: 'pi pi-clock',
         command: () => {
-             router.push('/coming-soon');
+            router.push('/coming-soon');
         }
     }
 ]);
 </script>
 
 <template>
-  <div class="layout-wrapper">
-      <Menubar :model="items" class="navbar">
-          <template #start>
-              <span class="text-xl font-bold text-primary-700 mr-4 cursor-pointer" @click="router.push('/')">Go DB Breakdown</span>
-          </template>
-          <template #end>
-              <a href="https://github.com/acsellers/db-compare" class="text-primary-700 mr-4 cursor-pointer"><i class="pi pi-github" style="font-size: 1.5rem;"></i></a>
-          </template>
-      </Menubar>
-      <div class="layout-content mt-4">
-          <RouterView />
-      </div>
-  </div>
+    <div class="layout-wrapper">
+        <Menubar :model="items" class="navbar">
+            <template #start>
+                <span class="text-xl font-bold text-primary-700 mr-4 cursor-pointer" @click="router.push('/')">Go DB
+                    Breakdown</span>
+            </template>
+            <template #end>
+                <a href="https://github.com/acsellers/db-compare" class="text-primary-700 mr-4 cursor-pointer"><i
+                        class="pi pi-github" style="font-size: 1.5rem;"></i></a>
+            </template>
+        </Menubar>
+        <div class="layout-content mt-4">
+            <RouterView />
+        </div>
+    </div>
 </template>

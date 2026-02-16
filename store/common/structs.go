@@ -63,39 +63,39 @@ type OrderPayment struct {
 	PaymentInfo map[string]any `json:"payment_info"`
 }
 type ItemSummary struct {
-	Name          string    `json:"name"`
-	Category      string    `json:"category"`
-	TotalQuantity int64     `json:"total_quantity"`
-	TotalSales    float64   `json:"total_sales"`
-	OrderDate     time.Time `json:"order_date"`
+	Name          string    `json:"name" db:"name"`
+	Category      string    `json:"category" db:"category"`
+	TotalQuantity int64     `json:"total_quantity" db:"total_quantity"`
+	TotalSales    float64   `json:"total_sales" db:"total_sales"`
+	OrderDate     time.Time `json:"order_date" db:"order_date"`
 }
 type DailyRevenue struct {
-	OrderType    string    `json:"order_type"`
-	OrderDate    time.Time `json:"order_date"`
-	TotalRevenue float64   `json:"total_revenue"`
+	OrderType    string    `json:"order_type" db:"order_type"`
+	OrderDate    time.Time `json:"order_date" db:"order_date"`
+	TotalRevenue float64   `json:"total_revenue" db:"total_revenue"`
 }
 type CustomerTotals struct {
-	ID          int64   `json:"id"`
-	Name        string  `json:"name"`
-	TotalSales  float64 `json:"total_sales"`
-	TotalOrders int64   `json:"total_orders"`
+	ID          int64   `json:"id" db:"id"`
+	Name        string  `json:"name" db:"name"`
+	TotalSales  float64 `json:"total_sales" db:"total_sales"`
+	TotalOrders int64   `json:"total_orders" db:"total_orders"`
 }
 
-type SaleReportLine struct {
-	Title       string  `json:"title"`
-	ReportOrder int64   `json:"report_order"`
-	ItemName    string  `json:"item_name"`
-	OrderCount  int64   `json:"order_count"`
-	Quantity    int64   `json:"quantity"`
-	TotalSales  float64 `json:"total_sales"`
+type GeneralSalesReport struct {
+	Title       string  `json:"title" db:"title"`
+	ReportOrder int64   `json:"report_order" db:"report_order"`
+	ItemName    string  `json:"item_name" db:"item_name"`
+	OrderCount  int64   `json:"order_count" db:"order_count"`
+	Quantity    int64   `json:"quantity" db:"quantity"`
+	TotalSales  float64 `json:"total_sales" db:"total_sales"`
 }
 type WeeklySaleReport struct {
-	Year        int64   `json:"year"`
-	WeekOfYear  int64   `json:"week_of_year"`
-	Title       string  `json:"title"`
-	ReportOrder int64   `json:"report_order"`
-	ItemName    string  `json:"item_name"`
-	OrderCount  int64   `json:"order_count"`
-	Quantity    int64   `json:"quantity"`
-	TotalSales  float64 `json:"total_sales"`
+	Year        int64   `json:"year" db:"year"`
+	WeekOfYear  int64   `json:"week_of_year" db:"week_of_year"`
+	Title       string  `json:"title" db:"title"`
+	ReportOrder int64   `json:"report_order" db:"report_order"`
+	ItemName    string  `json:"item_name" db:"item_name"`
+	OrderCount  int64   `json:"order_count" db:"order_count"`
+	Quantity    int64   `json:"quantity" db:"quantity"`
+	TotalSales  float64 `json:"total_sales" db:"total_sales"`
 }

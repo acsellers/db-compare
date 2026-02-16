@@ -1,21 +1,24 @@
 package main
 
 import (
+	"bufio"
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 type Docs struct {
-	Examples    map[string]string
+	Examples    map[string]ExampleText
 	Libraries   map[string]LibraryInfo
 	ReportCards map[string]ReportCard
 }
 
 func main() {
 	docs := Docs{
-		Examples:    make(map[string]string),
+		Examples:    make(map[string]ExampleText),
 		Libraries:   make(map[string]LibraryInfo),
 		ReportCards: make(map[string]ReportCard),
 	}
@@ -33,7 +36,7 @@ func main() {
 			}
 			filename := filepath.Base(path)
 			filename = filename[:len(filename)-len(filepath.Ext(filename))]
-			docs.Examples[filename] = string(content)
+			docs.Examples[filename] = ParseExample(content)
 		}
 		return nil
 	})
@@ -69,6 +72,9 @@ func main() {
 				fmt.Println(path, err)
 				return nil
 			}
+			if reportCard.Key == "" {
+				reportCard.Key = filename
+			}
 			docs.ReportCards[filename] = reportCard
 		}
 		return nil
@@ -76,6 +82,7 @@ func main() {
 	for name, markdown := range markdowns {
 		rc := docs.ReportCards[name]
 		docs.Libraries[name] = LibraryInfo{
+			Key:          name,
 			Name:         rc.Name,
 			MarkdownDesc: markdown,
 			Website:      rc.Website,
@@ -94,6 +101,7 @@ func main() {
 }
 
 type LibraryInfo struct {
+	Key          string   `json:"key"`
 	Name         string   `json:"name"`
 	MarkdownDesc string   `json:"markdown_desc"`
 	Website      string   `json:"website"`
@@ -105,6 +113,7 @@ type LibraryInfo struct {
 	Popularity   int      `json:"popularity"`
 }
 type ReportCard struct {
+	Key         string   `json:"key"`
 	Name        string   `json:"name"`
 	Website     string   `json:"website"`
 	Repo        string   `json:"repo"`
@@ -151,4 +160,47 @@ type ReportCard struct {
 			Notes string `json:"notes"`
 		} `json:"json"`
 	} `json:"grades"`
+}
+
+func ParseExample(content []byte) ExampleText {
+	et := ExampleText{}
+	scanner := bufio.NewScanner(bytes.NewBuffer(content))
+	desc := ""
+	inSubExample := false
+	for scanner.Scan() {
+		line := scanner.Text()
+		if strings.HasPrefix(line, "# ") {
+			et.Title = strings.TrimPrefix(line, "# ")
+		} else if strings.HasPrefix(line, "## ") {
+			if !inSubExample {
+				et.Description = strings.TrimSpace(desc)
+				inSubExample = true
+			} else {
+				et.SubExamples[len(et.SubExamples)-1].Description = strings.TrimSpace(desc)
+			}
+			desc = ""
+			et.SubExamples = append(et.SubExamples, SubExampleText{
+				Title: strings.TrimPrefix(line, "## "),
+			})
+		} else {
+			desc += line + "\n"
+		}
+	}
+	if !inSubExample {
+		et.Description = strings.TrimSpace(desc)
+	} else {
+		et.SubExamples[len(et.SubExamples)-1].Description = strings.TrimSpace(desc)
+	}
+	return et
+}
+
+type ExampleText struct {
+	Title       string           `json:"title"`
+	Description string           `json:"description"`
+	SubExamples []SubExampleText `json:"sub_examples"`
+}
+type SubExampleText struct {
+	Title       string `json:"title"`
+	Description string `json:"description"`
+	Code        string `json:"code"`
 }

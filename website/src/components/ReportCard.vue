@@ -1,28 +1,31 @@
 <script setup lang="ts">
 // Import images as URLs for vite
+import { onMounted, computed } from 'vue';
 import goldIcon from '@/assets/gold.svg';
 import silverIcon from '@/assets/silver.svg';
 import bronzeIcon from '@/assets/bronze.svg';
 import todoIcon from '@/assets/todo.svg';
 import failIcon from '@/assets/fail.svg';
-import { Subjects } from '@/data/subjects';
+import { useDataStore } from '@/stores/data';
+import type { ReportCard } from '@/stores/data';
+
+const store = useDataStore();
 
 const props = defineProps({
-    card: {
-        type: Object,
+    library: {
+        type: String,
         required: true
     }
 })
 
+const card = computed<ReportCard>(() => {
+    return store.reportCards[props.library] as ReportCard || {};
+})
+
 const getIcon = (subject: string) => {
-    console.log(subject, props.card.grades[subject])
-    let grade = props.card.grades[subject];
+    let grade = card.value!.grades[subject];
     if (!grade) { return todoIcon; }
-    if (typeof grade === 'object') {
-        grade = grade.level;
-    }
-    if (!grade) return todoIcon;
-    switch (grade.toLowerCase()) {
+    switch (grade.level.toLowerCase()) {
         case 'gold': return goldIcon;
         case 'silver': return silverIcon;
         case 'bronze': return bronzeIcon;
@@ -31,21 +34,21 @@ const getIcon = (subject: string) => {
     }
 }
 const getAlt = (subject: string) => {
-    if (typeof props.card.grades[subject] === 'object') {
-        return props.card.grades[subject].level;
+    if (typeof card.value!.grades[subject] === 'object') {
+        return card.value!.grades[subject].level;
     }
     return "Not Graded";
 }
 const getNotes = (subject: string) => {
-    if (typeof props.card.grades[subject] === 'object') {
-        return props.card.grades[subject].notes;
+    if (typeof card.value!.grades[subject] === 'object') {
+        return card.value!.grades[subject].notes;
     }
     return "Not Graded";
 }
 const formatSubject = (subject: string) => {
     return subject.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
 }
-const gradeSections = Subjects;
+const gradeSections = store.features;
 </script>
 
 <template>
@@ -78,19 +81,21 @@ const gradeSections = Subjects;
                     </tr>
                 </thead>
                 <tbody class="text-gray-600 text-sm font-light">
-                    <template v-for="section in gradeSections" :key="section.name">
+                    <template v-for="section in store.subjects" :key="section.name">
                         <tr class="border-b border-gray-200 hover:bg-gray-100">
                             <td colspan="3" class="pt-6 pb-1 px-6 text-center whitespace-nowrap">
                                 <span class="font-bold text-xl text-gray-600">{{ section.name }}</span>
                             </td>
                         </tr>
-                        <tr v-for="subject in section.subjects" :key="subject" class="border-b border-gray-200 hover:bg-gray-100">
+                        <tr v-for="subject in section.subjects" :key="subject"
+                            class="border-b border-gray-200 hover:bg-gray-100">
                             <td class="py-3 px-3 text-left whitespace-nowrap">
                                 <span class="font-bold text-xl text-gray-700">{{ formatSubject(subject) }}</span>
                             </td>
                             <td class="py-3 px-6 text-center">
                                 <div class="flex items-center justify-center">
-                                    <img :src="getIcon(subject)" :alt="getAlt(subject)" class="w-9 h-9" :title="getAlt(subject)" />
+                                    <img :src="getIcon(subject)" :alt="getAlt(subject)" class="w-9 h-9"
+                                        :title="getAlt(subject)" />
                                 </div>
                             </td>
                             <td class="py-3 px-6 text-left">
@@ -108,7 +113,7 @@ const gradeSections = Subjects;
 
     <!-- Footer -->
     <div class="bg-gray-50 p-4 text-center border-t border-gray-200 text-xs text-gray-500 uppercase tracking-widest">
-        Go Database Library Breakdown - 
+        Go Database Library Breakdown -
         <RouterLink to="/features">Subject Breakdown</RouterLink>
     </div>
 </template>

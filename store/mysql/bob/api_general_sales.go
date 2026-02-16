@@ -27,17 +27,7 @@ func GeneralSales(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Query().Get("start_date") != "" {
 		startDate, _ = time.Parse("2006-01-02", r.URL.Query().Get("start_date"))
 	}
-	/*
-		-- general sales report
-		select ro.title, ro.report_order, t.name,
-		sum(t.order_count) as order_count,
-		sum(t.total_quantity) as quantity,
-		sum(t.total_sales) as total_sales
-		from item_summaries t
-		inner join reporting_order ro on ro.order_type = 'general' and ro.category = t.category
-		group by ro.title, ro.report_order, t.name
-		order by ro.report_order, t.name;
-	*/
+
 	lines, err := bob.All(
 		r.Context(),
 		db,
@@ -60,7 +50,7 @@ func GeneralSales(w http.ResponseWriter, r *http.Request) {
 			sm.GroupBy("reporting_order.title, reporting_order.report_order, item_summaries.name"),
 			sm.OrderBy("reporting_order.report_order, item_summaries.name"),
 		),
-		scan.StructMapper[common.SaleReportLine](),
+		scan.StructMapper[common.GeneralSalesReport](),
 	)
 	if err != nil {
 		fmt.Println(err)

@@ -24,21 +24,6 @@ const router = createRouter({
       component: () => import('../views/examples.vue')
     },
     {
-      path: '/example/:name',
-      name: 'example',
-      component: () => import('../views/example.vue')
-    },
-    {
-      path: '/report_card/:name',
-      name: 'report_card',
-      component: () => import('../views/report_card.vue')
-    },
-    {
-      path: '/compare',
-      name: 'compare',
-      component: () => import('../views/compare.vue')
-    },
-    {
       path: '/coming-soon',
       name: 'coming-soon',
       component: () => import('../views/coming_soon.vue')

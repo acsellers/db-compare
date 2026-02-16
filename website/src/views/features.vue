@@ -1,37 +1,48 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
-import docs from '@/data/docs.json';
-import { Subjects } from '@/data/subjects';
-import markdownit from 'markdown-it';
+import { useDataStore } from '@/stores/data';
+import Panel from 'primevue/panel';
 
-const md = markdownit();
+const store = useDataStore();
 
-const examples = ref<Record<string, string[]>>({});
-onMounted(() => {
-    Subjects.forEach((subject: any) => {
-        examples.value[subject.name] = [];
-        subject.subjects.forEach((sub: string) => {
-            console.log(sub, docs.Examples[sub])
-            examples.value[subject.name].push(md.render(docs.Examples[sub]));
-        })
-    })
-})
+
+function toKey(s: any) {
+  console.log(s)
+  return s.title.toLowerCase().
+    replaceAll(' ', '_').
+    replaceAll('/', '_')
+
+}
+function renderMarkdown(markdown: string) {
+  return store.renderMarkdown(markdown);
+}
 </script>
 
 <template>
   <div class="normal-container">
-    <h1 class="text-3xl font-bold mb-6">Subject Breakdown</h1>
+    <h1 class="text-3xl font-bold mb-6">Evaluation Criteria</h1>
     <div class="flex flex-col gap-3">
-      <p>In order to evaluate libraries across a number of different features, I've broken down the features into these "subjects".</p>
-      <div class="markdown" v-for="(example, subject) in examples" :key="subject">
-        <h2>{{ subject }}</h2>
-        <div v-for="example in example" :key="example" v-html="example"></div>
+      <p>
+        In order to evaluate libraries across a number of different
+        features, I've broken down the features into these criteria. Each
+        section has an example of an ideal implementation. Some subjects
+        will have multiple sub-criteria, but they all get sort of averaged
+        together to get a final score.
+      </p>
+      <div v-for="feature in store.features" :key="feature.name">
+        <h2 class="text-2xl font-bold mb-2">{{ feature.name }}</h2>
+        <Panel v-for="subject in feature.subjects" :key="toKey(subject)" :header="subject.title" toggleable collapsed>
+          <div class="markdown" v-html="renderMarkdown(subject.description)"></div>
+          <div v-for="example in subject.sub_examples" :key="toKey(example)" class="mt-5">
+            <h4 class="text-xl font-bold mb-2">{{ example.title }}</h4>
+            <div class="markdown" v-html="renderMarkdown(example.description)"></div>
+          </div>
+        </Panel>
       </div>
     </div>
   </div>
 </template>
 <style scoped>
 a {
-    text-decoration: none;
+  text-decoration: none;
 }
 </style>

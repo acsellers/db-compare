@@ -1,12 +1,15 @@
-### Get Sale
+# Get Sale
 
-This example demonstrates a semi-secure solution for creating a sale record, along with the associated
-items and payment records. I say semi-secure because there isn't any verification of discount to 
-sales, but products and discounts are loaded from the database and calculations are performed
-server-side, then compared the expected total. 
+This is the first subject and arguable the simplest. That being said, not every library is going
+to have the simplest solution. ORM style libraries that can preload the data will take the 
+gold, while others will require multiple queries.
 
-This example demonstrates pulling records by id and inserting one record along with multiple
-child records. Some mapper libraries could allow the 
-developer to insert the parent and children in a single 
-call, while some libaries on the other side require
-setting the parent id on each child record individually.
+### Example Implementation
+
+```go
+sale, err := db.Sales.Query(
+    db.Where(db.Sales.ID.EQ(args.ID)),
+    db.Sales.Preload.OrderItems,
+    db.Sales.Preload.OrderPayments,
+).One(r.Context())
+```
