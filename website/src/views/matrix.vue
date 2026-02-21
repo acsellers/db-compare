@@ -10,7 +10,7 @@ interface CheckCategory {
 interface CheckItem {
     key: string;
     name: string;
-    func: (l: string) => boolean;
+    rating: (l: string) => string;
     notes?: (l: string) => string;
 }
 const checks = [{
@@ -18,23 +18,34 @@ const checks = [{
     subChecks: [{
         key: "postgres",
         name: "Postgres",
-        func: (l: string) => {
+        rating: (l: string) => {
             if (!store.reportCards[l]) { return false}
             return store.reportCards[l].databases.includes('postgres')
         }
     }, {
         key: "mysql",
         name: "MySQL",
-        func: (l: string) => {
+        rating: (l: string) => {
             if (!store.reportCards[l]) { return false}
             return store.reportCards[l].databases.includes('mysql')
         }
     }, {
         key: "sqlite",
         name: "SQLite",
-        func: (l: string) => {
+        rating: (l: string) => {
             if (!store.reportCards[l]) { return false}
             return store.reportCards[l].databases.includes('sqlite')
+        }
+    }, {
+        key: "other",
+        name: "Other Databases",
+        rating: (l: string) => {
+            if (!store.reportCards[l]) { return false}
+            return store.reportCards[l].databases.length > 3
+        },
+        notes: (l: string) => {
+            if (!store.reportCards[l]) { return ""}
+            return store.reportCards[l].databases.join(', ')
         }
     }]
 }, {
@@ -42,28 +53,28 @@ const checks = [{
     subChecks: [{
         key: "query_builder",
         name: "Query Builder",
-        func: (l: string) => {
+        rating: (l: string) => {
             if (!store.reportCards[l]) { return false}
             return store.reportCards[l].features.includes('Query Builder')
         }
     }, {
         key: "mapper",
         name: "Arbitrary Mapper",
-        func: (l: string) => {
+        rating: (l: string) => {
             if (!store.reportCards[l]) { return false}
             return store.reportCards[l].features.includes('Mapper')
         }
     }, {
         key: "orm",
         name: "ORM Querying",
-        func: (l: string) => {
+        rating: (l: string) => {
             if (!store.reportCards[l]) { return false}
             return store.reportCards[l].features.includes('ORM')
         }
     }, {
         key: "query_mapper",
         name: "Static Query Mapper",
-        func: (l: string) => {
+        rating: (l: string) => {
             if (!store.reportCards[l]) { return false}
             return store.reportCards[l].features.includes('Static Query Mapper')
         }

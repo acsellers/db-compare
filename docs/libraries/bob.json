@@ -21,6 +21,20 @@
         "mapper",
         "query_builder"
     ],
+    "matrix": {
+        "databases": {
+            "postgres": "gold",
+            "mysql": "gold",
+            "sqlite": "gold",
+            "other": ""
+        },
+        "features": {
+            "ORM": "gold",
+            "Mapper": "gold",
+            "Query Builder": "gold",
+            "Factory": "gold"
+        }
+    },
     "popularity": 1600,
     "grades": {
         "get_sale": {
