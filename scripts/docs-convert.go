@@ -124,44 +124,27 @@ type ReportCard struct {
 	License     string   `json:"license"`
 	Features    []string `json:"features"`
 	Popularity  int      `json:"popularity"`
-	Grades      struct {
-		GetSale struct {
-			Level string `json:"level"`
-			Notes string `json:"notes"`
-		} `json:"get_sale"`
-		CreateSale struct {
-			Level string `json:"level"`
-			Notes string `json:"notes"`
-		} `json:"create_sale"`
-		CustomerUpdate struct {
-			Level string `json:"level"`
-			Notes string `json:"notes"`
-		} `json:"customer_update"`
-		BasicGrouping struct {
-			Level string `json:"level"`
-			Notes string `json:"notes"`
-		} `json:"basic_grouping"`
-		AdvancedGrouping struct {
-			Level string `json:"level"`
-			Notes string `json:"notes"`
-		} `json:"advanced_grouping"`
-		WithQueries struct {
-			Level string `json:"level"`
-			Notes string `json:"notes"`
-		} `json:"with_queries"`
-		SaleSearch struct {
-			Level string `json:"level"`
-			Notes string `json:"notes"`
-		} `json:"sale_search"`
-		BulkCustomers struct {
-			Level string `json:"level"`
-			Notes string `json:"notes"`
-		} `json:"bulk_customers"`
-		JSON struct {
-			Level string `json:"level"`
-			Notes string `json:"notes"`
-		} `json:"json"`
-	} `json:"grades"`
+	Matrix      Matrix   `json:"matrix"`
+	Grades      Grades   `json:"grades"`
+}
+type Matrix struct {
+	Databases map[string]string `json:"databases"`
+	Features  map[string]string `json:"features"`
+}
+type Grades struct {
+	GetSale          GradeResult `json:"get_sale"`
+	CreateSale       GradeResult `json:"create_sale"`
+	CustomerUpdate   GradeResult `json:"customer_update"`
+	BasicGrouping    GradeResult `json:"basic_grouping"`
+	AdvancedGrouping GradeResult `json:"advanced_grouping"`
+	WithQueries      GradeResult `json:"with_queries"`
+	SaleSearch       GradeResult `json:"sale_search"`
+	BulkCustomers    GradeResult `json:"bulk_customers"`
+	JSON             GradeResult `json:"json"`
+}
+type GradeResult struct {
+	Level string `json:"level"`
+	Notes string `json:"notes"`
 }
 
 func ParseExample(content []byte) ExampleText {
