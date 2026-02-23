@@ -1,0 +1,40 @@
+{
+    "databases": {
+        "postgres": {
+            "level": "gold",
+            "notes": ""
+        },
+        "mysql": {
+            "level": "gold",
+            "notes": ""
+        },
+        "sqlite": {
+            "level": "silver",
+            "notes": "Listed as in beta"
+        }
+    },
+    "features": {
+        "Query Mapper": {
+            "level": "gold",
+            "notes": "Unable to specify parameter names, but able to use the query with the Query Builder functionality"
+        }
+    },
+    "other": {
+        "activity": {
+            "level": "gold",
+            "notes": "Has ports to other languages, on top of significant community support"
+        },
+        "documentation": {
+            "level": "gold",
+            "notes": "Dedicated documentation site, with many examples"
+        },
+        "examples": {
+            "level": "gold",
+            "notes": "Has many examples, and is easy to get started with"
+        },
+        "migration": {
+            "level": "n/a",
+            "notes": "Migrations are not part of the system"
+        }
+    }
+}

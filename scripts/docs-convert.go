@@ -128,8 +128,9 @@ type ReportCard struct {
 	Grades      Grades   `json:"grades"`
 }
 type Matrix struct {
-	Databases map[string]string `json:"databases"`
-	Features  map[string]string `json:"features"`
+	Databases map[string]GradeResult `json:"databases"`
+	Features  map[string]GradeResult `json:"features"`
+	Other     map[string]GradeResult `json:"other"`
 }
 type Grades struct {
 	GetSale          GradeResult `json:"get_sale"`

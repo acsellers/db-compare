@@ -78,15 +78,30 @@ export interface ReportCard {
   features: string[];
   popularity: number;
   grades: Record<string, Grade>;
+  matrix: Matrix;
 }
 
 export interface Grade {
   level: string;
   notes: string;
 }
+export interface Matrix {
+  databases: Record<string, Grade>;
+  features: Record<string, Grade>;
+  other: Record<string, Grade>;
+}
 
 export interface Benchmark {
+  runDate: string;
+  items: BenchmarkItem[];
+}
 
+export interface BenchmarkItem {
+  name: string;
+  time: number;
+  average: number;
+  rating: string;
+  notes: string;
 }
 
 export interface Feature {

@@ -1,0 +1,16 @@
+{
+    "name": "sqlc",
+    "website": "https://sqlc.dev/",
+    "repo": "https://github.com/sqlc-dev/sqlc",
+    "short_description": "Compile SQL to type-safe code; catch failures before they happen.",
+    "databases": [
+        "postgres",
+        "mysql",
+        "sqlite"
+    ],
+    "license": "MIT",
+    "features": [
+        "Query Mapper"
+    ],
+    "popularity": 16900
+}
