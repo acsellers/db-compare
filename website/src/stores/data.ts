@@ -1,10 +1,12 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import docs from '@/data/docs.json';
+import examples from '@/data/examples.json';
 import markdownit from 'markdown-it';
 import { fromHighlighter } from '@shikijs/markdown-it/core'
 import { createHighlighterCore } from 'shiki/core'
 import { createOnigurumaEngine } from 'shiki/engine/oniguruma'
+import type { FullLibrary, Feature, Subject } from '@/data/fields';
 
 const subjects = [
   {
@@ -49,88 +51,16 @@ const subjects = [
     ]
   }
 ]
-
-export interface Sample {
-  file?: string;
-  query?: string;
-  sub_examples?: Record<string, Example>;
-}
-
-export interface Library {
-  name: string;
-  markdown_desc: string;
-  website: string;
-  repo: string;
-  description: string;
-  databases: string[];
-  license: string;
-  features: string[];
-  popularity: number;
-}
-
-export interface ReportCard {
-  name: string;
-  website: string;
-  repo: string;
-  description: string;
-  databases: string[];
-  license: string;
-  features: string[];
-  popularity: number;
-  grades: Record<string, Grade>;
-  matrix: Matrix;
-}
-
-export interface Grade {
-  level: string;
-  notes: string;
-}
-export interface Matrix {
-  databases: Record<string, Grade>;
-  features: Record<string, Grade>;
-  other: Record<string, Grade>;
-}
-
-export interface Benchmark {
-  runDate: string;
-  items: BenchmarkItem[];
-}
-
-export interface BenchmarkItem {
-  name: string;
-  time: number;
-  average: number;
-  rating: string;
-  notes: string;
-}
-
-export interface Feature {
-  name: string;
-  subjects: Subject[];
-}
-
-export interface Subject {
-  title: string;
-  description: string;
-  sub_examples: Example[];
-}
-
-export interface Example {
-  title: string;
-  description: string;
-  code: string;
-}
+const examplesRecord = examples as Record<string, Subject>
 
 export const useDataStore = defineStore('data', () => {
-  const libraries = ref<Record<string, Library>>(docs.Libraries)
-  const reportCards = ref<Record<string, ReportCard>>(docs.ReportCards)
-  //const benchmarks = ref<Record<string, Benchmark>>(docs.Benchmarks)
+  const libraries = ref<Record<string, FullLibrary>>(docs)
   const features = ref<Feature[]>(
     subjects.map((subject: any) => {
       return {
         name: subject.name,
         subjects: subject.subjects.map((sub: string) => {
-          return docs.Examples[sub]
+          return examplesRecord[sub]
         })
       }
     })
@@ -158,5 +88,5 @@ export const useDataStore = defineStore('data', () => {
     return md.render(markdown);
   }
 
-  return { libraries, reportCards, features, subjects, renderMarkdown }
+  return { libraries, features, subjects, renderMarkdown }
 })

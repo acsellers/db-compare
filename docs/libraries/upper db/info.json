@@ -1,0 +1,18 @@
+{
+    "key": "upperdb",
+    "name": "upper/db",
+    "website": "https://upper.io",
+    "repo": "https://github.com/upper/db",
+    "short_description": "SQL query builder and mapper for Go with support for PostgreSQL, MySQL, SQLite, and more",
+    "databases": [
+        "postgres",
+        "mysql",
+        "sqlite"
+    ],
+    "license": "MIT",
+    "features": [
+        "Generic Mapper",
+        "Query Builder"
+    ],
+    "popularity": 3600
+}

@@ -1,0 +1,19 @@
+{
+    "key": "sqlboiler",
+    "name": "sqlboiler",
+    "website": "https://github.com/aarondl/sqlboiler?tab=readme-ov-file#table-of-contents",
+    "repo": "https://github.com/aarondl/sqlboiler",
+    "short_description": "Go ORM generated from your database schema",
+    "databases": [
+        "postgres",
+        "mysql",
+        "sqlite"
+    ],
+    "license": "BSD",
+    "features": [
+        "ORM",
+        "Generic Mapper",
+        "Query Builder"
+    ],
+    "popularity": 7000
+}

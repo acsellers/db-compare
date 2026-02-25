@@ -1,0 +1,38 @@
+{
+    "get_sale": {
+        "level": "todo",
+        "notes": "To be written"
+    },
+    "create_sale": {
+        "level": "todo",
+        "notes": "To be written"
+    },
+    "customer_update": {
+        "level": "todo",
+        "notes": "To be written"
+    },
+    "basic_grouping": {
+        "level": "todo",
+        "notes": "To be written"
+    },
+    "advanced_grouping": {
+        "level": "todo",
+        "notes": "To be written"
+    },
+    "with_queries": {
+        "level": "todo",
+        "notes": "To be written"
+    },
+    "sale_search": {
+        "level": "todo",
+        "notes": "To be written"
+    },
+    "bulk_customers": {
+        "level": "todo",
+        "notes": "To be written"
+    },
+    "json": {
+        "level": "todo",
+        "notes": "To be written"
+    }
+}

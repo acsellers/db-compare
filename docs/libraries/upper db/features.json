@@ -9,12 +9,20 @@
             "notes": ""
         },
         "sqlite": {
-            "level": "silver",
-            "notes": "Listed as in beta"
+            "level": "gold",
+            "notes": ""
+        },
+        "other": {
+            "level": "gold",
+            "notes": "Supports CochroachDB, SQL Server, QL, and MongoDB"
         }
     },
     "features": {
-        "Query Mapper": {
+        "Query Builder": {
+            "level": "gold",
+            "notes": ""
+        },
+        "Generic Mapper": {
             "level": "gold",
             "notes": ""
         }
@@ -22,7 +30,7 @@
     "other": {
         "activity": {
             "level": "gold",
-            "notes": "Has ports to other languages, on top of significant community support"
+            "notes": "Under active development"
         },
         "documentation": {
             "level": "gold",
@@ -34,7 +42,7 @@
         },
         "migration": {
             "level": "n/a",
-            "notes": "Migrations are not an intended feature of the system"
+            "notes": "Migrations are not part of the system"
         }
     }
 }

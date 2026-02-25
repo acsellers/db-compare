@@ -21,6 +21,13 @@ const items = ref([
         }
     },
     {
+        label: 'Feature Matrix',
+        icon: 'pi pi-table',
+        command: () => {
+            router.push('/matrix');
+        }
+    },
+    {
         label: 'Samples',
         icon: 'pi pi-code',
         command: () => {

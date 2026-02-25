@@ -1,21 +1,19 @@
 {
-    "key": "bob",
-    "name": "bob",
-    "website": "https://bob.stephenafamo.com/",
-    "repo": "https://github.com/stephenafamo/bob",
+    "key": "xorm",
+    "name": "xorm",
+    "website": "https://xorm.io/",
+    "repo": "https://github.com/go-xorm/xorm",
     "short_description": "SQL query builder and ORM/Factory generator for Go with support for PostgreSQL, MySQL and SQLite",
     "databases": [
         "postgres",
         "mysql",
         "sqlite"
     ],
-    "license": "MIT",
+    "license": "BSD",
     "features": [
         "ORM",
         "Generic Mapper",
-        "Query Mapper",
-        "Query Builder",
-        "Factory"
+        "Query Builder"
     ],
-    "popularity": 1600
+    "popularity": 2300
 }

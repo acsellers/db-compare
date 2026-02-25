@@ -1,0 +1,17 @@
+{
+    "key": "sqlx",
+    "name": "sqlx",
+    "website": "https://jmoiron.github.io/sqlx/",
+    "repo": "https://github.com/jmoiron/sqlx",
+    "short_description": "A set of extensions to Go's database/sql package for SQL-first development",
+    "databases": [
+        "postgres",
+        "mysql",
+        "sqlite"
+    ],
+    "license": "MIT",
+    "features": [
+        "Generic Mapper"
+    ],
+    "popularity": 17500
+}

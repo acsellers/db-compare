@@ -9,6 +9,7 @@ import './assets/main.css'
 
 import PrimeVue from 'primevue/config';
 import Aura from '@primeuix/themes/aura';
+import Tooltip from 'primevue/tooltip';
 import { definePreset, } from '@primeuix/themes';
 
 
@@ -45,6 +46,7 @@ const Emerald = definePreset(Aura, {
 
 const app = createApp(App)
 
+app.directive('tooltip', Tooltip);
 app.use(createPinia())
 app.use(router)
 app.use(PrimeVue, {

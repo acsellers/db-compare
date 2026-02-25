@@ -1,0 +1,24 @@
+{
+    "key": "gorm",
+    "name": "GORM",
+    "website": "https://gorm.io/",
+    "repo": "https://github.com/go-gorm/gorm",
+    "short_description": "A developer-friendly ORM for Go with wide database support",
+    "databases": [
+        "postgres",
+        "mysql",
+        "sqlite",
+        "gaussdb",
+        "oracle",
+        "sqlserver",
+        "tidb",
+        "clickhouse"
+    ],
+    "license": "MIT",
+    "features": [
+        "ORM",
+        "Generic Mapper",
+        "Query Builder"
+    ],
+    "popularity": 39600
+}

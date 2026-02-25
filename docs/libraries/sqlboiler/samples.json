@@ -1,0 +1,104 @@
+{
+    "store": {
+        "mysql": {
+            "get_sale": {
+                "file": "store/mysql/bob/api_get_sale.go"
+            },
+            "create_sale": {
+                "file": "store/mysql/bob/api_create_sale.go"
+            },
+            "customer_update": {
+                "sub_examples": {
+                    "updates": {
+                        "file": "store/mysql/bob/api_customer_update.go"
+                    },
+                    "temporary_table": {
+                        "file": "store/mysql/bob/api_customer_update2.go"
+                    }
+                }
+            },
+            "basic_grouping": {
+                "sub_examples": {
+                    "daily_revenue": {
+                        "file": "store/mysql/bob/api_daily_revenue.go"
+                    },
+                    "customer_sales": {
+                        "file": "store/mysql/bob/api_customer_sales.go"
+                    },
+                    "daily_sold_items": {
+                        "file": "store/mysql/bob/api_daily_sold_items.go"
+                    }
+                }
+            },
+            "advanced_grouping": {
+                "sub_examples": {
+                    "general_sales_report": {
+                        "file": "store/mysql/bob/api_general_sales_report.go"
+                    },
+                    "weekly_sales_report": {
+                        "file": "store/mysql/bob/api_weekly_sales_report.go"
+                    }
+                }
+            },
+            "sale_search": {
+                "file": "store/mysql/bob/api_sale_search.go"
+            },
+            "bulk_update": {
+                "file": "store/mysql/bob/api_bulk_customers.go"
+            },
+            "json": {
+                "file": "store/mysql/bob/api_json.go"
+            }
+        },
+        "postgres": {
+            "get_sale": {
+                "file": "store/postgres/bob/api_get_sale.go"
+            },
+            "create_sale": {
+                "file": "store/postgres/bob/api_create_sale.go"
+            },
+            "customer_update": {
+                "sub_examples": {
+                    "updates": {
+                        "file": "store/postgres/bob/api_customer_update.go"
+                    },
+                    "temporary_table": {
+                        "file": "store/postgres/bob/api_customer_update2.go"
+                    }
+                }
+            },
+            "basic_grouping": {
+                "sub_examples": {
+                    "daily_revenue": {
+                        "file": "store/postgres/bob/api_daily_revenue.go"
+                    },
+                    "customer_sales": {
+                        "file": "store/postgres/bob/api_customer_sales.go"
+                    },
+                    "daily_sold_items": {
+                        "file": "store/postgres/bob/api_daily_sold_items.go"
+                    }
+                }
+            },
+            "advanced_grouping": {
+                "sub_examples": {
+                    "general_sales_report": {
+                        "file": "store/postgres/bob/api_general_sales_report.go"
+                    },
+                    "weekly_sales_report": {
+                        "file": "store/postgres/bob/api_weekly_sales_report.go"
+                    }
+                }
+            },
+            "sale_search": {
+                "file": "store/postgres/bob/api_sale_search.go"
+            },
+            "bulk_update": {
+                "file": "store/postgres/bob/api_bulk_customers.go"
+            },
+            "json": {
+                "file": "store/postgres/bob/api_json.go"
+            }
+        }
+    }
+}

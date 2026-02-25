@@ -11,9 +11,17 @@
         "sqlite": {
             "level": "gold",
             "notes": ""
+        },
+        "other": {
+            "level": "gold",
+            "notes": "Supports GaussDB, Oracle, SQL Server, TiDB, and Clickhouse"
         }
     },
     "features": {
+        "ORM": {
+            "level": "gold",
+            "notes": ""
+        },
         "Query Builder": {
             "level": "gold",
             "notes": ""
@@ -21,32 +29,24 @@
         "Generic Mapper": {
             "level": "gold",
             "notes": ""
-        },
-        "ORM": {
-            "level": "gold",
-            "notes": ""
-        },
-        "Query Mapper": {
-            "level": "gold",
-            "notes": "Unable to specify parameter names, but able to use the query with the Query Builder functionality"
         }
     },
     "other": {
         "activity": {
             "level": "gold",
-            "notes": "Still hasn't reached 1.0, but remains active"
+            "notes": "Consistenty updated, with a large community"
         },
         "documentation": {
-            "level": "silver",
-            "notes": "Dedicated documentation site, with some examples"
+            "level": "gold",
+            "notes": "Dedicated documentation site, with examples"
         },
         "examples": {
-            "level": "silver",
-            "notes": "Generally has only one example per feature"
+            "level": "gold",
+            "notes": "Has plenty of examples, and is easy to get started with"
         },
         "migration": {
-            "level": "n/a",
-            "notes": "Migrations are not an intended feature of the system"
+            "level": "gold",
+            "notes": "Has a migration system using Go to auto generate migrations or specify migrations"
         }
     }
 }

@@ -1,0 +1,44 @@
+{
+    "databases": {
+        "postgres": {
+            "level": "gold",
+            "notes": ""
+        },
+        "mysql": {
+            "level": "gold",
+            "notes": ""
+        },
+        "sqlite": {
+            "level": "gold",
+            "notes": ""
+        },
+        "other": {
+            "level": "gold",
+            "notes": "Does not require a database dialect, supports all database/sql drivers"
+        }
+    },
+    "features": {
+        "Generic Mapper": {
+            "level": "gold",
+            "notes": ""
+        }
+    },
+    "other": {
+        "activity": {
+            "level": "bronze",
+            "notes": "Stable, but not under active development"
+        },
+        "documentation": {
+            "level": "silver",
+            "notes": "Has a dedicated documentation site"
+        },
+        "examples": {
+            "level": "silver",
+            "notes": "Has some examples"
+        },
+        "migration": {
+            "level": "n/a",
+            "notes": "Migrations are not part of the system"
+        }
+    }
+}

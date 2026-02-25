@@ -1,0 +1,18 @@
+{
+    "key": "jet",
+    "name": "Jet",
+    "website": "https://github.com/go-jet/jet?tab=readme-ov-file#jet",
+    "repo": "https://github.com/go-jet/jet",
+    "short_description": "Type Safe SQL builder with code generation and query mapper",
+    "databases": [
+        "postgres",
+        "mysql",
+        "sqlite"
+    ],
+    "license": "Apache-2.0",
+    "features": [
+        "Query Mapper",
+        "Query Builder"
+    ],
+    "popularity": 3600
+}

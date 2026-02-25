@@ -14,7 +14,7 @@ const props = defineProps({
 })
 
 function description(library: any) {
-  return store.renderMarkdown(library.markdown_desc);
+  return store.renderMarkdown(library.info.markdown_desc);
 }
 function viewReportCard(library: any) {
   emit('view-report-card', library);
@@ -25,7 +25,7 @@ function viewReportCard(library: any) {
   <Card>
     <template #content>
       <div class="float-right">
-        <span class="text-sm text-gray-500">{{ library.popularity }} <i class="pi pi-heart"></i></span>
+        <span class="text-sm text-gray-500">{{ library.info.popularity }} <i class="pi pi-heart"></i></span>
       </div>
       <div class="markdown">
         <div v-html="description(library)"></div>
@@ -34,7 +34,7 @@ function viewReportCard(library: any) {
     <template #footer>
       <div class="flex justify-end gap-4">
         <Button asChild v-slot="slotProps" severity="secondary">
-          <RouterLink :to="`/libraries/${library.id}`" :class="slotProps.class">Code Samples</RouterLink>
+          <RouterLink :to="`/libraries/${library.info.key}`" :class="slotProps.class">Code Samples</RouterLink>
         </Button>
         <Button @click="viewReportCard(library)" severity="info">
           Report Card

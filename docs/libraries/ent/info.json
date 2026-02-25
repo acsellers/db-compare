@@ -1,0 +1,22 @@
+{
+    "key": "ent",
+    "name": "ent",
+    "website": "https://entgo.io/",
+    "repo": "https://github.com/ent/ent",
+    "short_description": "Entity framework for Go",
+    "databases": [
+        "postgres",
+        "mysql",
+        "sqlite",
+        "cockroachdb",
+        "mariadb",
+        "tidb"
+    ],
+    "license": "Apache-2.0",
+    "features": [
+        "ORM",
+        "Generic Mapper",
+        "Query Builder"
+    ],
+    "popularity": 16900
+}

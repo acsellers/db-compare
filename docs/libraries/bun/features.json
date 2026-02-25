@@ -9,12 +9,24 @@
             "notes": ""
         },
         "sqlite": {
-            "level": "silver",
-            "notes": "Listed as in beta"
+            "level": "gold",
+            "notes": ""
+        },
+        "other": {
+            "level": "bronze",
+            "notes": "SQL Server is supported"
         }
     },
     "features": {
-        "Query Mapper": {
+        "ORM": {
+            "level": "gold",
+            "notes": ""
+        },
+        "Query Builder": {
+            "level": "gold",
+            "notes": ""
+        },
+        "Generic Mapper": {
             "level": "gold",
             "notes": ""
         }
@@ -22,7 +34,7 @@
     "other": {
         "activity": {
             "level": "gold",
-            "notes": "Has ports to other languages, on top of significant community support"
+            "notes": "Active development"
         },
         "documentation": {
             "level": "gold",
@@ -33,8 +45,8 @@
             "notes": "Has many examples, and is easy to get started with"
         },
         "migration": {
-            "level": "n/a",
-            "notes": "Migrations are not an intended feature of the system"
+            "level": "gold",
+            "notes": "Has a migration system using Go files and/or SQL files"
         }
     }
 }

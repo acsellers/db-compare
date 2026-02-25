@@ -9,12 +9,20 @@
             "notes": ""
         },
         "sqlite": {
-            "level": "silver",
-            "notes": "Listed as in beta"
+            "level": "gold",
+            "notes": ""
+        },
+        "other": {
+            "level": "gold",
+            "notes": "Supports CockroachDB, MariaDB, TiDB, SQL Server, and Oracle"
         }
     },
     "features": {
-        "Query Mapper": {
+        "ORM": {
+            "level": "gold",
+            "notes": ""
+        },
+        "Generic Mapper": {
             "level": "gold",
             "notes": ""
         }
@@ -29,12 +37,12 @@
             "notes": "Dedicated documentation site, with many examples"
         },
         "examples": {
-            "level": "gold",
-            "notes": "Has many examples, and is easy to get started with"
+            "level": "silver",
+            "notes": "Has some examples"
         },
         "migration": {
             "level": "n/a",
-            "notes": "Migrations are not an intended feature of the system"
+            "notes": "Migrations are not part of the system"
         }
     }
 }

@@ -7,23 +7,21 @@ import bronzeIcon from '@/assets/bronze.svg';
 import todoIcon from '@/assets/todo.svg';
 import failIcon from '@/assets/fail.svg';
 import { useDataStore } from '@/stores/data';
-import type { ReportCard } from '@/stores/data';
+import type { FullLibrary } from '@/data/fields';
+import type { PropType } from 'vue';
 
 const store = useDataStore();
 
 const props = defineProps({
     library: {
-        type: String,
+        type: Object as PropType<FullLibrary>,
         required: true
     }
 })
 
-const card = computed<ReportCard>(() => {
-    return store.reportCards[props.library] as ReportCard || {};
-})
 
 const getIcon = (subject: string) => {
-    let grade = card.value!.grades[subject];
+    let grade = props.library.grades[subject];
     if (!grade) { return todoIcon; }
     switch (grade.level.toLowerCase()) {
         case 'gold': return goldIcon;
@@ -34,14 +32,14 @@ const getIcon = (subject: string) => {
     }
 }
 const getAlt = (subject: string) => {
-    if (typeof card.value!.grades[subject] === 'object') {
-        return card.value!.grades[subject].level;
+    if (typeof props.library.grades[subject] === 'object') {
+        return props.library.grades[subject].level;
     }
     return "Not Graded";
 }
 const getNotes = (subject: string) => {
-    if (typeof card.value!.grades[subject] === 'object') {
-        return card.value!.grades[subject].notes;
+    if (typeof props.library.grades[subject] === 'object') {
+        return props.library.grades[subject].notes;
     }
     return "Not Graded";
 }
@@ -56,17 +54,19 @@ const gradeSections = store.features;
     <div class="bg-gray-800 text-white p-4 border-b-4 border-blue-500">
         <div class="flex justify-between items-center">
             <div>
-                <h1 class="text-5xl font-bold text-blue-400 uppercase tracking-wide">{{ card.name }}</h1>
+                <h1 class="text-5xl font-bold text-blue-400 uppercase tracking-wide">{{ library?.info.name }}</h1>
             </div>
             <div class="text-right">
                 <h2 class="text-2xl font-bold">Report Card</h2>
                 <div class="flex gap-4 mt-2 justify-end text-sm">
-                    <a :href="card.website" target="_blank" class="hover:text-blue-300 underline">Website</a>
-                    <a :href="card.repo" target="_blank" class="hover:text-blue-300 underline">Repo</a>
+                    <a v-if="library?.info.website" :href="library?.info.website" target="_blank"
+                        class="hover:text-blue-300 underline">Website</a>
+                    <a v-if="library?.info.repo" :href="library?.info.repo" target="_blank"
+                        class="hover:text-blue-300 underline">Repo</a>
                 </div>
             </div>
         </div>
-        <p class="mt-4 text-gray-300 italic">{{ card.description }}</p>
+        <p class="mt-4 text-gray-300 italic">{{ library?.info.short_description }}</p>
     </div>
 
     <!-- Content -->

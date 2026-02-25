@@ -1,0 +1,22 @@
+{
+    "key": "bun",
+    "name": "bun",
+    "website": "https://bun.uptrace.dev/",
+    "repo": "https://github.com/uptrace/bun",
+    "short_description": "SQL-first Golang ORM",
+    "databases": [
+        "postgres",
+        "mysql",
+        "sqlite",
+        "sqlserver"
+    ],
+    "license": "BSD",
+    "features": [
+        "ORM",
+        "Generic Mapper",
+        "Query Mapper",
+        "Query Builder",
+        "Factory"
+    ],
+    "popularity": 4700
+}

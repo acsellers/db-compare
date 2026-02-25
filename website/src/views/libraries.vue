@@ -5,6 +5,7 @@ import { useDataStore } from '@/stores/data';
 import Dialog from 'primevue/dialog';
 import ReportCard from '@/components/ReportCard.vue';
 import InfoCard from '@/components/InfoCard.vue';
+import type { FullLibrary } from '@/data/fields';
 
 interface Library {
   id: string;
@@ -53,12 +54,12 @@ const libs = computed(() => {
   return list;
 })
 
-function viewReportCard(library: any) {
-  reportCard.value = library.key;
+function viewReportCard(library: FullLibrary) {
+  selectedLibrary.value = library;
   showReportCard.value = true;
 }
 
-const reportCard = ref<string | null>(null);
+const selectedLibrary = ref<FullLibrary | null>(null);
 const showReportCard = ref(false);
 </script>
 
@@ -70,14 +71,14 @@ const showReportCard = ref(false);
       </div>
     </div>
     <div class="flex flex-col gap-3">
-      <InfoCard v-for="library in libs" :key="library.key" :library="library" @view-report-card="viewReportCard" />
+      <InfoCard v-for="library in libs" :key="library.info.key" :library="library" @view-report-card="viewReportCard" />
     </div>
   </div>
   <Dialog v-model:visible="showReportCard" modal pt:root:class="!border-0 !bg-transparent"
     pt:mask:class="backdrop-blur-sm">
     <template #container="{ closeCallback }">
       <div class="bg-white max-h-[90vh] overflow-y-auto">
-        <ReportCard v-if="reportCard" :library="reportCard" />
+        <ReportCard :library="selectedLibrary" />
       </div>
       <div class="close-button fixed -right-4 -top-4">
         <Button @click="closeCallback" icon="pi pi-times" rounded severity="secondary" />

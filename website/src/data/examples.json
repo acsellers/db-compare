@@ -1,0 +1,90 @@
+{
+  "advanced_grouping": {
+    "title": "Advanced Grouping and Joins",
+    "description": "For now, there are just two examples of advanced grouping and joins.\nCompared to some of the joins I write at work, these should actually\nbe in the basic section, but the current schema is pretty limited for \nshowing off more complex joins.\n\nBoth examples use the ItemSummary view and join onto a ReportingOrders\ntable. The Typed Sales report also joins onto a dim_date table. Yes, it\nis possible to use date functions to replace the dim_date table, but that\nis out of scope for this example.",
+    "sub_examples": [
+      {
+        "title": "General Sales Report",
+        "description": "The General Sales report joins a view to a \nreporting category table, but only to the \"general\"\ncategory labels.\n\n### Example Implementation\n\n```go\ntype GeneralSalesReport struct {\n\tTitle       string  `json:\"title\" db:\"title\"`\n\tReportOrder int64   `json:\"report_order\" db:\"report_order\"`\n\tItemName    string  `json:\"item_name\" db:\"item_name\"`\n\tOrderCount  int64   `json:\"order_count\" db:\"order_count\"`\n\tQuantity    int64   `json:\"quantity\" db:\"quantity\"`\n\tTotalSales  float64 `json:\"total_sales\" db:\"total_sales\"`\n}\nresults := []GeneralSalesReport{}\n\nerr := db.ItemSummaries.Query(\n    db.Columns(\n        models.ReportingOrders.Columns.Title,\n        models.ReportingOrders.Columns.ReportOrder,\n        models.ItemSummaries.Columns.Name.As(\"item_name\"),\n        models.ItemSummaries.Columns.OrderCount.Sum().As(\"order_count\"),\n        models.ItemSummaries.Columns.Quantity.Sum().As(\"quantity\"),\n        models.ItemSummaries.Columns.Total.Sum().As(\"total_sales\"),\n    ),\n    db.ReportingOrder.JoinOn(\n        db.ReportingOrder.Columns.OrderType.Eq(\"general\"),\n        db.ReportingOrder.Columns.Category.Eq(models.ItemSummaries.Columns.Category),\n    ),\n    db.ItemSummaries.OrderDate.GTE(startDate),\n    db.ItemSummaries.OrderDate.LTE(endDate),\n    db.GroupBy(\n        db.ReportingOrders.Columns.Title,\n        db.ReportingOrders.Columns.ReportOrder,\n        db.ItemSummaries.Columns.Name,\n    ),\n    db.OrderBy(\n        db.ReportingOrders.Columns.ReportOrder,\n        db.ItemSummaries.Columns.Name,\n    ),\n).All(\u0026results)\n```",
+        "code": ""
+      },
+      {
+        "title": "Weekly Sales Report",
+        "description": "The weekly (or typed) sales report steps up the complexity a bit by \njoining on a new dim_date table. For libraries that can do query\nmapping and query building, they are allowed to use query mapping here, but \nnot with the General Sales Report.\n\n### Example Implementation\n\n```go\ntype WeeklySaleReport struct {\n\tYear        int64   `json:\"year\" db:\"year\"`\n\tWeekOfYear  int64   `json:\"week_of_year\" db:\"week_of_year\"`\n\tTitle       string  `json:\"title\" db:\"title\"`\n\tReportOrder int64   `json:\"report_order\" db:\"report_order\"`\n\tItemName    string  `json:\"item_name\" db:\"item_name\"`\n\tOrderCount  int64   `json:\"order_count\" db:\"order_count\"`\n\tQuantity    int64   `json:\"quantity\" db:\"quantity\"`\n\tTotalSales  float64 `json:\"total_sales\" db:\"total_sales\"`\n}\n\nresults := []WeeklySaleReport{}\n\nerr := db.ItemSummaries.Query(\n    db.Columns(\n        models.DimDates.Columns.Year,\n        models.DimDates.Columns.WeekOfYear,\n        models.ReportingOrders.Columns.Title,\n        models.ReportingOrders.Columns.ReportOrder,\n        models.ItemSummaries.Columns.Name.As(\"item_name\"),\n        models.ItemSummaries.Columns.OrderCount.Sum().As(\"order_count\"),\n        models.ItemSummaries.Columns.Quantity.Sum().As(\"quantity\"),\n        models.ItemSummaries.Columns.Total.Sum().As(\"total_sales\"),\n    ),\n    db.ReportingOrder.JoinOn(\n        db.ReportingOrder.Columns.OrderType.Eq(\"general\"),\n        db.ReportingOrder.Columns.Category.Eq(models.ItemSummaries.Columns.Category),\n    ),\n    db.DimDate.JoinOn(\n        db.DimDate.Columns.Date.Eq(models.ItemSummaries.Columns.OrderDate),\n    ),\n    db.ItemSummaries.OrderDate.GTE(startDate),\n    db.ItemSummaries.OrderDate.LTE(endDate),\n    db.GroupBy(\n        db.DimDates.Columns.Year,\n        db.DimDates.Columns.WeekOfYear,\n        db.ReportingOrders.Columns.Title,\n        db.ReportingOrders.Columns.ReportOrder,\n        db.ItemSummaries.Columns.Name,\n    ),\n    db.OrderBy(\n        db.DimDates.Columns.Year,\n        db.DimDates.Columns.WeekOfYear,\n        db.ReportingOrders.Columns.ReportOrder,\n        db.ItemSummaries.Columns.Name,\n    ),\n).All(\u0026results)\n```",
+        "code": ""
+      }
+    ]
+  },
+  "basic_grouping": {
+    "title": "Basic Grouping and Joining",
+    "description": "There's three different examples in this section. One example just does\na group by, but the other two do joins as well a group by. The common package\nrefers to the common package in the store directory.",
+    "sub_examples": [
+      {
+        "title": "Daily Revenue",
+        "description": "This is the simplest example. It just groups the Orders table by date and \norder type and returns the total revenue for each.\n\n\n### Example Implementation\n\n```go\ntype DailyRevenue struct {\n\tOrderType    string    `json:\"order_type\" db:\"order_type\"`\n\tOrderDate    time.Time `json:\"order_date\" db:\"order_date\"`\n\tTotalRevenue float64   `json:\"total_revenue\" db:\"total_revenue\"`\n}\n\nresults := []DailyRevenue{}\n\nerr := db.Orders.Query(\n    db.GroupBy(db.Orders.OrderType, db.Orders.OrderDate),\n    db.Select(\n        db.Orders.OrderType,\n        db.Orders.OrderDate,\n        db.Orders.Total.Sum().As(\"total_revenue\"),\n    ),\n).All(\u0026results)\n```",
+        "code": ""
+      },
+      {
+        "title": "Customer Sales",
+        "description": "Now we add in a join to the Customers table and change to grouping by \ncustomer instead of order type. We also add in a count of the number of\norders.\n\n### Example Implementation\n\n```go\ntype CustomerTotal struct {\n\tID          int64   `json:\"id\" db:\"id\"`\n\tName        string  `json:\"name\" db:\"name\"`\n\tTotalSales  float64 `json:\"total_sales\" db:\"total_sales\"`\n\tTotalOrders int64   `json:\"total_orders\" db:\"total_orders\"`\n}\n\nresults := []CustomerTotal{}\n\nerr := db.Customers.Query(\n    db.Customers.Joins.Orders,\n    db.GroupBy(db.Customers.ID, db.Customers.Name),\n    db.Select(\n        db.Customers.ID,\n        db.Customers.Name,\n        db.Customers.Orders.Count().As(\"order_count\"),\n        db.Customers.Orders.Total.Sum().As(\"total_sales\"),\n    ),\n).All(\u0026results)\n```",
+        "code": ""
+      },
+      {
+        "title": "Daily Sold Items",
+        "description": "This example goes back to not using joins, but it is using a View instead of\na Table. This is more a test of whether the mapper library can handle views.\n\n### Example Implementation\n\n```go\ntype ItemSummary struct {\n\tName          string    `json:\"name\" db:\"name\"`\n\tCategory      string    `json:\"category\" db:\"category\"`\n\tTotalQuantity int64     `json:\"total_quantity\" db:\"total_quantity\"`\n\tTotalSales    float64   `json:\"total_sales\" db:\"total_sales\"`\n}\n\nresults := []ItemSummary{}\n\nerr := db.ItemSummary.Query(\n    db.Where(db.ItemSummary.OrderDate.EQ(args.Date)),\n    db.GroupBy(db.ItemSummary.Name, db.ItemSummary.Category),\n    db.Select(\n        db.ItemSummary.Name,\n        db.ItemSummary.Category,\n        db.ItemSummary.Quantity.Sum().As(\"total_quantity\"),\n        db.ItemSummary.Total.Sum().As(\"total_sales\"),\n    ),\n).All(\u0026results)\n```",
+        "code": ""
+      }
+    ]
+  },
+  "bulk_customers": {
+    "title": "Bulk Customer Load",
+    "description": "Most applications will need some way to load mass amounts of data into the database. \n\nThis example is limited to whatever the mapper supports. The simplest solution is to just\nrun a bunch of insert statements, using a prepared statement. A better solution is to have\nmultiple rows per insert statement.\n\nThe gold standard is for the mapper to support the special bulk load statements, like LOAD DATA\nINFILE for Mysql or COPY INTO for Postgres. \n\nThis example has three sub-tests: a 10,000 row test, a 1,000,000 row test, and a 100,000,000 row test.\n\n\n### Example Implementation\n\n```go\nrows := make([]db.Input)\nfor _, inputRow := range inputRows {\n    rows = append(rows, db.Input{\n        db.StringValue(inputRow.Name),\n        db.NullStringValue(inputRow.Phone),\n        db.NullStringValue(inputRow.Email),\n    })\n}\n\n_, err := db.Customers.BulkInsert(\n    db.Columns(db.Customers.Name, db.Customers.Email, db.Customers.Phone),\n    rows,\n)\n```",
+    "sub_examples": null
+  },
+  "create_sale": {
+    "title": "Create Sale",
+    "description": "This example demonstrates a semi-secure solution for creating a sale record, along with the associated\nitems and payment records. I say semi-secure because there isn't any verification of discount to \nsales, but products and discounts are loaded from the database and calculations are performed\nserver-side, then compared the expected total. \n\nThis example demonstrates pulling records by id and inserting one record along with multiple\nchild records. Some mapper libraries could allow the \ndeveloper to insert the parent and children in a single \ncall, while some libaries on the other side require\nsetting the parent id on each child record individually.\n\n### Example Implementation (Abridged)\n\n```go\ndiscountIds := []int64{}\nproductIds := []int64{}\ncustomerID := sql.NullInt64{}\n\n// Find the discounts and products used in the sale...\n\ndiscounts, err := db.Discounts.Query(\n    db.Where(db.Discounts.ID.In(args.DiscountIDs...)),\n).All(r.Context())\n\nproducts, err := db.Products.Query(\n    db.Where(db.Products.ID.In(args.ProductIDs...)),\n).All(r.Context())\n\n// Validate the order and setup the items and payments...\n\norder := models.OrderParams{\n    CustomerID: customerID,\n    // Order Attributes: CustomerID, OrderType...\n    OrderItems: orderItems,\n    OrderPayments: orderPayments,\n}\n\nresult, err := db.Orders.Insert(order).Exec(r.Context())\n```",
+    "sub_examples": null
+  },
+  "customer_update": {
+    "title": "Update Customer",
+    "description": "This subject has two sub-examples, demonstrating two different\nways to update a bunch of customer records.\n\n\n\n### Example Implementation\n\n```go\nfor _, row := range inputRows {\n    if row[0] == \"\" {\n        continue\n    }\n    changes := []db.CustomerUpdateParams{}\n    if row[1] != \"\" {\n        changes = append(changes, db.Customers.Columns.Name.Set(row[1]))\n    }\n    if row[2] != \"\" {\n        changes = append(changes, db.Customers.Columns.Email.Set(row[2]))\n    }\n    if row[3] != \"\" {\n        changes = append(changes, db.Customers.Columns.Phone.Set(row[3]))\n    }\n    db.Customers.Update(\n        db.Where(db.Customers.ExternalID.EQ(row[0])),\n        changes...,\n    ).Exec(r.Context())\n}\n```",
+    "sub_examples": null
+  },
+  "get_sale": {
+    "title": "Get Sale",
+    "description": "This is the first subject and arguable the simplest. That being said, not every library is going\nto have the simplest solution. ORM style libraries that can preload the data will take the \ngold, while others will require multiple queries.\n\n### Example Implementation\n\n```go\nsale, err := db.Sales.Query(\n    db.Where(db.Sales.ID.EQ(args.ID)),\n    db.Sales.Preload.OrderItems,\n    db.Sales.Preload.OrderPayments,\n).One(r.Context())\n```",
+    "sub_examples": null
+  },
+  "json": {
+    "title": "JSON Support",
+    "description": "JSON columns are a great way to store semi-structured data in a relational database. At the\nsame time, they're not well represented in the Go mapper library world. I would like to bring\nmore attention to this column type.",
+    "sub_examples": [
+      {
+        "title": "JSON Saving/Loading",
+        "description": "This evaluates whether the mapper library recognizes JSON columns and will add \nhelpers to marshal/unmarshal the JSON into structs. \n\n### Example Record\n\n```go\ntype OrderPayment struct {\n\tID             int          `db:\"id\"`\n\tOrderID        int          `db:\"order_id\"`\n\tPaymentType    string       `db:\"payment_type\"`\n\tAmount         big.Float    `db:\"amount\"`\n\tPaymentInfo json.RawMessage `db:\"payment_info\"`\n}\n```",
+        "code": ""
+      },
+      {
+        "title": "JSON Querying",
+        "description": "This evaluates whether the mapper library provides helpers to query JSON columns.\n\n### Example Query\n\n```go\nnow := time.Now()\nexpiringCards, err := db.OrderPayments.Query(\n    db.OrderPayments.Where(\n        db.OrderPayments.PaymentInfo.JSONPath(\"$.exp_month\").Eq(int(now.Month())),\n        db.OrderPayments.PaymentInfo.JSONPath(\"$.exp_year\").Eq(now.Year()),\n    )\n)\n```",
+        "code": ""
+      },
+      {
+        "title": "Auto Marshal/Unmarshal",
+        "description": "Ideally, a mapper library would have some way for a developer to define the structure\nof the column and be able to choose whether it automatically marshals/unmarshals the JSON into\nstructs. I don't know if any libraries currently do this, but I'll keep an eye out for it.\n\n```go\ntype OrderPayment struct {\n\tID             int             `db:\"id\"`\n\tOrderID        int             `db:\"order_id\"`\n\tPaymentType    string          `db:\"payment_type\"`\n\tAmount         big.Float       `db:\"amount\"`\n\tPaymentInfoRaw json.RawMessage `db:\"payment_info\"`\n\tPaymentInfo    PaymentInfo     `db:\"payment_info\"`\n}\n\ntype PaymentInfo struct {\n\tLast4         string `json:\"last4\"`\n\tExpMonth      int    `json:\"exp_month\"`\n\tExpYear       int    `json:\"exp_year\"`\n\tCardType      string `json:\"card_type\"`\n\tTransactionID string `json:\"transaction_id\"`\n}\n```",
+        "code": ""
+      }
+    ]
+  },
+  "sale_search": {
+    "title": "Order Search",
+    "description": "Pretty much any web application will need to support some sort of search functionality. \nAt the moment, this does not have a full text search example, instead it is focused on \nmatching on multiple columns across multiple tables with a single text like query.\n\nThis example is a simplified version of the sort of real-world query, but it has enough\ncomplexity to demonstrate the strengths and weaknesses of the different mapper libraries.\n\n\n### Example Implementation\n\n```go\nfilters := []db.WhereFilter{}\nif args.StartDate != \"\" {\n    filters = append(filters, db.Orders.OrderDate.GTE(args.StartDate))\n}\nif args.EndDate != \"\" {\n    filters = append(filters, db.Orders.OrderDate.LTE(args.EndDate))\n}\nif args.OrderType != \"\" {\n    filters = append(filters, db.Orders.OrderType.EQ(args.OrderType))\n}\nif args.MinTotal != \"\" {\n    filters = append(filters, db.Orders.Total.GTE(args.MinTotal))\n}\nif args.MaxTotal != \"\" {\n    filters = append(filters, db.Orders.Total.LTE(args.MaxTotal))\n}\nif args.CustomerName != \"\" {\n    filters = append(filters, db.Orders.Customers.Name.Like(args.CustomerName))\n}\n\nsales, err := db.Orders.Query(\n    db.Orders.Joins.Customers,\n    db.Orders.Where(filters...),\n    db.Orders.OrderBy(db.Orders.OrderDate.Desc()),\n)\n```",
+    "sub_examples": null
+  },
+  "with_queries": {
+    "title": "Common Table Expressions (With Queries)",
+    "description": "Common table expressions, or CTEs, are a way to organize complex queries.\nThis example is still in development.",
+    "sub_examples": null
+  }
+}

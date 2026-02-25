@@ -14,7 +14,7 @@
         }
     },
     "features": {
-        "Query Builder": {
+        "ORM": {
             "level": "gold",
             "notes": ""
         },
@@ -22,31 +22,27 @@
             "level": "gold",
             "notes": ""
         },
-        "ORM": {
+        "Query Builder": {
             "level": "gold",
             "notes": ""
-        },
-        "Query Mapper": {
-            "level": "gold",
-            "notes": "Unable to specify parameter names, but able to use the query with the Query Builder functionality"
         }
     },
     "other": {
         "activity": {
-            "level": "gold",
-            "notes": "Still hasn't reached 1.0, but remains active"
+            "level": "bronze",
+            "notes": "Has been superseded by bob, no longer actively developed"
         },
         "documentation": {
-            "level": "silver",
-            "notes": "Dedicated documentation site, with some examples"
+            "level": "bronze",
+            "notes": "Has a README, but no dedicated documentation site"
         },
         "examples": {
             "level": "silver",
-            "notes": "Generally has only one example per feature"
+            "notes": "Has a reasonable amount of examples"
         },
         "migration": {
             "level": "n/a",
-            "notes": "Migrations are not an intended feature of the system"
+            "notes": "Migrations are not part of the system"
         }
     }
 }
