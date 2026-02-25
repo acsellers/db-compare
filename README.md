@@ -1,8 +1,23 @@
 # Database Comparison
 
-This is a set of common database operations that might be needed for a database mapping library.
-Currently, it does not have a website, but that is the next step after I get more than one implementation
-written. 
+The goal of this project is to compare the features and code for the different major database mapping libraries
+for the Go programming language. 
+
+## Contributing
+
+Not yet, but when I finish setting up the first couple of libraries, I'll start accepting pull requests.
+
+The plan is that new libraries will be added by doing the following:
+
+1. Create new directory in the docs/libraries folder with the files from the docs/libraries/template folder.
+2. Fill out the files in that directory with the info about the library.
+3. Implement the library actions for the store example for Mysql/Postgres/Sqlite using the template project.
+4. Load the verification data into the database for the library.
+5. Run the verification code to verify that the library works as expected.
+6. Setup the sample list in the docs folder so samples will be displayed.
+7. Make a pull request to pull in the new library.
+8. I pull in the new library and run the benchmarks on the benchmark machine.
+9. New library becomes available on the website.
 
 ## TODO
 
@@ -12,7 +27,8 @@ written.
 - [x] Samples format
 - [x] Report Card format
 - [x] Examples Draft
-- [ ] CTE Example
+- [x] Rework the documentation info into folders and files.
+- [ ] With Example
 - [ ] Examples Final
 - [x] Bob Description Draft
 - [ ] Bob Description Final
@@ -22,6 +38,7 @@ written.
 - [ ] sqlc Description Final
 - [x] sqlc Report Card
 - [ ] sqlc Sample Mapping
+- [x] Other Libraries Basic Info
 
 ### Bob (mysql)
 
@@ -107,6 +124,8 @@ written.
 - [ ] Criteria Page Mobile View (source code wide issue)
 - [ ] Samples Page
 - [ ] Benchmark Page
+- [x] Feature Matrix Page
+- [ ] Feature Matrix Improvements
 - [x] Coming Soon Page
 - [ ] Github Pages Setup
 
