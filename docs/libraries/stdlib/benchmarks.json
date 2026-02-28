@@ -1,0 +1,61 @@
+{
+    "key": "stdlib",
+    "run_date": "2026-02-23",
+    "items": [
+        {
+            "name": "sale_mix",
+            "time": 1000,
+            "runs": [
+                1000,
+                1000,
+                1000
+            ],
+            "rating": "gold",
+            "notes": ""
+        },
+        {
+            "name": "customer_updates",
+            "time": 1000,
+            "runs": [
+                1000,
+                1000,
+                1000
+            ],
+            "rating": "gold",
+            "notes": ""
+        },
+        {
+            "name": "reporting",
+            "time": 1000,
+            "runs": [
+                1000,
+                1000,
+                1000
+            ],
+            "rating": "gold",
+            "notes": ""
+        },
+        {
+            "name": "search",
+            "time": 1000,
+            "runs": [
+                1000,
+                1000,
+                1000
+            ],
+            "rating": "gold",
+            "notes": ""
+        },
+        {
+            "name": "bulk_import",
+            "time": 1000,
+            "runs": [
+                1000,
+                1000,
+                1000
+            ],
+            "rating": "gold",
+            "notes": ""
+        }
+    ]
+}

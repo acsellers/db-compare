@@ -1,0 +1,21 @@
+{
+    "key": "bob",
+    "name": "bob",
+    "website": "https://bob.stephenafamo.com/",
+    "repo": "https://github.com/stephenafamo/bob",
+    "short_description": "SQL query builder and ORM/Factory generator for Go with support for PostgreSQL, MySQL and SQLite",
+    "databases": [
+        "postgres",
+        "mysql",
+        "sqlite"
+    ],
+    "license": "MIT",
+    "features": [
+        "ORM",
+        "Generic Mapper",
+        "Query Mapper",
+        "Query Builder",
+        "Factory"
+    ],
+    "popularity": 1600
+}

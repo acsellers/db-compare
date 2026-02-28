@@ -1,4 +1,7 @@
 {
+    "key": "jet",
+    "library": "jet",
+    "name": "Jet",
     "store": {
         "mysql": {
             "get_sale": {

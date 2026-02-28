@@ -1,4 +1,7 @@
 {
+    "key": "sqlc",
+    "library": "sqlc",
+    "name": "SQLC",
     "store": {
         "mysql": {
             "get_sale": {

@@ -29,18 +29,6 @@ var Libraries = []string{
 	"xorm",
 }
 
-type Benchmarks struct {
-	RunDate string          `json:"run_date"`
-	Items   []BenchmarkItem `json:"items"`
-}
-type BenchmarkItem struct {
-	Name    string `json:"name"`
-	Time    int    `json:"time"`
-	Average int    `json:"average"`
-	Rating  string `json:"rating"`
-	Notes   string `json:"notes"`
-}
-
 type Features struct {
 	Databases map[string]GradeResult `json:"databases"`
 	Features  map[string]GradeResult `json:"features"`
@@ -105,10 +93,9 @@ type SubSamples struct {
 }
 
 type FinalLibraryInfo struct {
-	Info       LibraryInfo `json:"info"`
-	Benchmarks Benchmarks  `json:"benchmarks"`
-	Grades     Grades      `json:"grades"`
-	Features   Features    `json:"features"`
+	Info     LibraryInfo `json:"info"`
+	Grades   Grades      `json:"grades"`
+	Features Features    `json:"features"`
 }
 
 func GenerateLibraries() {
@@ -129,14 +116,6 @@ func GenerateLibraries() {
 			log.Fatal(err)
 		}
 		fli.Info.MarkdownDesc = string(descFile)
-
-		benchmarksFile, err := os.Open(fmt.Sprintf("docs/libraries/%s/benchmarks.json", lib))
-		if err != nil {
-			fmt.Println("Missing benchmarks.json for ", lib)
-			log.Fatal(err)
-		}
-		defer benchmarksFile.Close()
-		json.NewDecoder(benchmarksFile).Decode(&fli.Benchmarks)
 
 		gradesFile, err := os.Open(fmt.Sprintf("docs/libraries/%s/grades.json", lib))
 		if err != nil {

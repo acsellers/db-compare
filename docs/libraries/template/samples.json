@@ -1,7 +1,7 @@
 {
-    "key": "sqlboiler",
-    "library": "sqlboiler",
-    "name": "SQLBoiler",
+    "key": "template",
+    "library": "template",
+    "name": "Template",
     "store": {
         "mysql": {
             "get_sale": {

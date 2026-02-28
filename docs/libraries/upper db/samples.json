@@ -1,4 +1,7 @@
 {
+    "key": "upperdb",
+    "library": "upperdb",
+    "name": "UpperDB",
     "store": {
         "mysql": {
             "get_sale": {

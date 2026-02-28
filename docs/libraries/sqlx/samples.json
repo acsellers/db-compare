@@ -1,4 +1,7 @@
 {
+    "key": "sqlx",
+    "library": "sqlx",
+    "name": "SQLX",
     "store": {
         "mysql": {
             "get_sale": {

@@ -1,4 +1,7 @@
 {
+    "key": "gorm",
+    "library": "gorm",
+    "name": "GORM",
     "store": {
         "mysql": {
             "get_sale": {

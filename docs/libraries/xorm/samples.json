@@ -1,4 +1,7 @@
 {
+    "key": "xorm",
+    "library": "xorm",
+    "name": "XORM",
     "store": {
         "mysql": {
             "get_sale": {

@@ -1,4 +1,7 @@
 {
+    "key": "bun",
+    "library": "bun",
+    "name": "Bun",
     "store": {
         "mysql": {
             "get_sale": {

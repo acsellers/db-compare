@@ -1,4 +1,7 @@
 {
+    "key": "ent",
+    "library": "ent",
+    "name": "Ent",
     "store": {
         "mysql": {
             "get_sale": {

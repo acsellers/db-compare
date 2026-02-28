@@ -1,0 +1,56 @@
+{
+    "databases": {
+        "postgres": {
+            "level": "gold",
+            "notes": "Level can be gold/silver/bronze. Remove the section if it doesn't support the database."
+        },
+        "mysql": {
+            "level": "gold",
+            "notes": "Level can be gold/silver/bronze. Remove the section if it doesn't support the database."
+        },
+        "sqlite": {
+            "level": "gold",
+            "notes": "Level can be gold/silver/bronze. Remove the section if it doesn't support the database."
+        },
+        "other": {
+            "level": "gold",
+            "notes": "Level can be gold/silver/bronze. Remove the section if it doesn't support alternative databases. Bronze is one or two, silver is three or four, gold is five or more."
+        }
+    },
+    "features": {
+        "Query Builder": {
+            "level": "gold",
+            "notes": "This is the section for query builder functionality. Remove if the library doesn't support it."
+        },
+        "Generic Mapper": {
+            "level": "gold",
+            "notes": "This is the section for generic mapper functionality, if you can't provide a random struct to map a result into, it's not a generic mapper. This doesn't have to include generics in the mapper."
+        },
+        "ORM": {
+            "level": "gold",
+            "notes": "This is the section for ORM functionality. Remove if the library doesn't support it."
+        },
+        "Query Mapper": {
+            "level": "gold",
+            "notes": "This is for generating a mapper based on a pre-written query. Remove if the library doesn't support it."
+        }
+    },
+    "other": {
+        "activity": {
+            "level": "gold",
+            "notes": "How often is the library updated? When was the last commit?"
+        },
+        "documentation": {
+            "level": "silver",
+            "notes": "Do they have a dedicated documentation site? Are there plenty of examples?"
+        },
+        "examples": {
+            "level": "bronze",
+            "notes": "Does the library have like 5 examples or 35 examples?"
+        },
+        "migration": {
+            "level": "n/a",
+            "notes": "Not every library has migrations."
+        }
+    }
+}
