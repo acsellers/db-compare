@@ -1,0 +1,539 @@
+{
+  "bob": {
+    "key": "bob",
+    "run_date": "2026-02-23",
+    "overall": 1.229822891243025,
+    "items": [
+      {
+        "name": "sale_mix",
+        "time": 1000,
+        "vs_stdlib": 1.0834236186348862,
+        "runs": null,
+        "rating": "gold",
+        "notes": ""
+      },
+      {
+        "name": "customer_updates",
+        "time": 1000,
+        "vs_stdlib": 0.9775171065493646,
+        "runs": null,
+        "rating": "gold",
+        "notes": ""
+      },
+      {
+        "name": "reporting",
+        "time": 1000,
+        "vs_stdlib": 1.0204081632653061,
+        "runs": null,
+        "rating": "gold",
+        "notes": ""
+      },
+      {
+        "name": "search",
+        "time": 1000,
+        "vs_stdlib": 1.2820512820512822,
+        "runs": null,
+        "rating": "gold",
+        "notes": ""
+      },
+      {
+        "name": "bulk_import",
+        "time": 1000,
+        "vs_stdlib": 1.7857142857142858,
+        "runs": null,
+        "rating": "gold",
+        "notes": ""
+      }
+    ]
+  },
+  "bun": {
+    "key": "bun",
+    "run_date": "2026-02-23",
+    "overall": 1.229822891243025,
+    "items": [
+      {
+        "name": "sale_mix",
+        "time": 1000,
+        "vs_stdlib": 1.0834236186348862,
+        "runs": null,
+        "rating": "gold",
+        "notes": ""
+      },
+      {
+        "name": "customer_updates",
+        "time": 1000,
+        "vs_stdlib": 0.9775171065493646,
+        "runs": null,
+        "rating": "gold",
+        "notes": ""
+      },
+      {
+        "name": "reporting",
+        "time": 1000,
+        "vs_stdlib": 1.0204081632653061,
+        "runs": null,
+        "rating": "gold",
+        "notes": ""
+      },
+      {
+        "name": "search",
+        "time": 1000,
+        "vs_stdlib": 1.2820512820512822,
+        "runs": null,
+        "rating": "gold",
+        "notes": ""
+      },
+      {
+        "name": "bulk_import",
+        "time": 1000,
+        "vs_stdlib": 1.7857142857142858,
+        "runs": null,
+        "rating": "gold",
+        "notes": ""
+      }
+    ]
+  },
+  "ent": {
+    "key": "ent",
+    "run_date": "2026-02-23",
+    "overall": 1.229822891243025,
+    "items": [
+      {
+        "name": "sale_mix",
+        "time": 1000,
+        "vs_stdlib": 1.0834236186348862,
+        "runs": null,
+        "rating": "gold",
+        "notes": ""
+      },
+      {
+        "name": "customer_updates",
+        "time": 1000,
+        "vs_stdlib": 0.9775171065493646,
+        "runs": null,
+        "rating": "gold",
+        "notes": ""
+      },
+      {
+        "name": "reporting",
+        "time": 1000,
+        "vs_stdlib": 1.0204081632653061,
+        "runs": null,
+        "rating": "gold",
+        "notes": ""
+      },
+      {
+        "name": "search",
+        "time": 1000,
+        "vs_stdlib": 1.2820512820512822,
+        "runs": null,
+        "rating": "gold",
+        "notes": ""
+      },
+      {
+        "name": "bulk_import",
+        "time": 1000,
+        "vs_stdlib": 1.7857142857142858,
+        "runs": null,
+        "rating": "gold",
+        "notes": ""
+      }
+    ]
+  },
+  "gorm": {
+    "key": "gorm",
+    "run_date": "2026-02-23",
+    "overall": 1.229822891243025,
+    "items": [
+      {
+        "name": "sale_mix",
+        "time": 1000,
+        "vs_stdlib": 1.0834236186348862,
+        "runs": null,
+        "rating": "gold",
+        "notes": ""
+      },
+      {
+        "name": "customer_updates",
+        "time": 1000,
+        "vs_stdlib": 0.9775171065493646,
+        "runs": null,
+        "rating": "gold",
+        "notes": ""
+      },
+      {
+        "name": "reporting",
+        "time": 1000,
+        "vs_stdlib": 1.0204081632653061,
+        "runs": null,
+        "rating": "gold",
+        "notes": ""
+      },
+      {
+        "name": "search",
+        "time": 1000,
+        "vs_stdlib": 1.2820512820512822,
+        "runs": null,
+        "rating": "gold",
+        "notes": ""
+      },
+      {
+        "name": "bulk_import",
+        "time": 1000,
+        "vs_stdlib": 1.7857142857142858,
+        "runs": null,
+        "rating": "gold",
+        "notes": ""
+      }
+    ]
+  },
+  "jet": {
+    "key": "jet",
+    "run_date": "2026-02-23",
+    "overall": 1.229822891243025,
+    "items": [
+      {
+        "name": "sale_mix",
+        "time": 1000,
+        "vs_stdlib": 1.0834236186348862,
+        "runs": null,
+        "rating": "gold",
+        "notes": ""
+      },
+      {
+        "name": "customer_updates",
+        "time": 1000,
+        "vs_stdlib": 0.9775171065493646,
+        "runs": null,
+        "rating": "gold",
+        "notes": ""
+      },
+      {
+        "name": "reporting",
+        "time": 1000,
+        "vs_stdlib": 1.0204081632653061,
+        "runs": null,
+        "rating": "gold",
+        "notes": ""
+      },
+      {
+        "name": "search",
+        "time": 1000,
+        "vs_stdlib": 1.2820512820512822,
+        "runs": null,
+        "rating": "gold",
+        "notes": ""
+      },
+      {
+        "name": "bulk_import",
+        "time": 1000,
+        "vs_stdlib": 1.7857142857142858,
+        "runs": null,
+        "rating": "gold",
+        "notes": ""
+      }
+    ]
+  },
+  "sqlboiler": {
+    "key": "sqlboiler",
+    "run_date": "2026-02-23",
+    "overall": 1.229822891243025,
+    "items": [
+      {
+        "name": "sale_mix",
+        "time": 1000,
+        "vs_stdlib": 1.0834236186348862,
+        "runs": null,
+        "rating": "gold",
+        "notes": ""
+      },
+      {
+        "name": "customer_updates",
+        "time": 1000,
+        "vs_stdlib": 0.9775171065493646,
+        "runs": null,
+        "rating": "gold",
+        "notes": ""
+      },
+      {
+        "name": "reporting",
+        "time": 1000,
+        "vs_stdlib": 1.0204081632653061,
+        "runs": null,
+        "rating": "gold",
+        "notes": ""
+      },
+      {
+        "name": "search",
+        "time": 1000,
+        "vs_stdlib": 1.2820512820512822,
+        "runs": null,
+        "rating": "gold",
+        "notes": ""
+      },
+      {
+        "name": "bulk_import",
+        "time": 1000,
+        "vs_stdlib": 1.7857142857142858,
+        "runs": null,
+        "rating": "gold",
+        "notes": ""
+      }
+    ]
+  },
+  "sqlc": {
+    "key": "sqlc",
+    "run_date": "2026-02-23",
+    "overall": 1.229822891243025,
+    "items": [
+      {
+        "name": "sale_mix",
+        "time": 1000,
+        "vs_stdlib": 1.0834236186348862,
+        "runs": null,
+        "rating": "gold",
+        "notes": ""
+      },
+      {
+        "name": "customer_updates",
+        "time": 1000,
+        "vs_stdlib": 0.9775171065493646,
+        "runs": null,
+        "rating": "gold",
+        "notes": ""
+      },
+      {
+        "name": "reporting",
+        "time": 1000,
+        "vs_stdlib": 1.0204081632653061,
+        "runs": null,
+        "rating": "gold",
+        "notes": ""
+      },
+      {
+        "name": "search",
+        "time": 1000,
+        "vs_stdlib": 1.2820512820512822,
+        "runs": null,
+        "rating": "gold",
+        "notes": ""
+      },
+      {
+        "name": "bulk_import",
+        "time": 1000,
+        "vs_stdlib": 1.7857142857142858,
+        "runs": null,
+        "rating": "gold",
+        "notes": ""
+      }
+    ]
+  },
+  "sqlx": {
+    "key": "sqlx",
+    "run_date": "2026-02-23",
+    "overall": 1.229822891243025,
+    "items": [
+      {
+        "name": "sale_mix",
+        "time": 1000,
+        "vs_stdlib": 1.0834236186348862,
+        "runs": null,
+        "rating": "gold",
+        "notes": ""
+      },
+      {
+        "name": "customer_updates",
+        "time": 1000,
+        "vs_stdlib": 0.9775171065493646,
+        "runs": null,
+        "rating": "gold",
+        "notes": ""
+      },
+      {
+        "name": "reporting",
+        "time": 1000,
+        "vs_stdlib": 1.0204081632653061,
+        "runs": null,
+        "rating": "gold",
+        "notes": ""
+      },
+      {
+        "name": "search",
+        "time": 1000,
+        "vs_stdlib": 1.2820512820512822,
+        "runs": null,
+        "rating": "gold",
+        "notes": ""
+      },
+      {
+        "name": "bulk_import",
+        "time": 1000,
+        "vs_stdlib": 1.7857142857142858,
+        "runs": null,
+        "rating": "gold",
+        "notes": ""
+      }
+    ]
+  },
+  "stdlib": {
+    "key": "stdlib",
+    "run_date": "2026-02-23",
+    "overall": 0,
+    "items": [
+      {
+        "name": "sale_mix",
+        "time": 923,
+        "vs_stdlib": 0,
+        "runs": [
+          923,
+          923,
+          923
+        ],
+        "rating": "gold",
+        "notes": ""
+      },
+      {
+        "name": "customer_updates",
+        "time": 1023,
+        "vs_stdlib": 0,
+        "runs": [
+          1023,
+          1023,
+          1023
+        ],
+        "rating": "gold",
+        "notes": ""
+      },
+      {
+        "name": "reporting",
+        "time": 980,
+        "vs_stdlib": 0,
+        "runs": [
+          980,
+          980,
+          980
+        ],
+        "rating": "gold",
+        "notes": ""
+      },
+      {
+        "name": "search",
+        "time": 780,
+        "vs_stdlib": 0,
+        "runs": [
+          780,
+          780,
+          780
+        ],
+        "rating": "gold",
+        "notes": ""
+      },
+      {
+        "name": "bulk_import",
+        "time": 560,
+        "vs_stdlib": 0,
+        "runs": [
+          560,
+          560,
+          560
+        ],
+        "rating": "gold",
+        "notes": ""
+      }
+    ]
+  },
+  "upper db": {
+    "key": "upper db",
+    "run_date": "2026-02-23",
+    "overall": 1.229822891243025,
+    "items": [
+      {
+        "name": "sale_mix",
+        "time": 1000,
+        "vs_stdlib": 1.0834236186348862,
+        "runs": null,
+        "rating": "gold",
+        "notes": ""
+      },
+      {
+        "name": "customer_updates",
+        "time": 1000,
+        "vs_stdlib": 0.9775171065493646,
+        "runs": null,
+        "rating": "gold",
+        "notes": ""
+      },
+      {
+        "name": "reporting",
+        "time": 1000,
+        "vs_stdlib": 1.0204081632653061,
+        "runs": null,
+        "rating": "gold",
+        "notes": ""
+      },
+      {
+        "name": "search",
+        "time": 1000,
+        "vs_stdlib": 1.2820512820512822,
+        "runs": null,
+        "rating": "gold",
+        "notes": ""
+      },
+      {
+        "name": "bulk_import",
+        "time": 1000,
+        "vs_stdlib": 1.7857142857142858,
+        "runs": null,
+        "rating": "gold",
+        "notes": ""
+      }
+    ]
+  },
+  "xorm": {
+    "key": "xorm",
+    "run_date": "2026-02-23",
+    "overall": 1.229822891243025,
+    "items": [
+      {
+        "name": "sale_mix",
+        "time": 1000,
+        "vs_stdlib": 1.0834236186348862,
+        "runs": null,
+        "rating": "gold",
+        "notes": ""
+      },
+      {
+        "name": "customer_updates",
+        "time": 1000,
+        "vs_stdlib": 0.9775171065493646,
+        "runs": null,
+        "rating": "gold",
+        "notes": ""
+      },
+      {
+        "name": "reporting",
+        "time": 1000,
+        "vs_stdlib": 1.0204081632653061,
+        "runs": null,
+        "rating": "gold",
+        "notes": ""
+      },
+      {
+        "name": "search",
+        "time": 1000,
+        "vs_stdlib": 1.2820512820512822,
+        "runs": null,
+        "rating": "gold",
+        "notes": ""
+      },
+      {
+        "name": "bulk_import",
+        "time": 1000,
+        "vs_stdlib": 1.7857142857142858,
+        "runs": null,
+        "rating": "gold",
+        "notes": ""
+      }
+    ]
+  }
+}

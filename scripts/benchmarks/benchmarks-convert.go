@@ -10,6 +10,7 @@ import (
 type BenchmarkRun struct {
 	Key     string          `json:"key"`
 	RunDate string          `json:"run_date"`
+	Overall float64         `json:"overall"`
 	Items   []BenchmarkItem `json:"items"`
 }
 type BenchmarkItem struct {
@@ -25,7 +26,7 @@ type Benchmarks struct {
 	Items   []BenchmarkItem `json:"items"`
 }
 
-var benches = map[string]BenchmarkRun{}
+var benches = map[string]*BenchmarkRun{}
 
 func main() {
 
@@ -36,9 +37,13 @@ func main() {
 	}
 	for _, lib := range Libraries {
 		LoadLibrary(lib)
-		for _, item := range benches[lib].Items {
-			item.VsStdlib = float64(item.Time) / stdlib[item.Name]
+		avg := 0.0
+		for i := range benches[lib].Items {
+			benches[lib].Items[i].VsStdlib = float64(benches[lib].Items[i].Time) / stdlib[benches[lib].Items[i].Name]
+			avg += benches[lib].Items[i].VsStdlib
 		}
+		avg /= float64(len(benches[lib].Items))
+		benches[lib].Overall = avg
 	}
 	outputFile, err := os.Create("website/src/data/benchmarks.json")
 	if err != nil {
@@ -55,11 +60,11 @@ func main() {
 }
 func LoadStdlib() {
 	b := loadData("stdlib")
-	benches["stdlib"] = b
+	benches["stdlib"] = &b
 }
 func LoadLibrary(lib string) {
 	b := loadData(lib)
-	benches[lib] = b
+	benches[lib] = &b
 }
 func loadData(lib string) BenchmarkRun {
 	file, err := os.Open(fmt.Sprintf("docs/libraries/%s/benchmarks.json", lib))
@@ -69,8 +74,9 @@ func loadData(lib string) BenchmarkRun {
 	}
 	defer file.Close()
 	bench := BenchmarkRun{}
-	json.NewDecoder(file).Decode(&benches[lib])
-
+	json.NewDecoder(file).Decode(&bench)
+	bench.Key = lib
+	return bench
 }
 
 var Libraries = []string{

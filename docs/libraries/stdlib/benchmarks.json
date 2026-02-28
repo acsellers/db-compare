@@ -4,55 +4,55 @@
     "items": [
         {
             "name": "sale_mix",
-            "time": 1000,
+            "time": 923,
             "runs": [
-                1000,
-                1000,
-                1000
+                923,
+                923,
+                923
             ],
             "rating": "gold",
             "notes": ""
         },
         {
             "name": "customer_updates",
-            "time": 1000,
+            "time": 1023,
             "runs": [
-                1000,
-                1000,
-                1000
+                1023,
+                1023,
+                1023
             ],
             "rating": "gold",
             "notes": ""
         },
         {
             "name": "reporting",
-            "time": 1000,
+            "time": 980,
             "runs": [
-                1000,
-                1000,
-                1000
+                980,
+                980,
+                980
             ],
             "rating": "gold",
             "notes": ""
         },
         {
             "name": "search",
-            "time": 1000,
+            "time": 780,
             "runs": [
-                1000,
-                1000,
-                1000
+                780,
+                780,
+                780
             ],
             "rating": "gold",
             "notes": ""
         },
         {
             "name": "bulk_import",
-            "time": 1000,
+            "time": 560,
             "runs": [
-                1000,
-                1000,
-                1000
+                560,
+                560,
+                560
             ],
             "rating": "gold",
             "notes": ""
