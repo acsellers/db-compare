@@ -5,113 +5,547 @@
     "store": {
         "mysql": {
             "get_sale": {
-                "file": "store/mysql/sqlc/api_get_sale.go",
-                "query": "store/mysql/sqlc/queries.sql[10:24]"
+                "go": {
+                    "file": "store/mysql/sqlc/api_get_sale.go",
+                    "lines": [],
+                    "highlights": []
+                },
+                "sql": {
+                    "file": "store/mysql/sqlc/queries.sql",
+                    "lines": [
+                        [
+                            10,
+                            24
+                        ]
+                    ],
+                    "highlights": [
+                        [
+                            10,
+                            24
+                        ]
+                    ]
+                }
             },
             "create_sale": {
-                "file": "store/mysql/sqlc/api_create_sale.go",
-                "query": "store/mysql/sqlc/queries.sql[1:8,26:36]"
+                "go": {
+                    "file": "store/mysql/sqlc/api_create_sale.go",
+                    "lines": [],
+                    "highlights": []
+                },
+                "sql": {
+                    "file": "store/mysql/sqlc/queries.sql",
+                    "lines": [
+                        [
+                            1,
+                            8
+                        ],
+                        [
+                            26,
+                            36
+                        ]
+                    ],
+                    "highlights": [
+                        [
+                            1,
+                            8
+                        ],
+                        [
+                            26,
+                            36
+                        ]
+                    ]
+                }
             },
             "customer_update": {
                 "sub_examples": {
                     "updates": {
-                        "file": "store/mysql/sqlc/api_customer_update.go",
-                        "query": "store/mysql/sqlc/queries.sql[35:46]"
+                        "go": {
+                            "file": "store/mysql/sqlc/api_customer_update.go",
+                            "lines": [],
+                            "highlights": []
+                        },
+                        "sql": {
+                            "file": "store/mysql/sqlc/queries.sql",
+                            "lines": [
+                                [
+                                    35,
+                                    46
+                                ]
+                            ],
+                            "highlights": [
+                                [
+                                    35,
+                                    46
+                                ]
+                            ]
+                        }
                     },
                     "temporary_table": {
-                        "file": "store/mysql/sqlc/api_customer_update2.go",
-                        "query": "store/mysql/sqlc/queries.sql[48:69]"
+                        "go": {
+                            "file": "store/mysql/sqlc/api_customer_update2.go",
+                            "lines": [],
+                            "highlights": []
+                        },
+                        "sql": {
+                            "file": "store/mysql/sqlc/queries.sql",
+                            "lines": [
+                                [
+                                    48,
+                                    69
+                                ]
+                            ],
+                            "highlights": [
+                                [
+                                    48,
+                                    69
+                                ]
+                            ]
+                        }
                     }
                 }
             },
             "basic_grouping": {
                 "sub_examples": {
                     "daily_revenue": {
-                        "file": "store/mysql/sqlc/api_daily_revenue.go",
-                        "query": "store/mysql/sqlc/queries.sql[80:84]"
+                        "go": {
+                            "file": "store/mysql/sqlc/api_daily_revenue.go",
+                            "lines": [],
+                            "highlights": []
+                        },
+                        "sql": {
+                            "file": "store/mysql/sqlc/queries.sql",
+                            "lines": [
+                                [
+                                    80,
+                                    84
+                                ]
+                            ],
+                            "highlights": [
+                                [
+                                    80,
+                                    84
+                                ]
+                            ]
+                        }
                     },
                     "customer_sales": {
-                        "file": "store/mysql/sqlc/api_customer_sales.go",
-                        "query": "store/mysql/sqlc/queries.sql[86:93]"
+                        "go": {
+                            "file": "store/mysql/sqlc/api_customer_sales.go",
+                            "lines": [],
+                            "highlights": []
+                        },
+                        "sql": {
+                            "file": "store/mysql/sqlc/queries.sql",
+                            "lines": [
+                                [
+                                    86,
+                                    93
+                                ]
+                            ],
+                            "highlights": [
+                                [
+                                    86,
+                                    93
+                                ]
+                            ]
+                        }
                     },
                     "daily_sold_items": {
-                        "file": "store/mysql/sqlc/api_daily_sold_items.go",
-                        "query": "store/mysql/sqlc/queries.sql[71:78]"
+                        "go": {
+                            "file": "store/mysql/sqlc/api_daily_sold_items.go",
+                            "lines": [],
+                            "highlights": []
+                        },
+                        "sql": {
+                            "file": "store/mysql/sqlc/queries.sql",
+                            "lines": [
+                                [
+                                    71,
+                                    78
+                                ]
+                            ],
+                            "highlights": [
+                                [
+                                    71,
+                                    78
+                                ]
+                            ]
+                        }
                     }
                 }
             },
             "advanced_grouping": {
                 "sub_examples": {
                     "general_sales_report": {
-                        "file": "store/mysql/sqlc/api_general_sales_report.go",
-                        "query": "store/mysql/sqlc/queries.sql[95:104]"
+                        "go": {
+                            "file": "store/mysql/sqlc/api_general_sales_report.go",
+                            "lines": [],
+                            "highlights": []
+                        },
+                        "sql": {
+                            "file": "store/mysql/sqlc/queries.sql",
+                            "lines": [
+                                [
+                                    95,
+                                    104
+                                ]
+                            ],
+                            "highlights": [
+                                [
+                                    95,
+                                    104
+                                ]
+                            ]
+                        }
                     },
                     "weekly_sales_report": {
-                        "file": "store/mysql/sqlc/api_weekly_sales_report.go",
-                        "query": "store/mysql/sqlc/queries.sql[106:116]"
+                        "go": {
+                            "file": "store/mysql/sqlc/api_weekly_sales_report.go",
+                            "lines": [],
+                            "highlights": []
+                        },
+                        "sql": {
+                            "file": "store/mysql/sqlc/queries.sql",
+                            "lines": [
+                                [
+                                    106,
+                                    116
+                                ]
+                            ],
+                            "highlights": [
+                                [
+                                    106,
+                                    116
+                                ]
+                            ]
+                        }
                     }
                 }
             },
             "sale_search": {
-                "file": "store/mysql/sqlc/api_sale_search.go",
-                "query": "store/mysql/sqlc/queries.sql[118:128]"
+                "go": {
+                    "file": "store/mysql/sqlc/api_sale_search.go",
+                    "lines": [],
+                    "highlights": []
+                },
+                "sql": {
+                    "file": "store/mysql/sqlc/queries.sql",
+                    "lines": [
+                        [
+                            118,
+                            128
+                        ]
+                    ],
+                    "highlights": [
+                        [
+                            118,
+                            128
+                        ]
+                    ]
+                }
             },
             "bulk_update": {
-                "file": "store/mysql/sqlc/api_bulk_customers.go",
-                "query": "store/mysql/sqlc/queries.sql[38:39]"
+                "go": {
+                    "file": "store/mysql/sqlc/api_bulk_customers.go",
+                    "lines": [],
+                    "highlights": []
+                },
+                "sql": {
+                    "file": "store/mysql/sqlc/queries.sql",
+                    "lines": [
+                        [
+                            38,
+                            39
+                        ]
+                    ],
+                    "highlights": [
+                        [
+                            38,
+                            39
+                        ]
+                    ]
+                }
             },
             "json": {
-                "file": "store/mysql/sqlc/api_json.go"
+                "go": {
+                    "file": "store/mysql/sqlc/api_json.go",
+                    "lines": [],
+                    "highlights": []
+                },
+                "sql": {
+                    "file": "store/mysql/sqlc/queries.sql",
+                    "lines": [
+                        [
+                            130,
+                            136
+                        ]
+                    ],
+                    "highlights": [
+                        [
+                            130,
+                            136
+                        ]
+                    ]
+                }
             }
         },
         "postgres": {
             "get_sale": {
-                "file": "store/postgres/sqlc/api_get_sale.go"
+                "go": {
+                    "file": "store/postgres/sqlc/api_get_sale.go",
+                    "lines": [],
+                    "highlights": []
+                },
+                "sql": {
+                    "file": "store/postgres/sqlc/queries.sql",
+                    "lines": [
+                        [
+                            1,
+                            8
+                        ]
+                    ],
+                    "highlights": [
+                        [
+                            1,
+                            8
+                        ]
+                    ]
+                }
             },
             "create_sale": {
-                "file": "store/postgres/sqlc/api_create_sale.go"
+                "go": {
+                    "file": "store/postgres/sqlc/api_create_sale.go",
+                    "lines": [],
+                    "highlights": []
+                },
+                "sql": {
+                    "file": "store/postgres/sqlc/queries.sql",
+                    "lines": [
+                        [
+                            10,
+                            24
+                        ]
+                    ],
+                    "highlights": [
+                        [
+                            10,
+                            24
+                        ]
+                    ]
+                }
             },
             "customer_update": {
                 "sub_examples": {
                     "updates": {
-                        "file": "store/postgres/sqlc/api_customer_update.go"
+                        "go": {
+                            "file": "store/postgres/sqlc/api_customer_update.go",
+                            "lines": [],
+                            "highlights": []
+                        },
+                        "sql": {
+                            "file": "store/postgres/sqlc/queries.sql",
+                            "lines": [
+                                [
+                                    35,
+                                    46
+                                ]
+                            ],
+                            "highlights": [
+                                [
+                                    35,
+                                    46
+                                ]
+                            ]
+                        }
                     },
                     "temporary_table": {
-                        "file": "store/postgres/sqlc/api_customer_update2.go"
+                        "go": {
+                            "file": "store/postgres/sqlc/api_customer_update2.go",
+                            "lines": [],
+                            "highlights": []
+                        },
+                        "sql": {
+                            "file": "store/postgres/sqlc/queries.sql",
+                            "lines": [
+                                [
+                                    48,
+                                    69
+                                ]
+                            ],
+                            "highlights": [
+                                [
+                                    48,
+                                    69
+                                ]
+                            ]
+                        }
                     }
                 }
             },
             "basic_grouping": {
                 "sub_examples": {
                     "daily_revenue": {
-                        "file": "store/postgres/sqlc/api_daily_revenue.go"
+                        "go": {
+                            "file": "store/postgres/sqlc/api_daily_revenue.go",
+                            "lines": [],
+                            "highlights": []
+                        },
+                        "sql": {
+                            "file": "store/postgres/sqlc/queries.sql",
+                            "lines": [
+                                [
+                                    80,
+                                    84
+                                ]
+                            ],
+                            "highlights": [
+                                [
+                                    80,
+                                    84
+                                ]
+                            ]
+                        }
                     },
                     "customer_sales": {
-                        "file": "store/postgres/sqlc/api_customer_sales.go"
+                        "go": {
+                            "file": "store/postgres/sqlc/api_customer_sales.go",
+                            "lines": [],
+                            "highlights": []
+                        },
+                        "sql": {
+                            "file": "store/postgres/sqlc/queries.sql",
+                            "lines": [
+                                [
+                                    86,
+                                    93
+                                ]
+                            ],
+                            "highlights": [
+                                [
+                                    86,
+                                    93
+                                ]
+                            ]
+                        }
                     },
                     "daily_sold_items": {
-                        "file": "store/postgres/sqlc/api_daily_sold_items.go"
+                        "go": {
+                            "file": "store/postgres/sqlc/api_daily_sold_items.go",
+                            "lines": [],
+                            "highlights": []
+                        },
+                        "sql": {
+                            "file": "store/postgres/sqlc/queries.sql",
+                            "lines": [
+                                [
+                                    71,
+                                    78
+                                ]
+                            ],
+                            "highlights": [
+                                [
+                                    71,
+                                    78
+                                ]
+                            ]
+                        }
                     }
                 }
             },
             "advanced_grouping": {
                 "sub_examples": {
                     "general_sales_report": {
-                        "file": "store/postgres/sqlc/api_general_sales_report.go"
+                        "go": {
+                            "file": "store/postgres/sqlc/api_general_sales_report.go",
+                            "lines": [],
+                            "highlights": []
+                        },
+                        "sql": {
+                            "file": "store/postgres/sqlc/queries.sql",
+                            "lines": [
+                                [
+                                    95,
+                                    104
+                                ]
+                            ],
+                            "highlights": [
+                                [
+                                    95,
+                                    104
+                                ]
+                            ]
+                        }
                     },
                     "weekly_sales_report": {
-                        "file": "store/postgres/sqlc/api_weekly_sales_report.go"
+                        "go": {
+                            "file": "store/postgres/sqlc/api_weekly_sales_report.go",
+                            "lines": [],
+                            "highlights": []
+                        },
+                        "sql": {
+                            "file": "store/postgres/sqlc/queries.sql",
+                            "lines": [
+                                [
+                                    106,
+                                    116
+                                ]
+                            ],
+                            "highlights": [
+                                [
+                                    106,
+                                    116
+                                ]
+                            ]
+                        }
                     }
                 }
             },
             "sale_search": {
-                "file": "store/postgres/sqlc/api_sale_search.go"
+                "go": {
+                    "file": "store/postgres/sqlc/api_sale_search.go",
+                    "lines": [],
+                    "highlights": []
+                },
+                "sql": {
+                    "file": "store/postgres/sqlc/queries.sql",
+                    "lines": [
+                        [
+                            118,
+                            128
+                        ]
+                    ],
+                    "highlights": [
+                        [
+                            118,
+                            128
+                        ]
+                    ]
+                }
             },
             "bulk_update": {
-                "file": "store/postgres/sqlc/api_bulk_customers.go"
+                "go": {
+                    "file": "store/postgres/sqlc/api_bulk_customers.go",
+                    "lines": [],
+                    "highlights": []
+                },
+                "sql": {
+                    "file": "store/postgres/sqlc/queries.sql",
+                    "lines": [
+                        [
+                            130,
+                            140
+                        ]
+                    ],
+                    "highlights": [
+                        [
+                            130,
+                            140
+                        ]
+                    ]
+                }
             },
             "json": {
-                "file": "store/postgres/sqlc/api_json.go"
+                "go": "store/postgres/sqlc/api_json.go"
             }
         }
     }
