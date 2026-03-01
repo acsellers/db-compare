@@ -10,10 +10,6 @@ import (
 )
 
 func TypedSales(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Query().Get("debug") != "" {
-		logQueries = true
-		defer func() { logQueries = false }()
-	}
 	endDate := time.Now().Truncate(24 * time.Hour)
 	if r.URL.Query().Get("end_date") != "" {
 		endDate, _ = time.Parse("2006-01-02", r.URL.Query().Get("end_date"))

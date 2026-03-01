@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"strconv"
 
@@ -12,13 +11,12 @@ import (
 )
 
 func GetSale(w http.ResponseWriter, r *http.Request) {
-	sid := r.PathValue("id")
-	id, err := strconv.ParseInt(sid, 10, 64)
+	id, err := strconv.ParseInt(r.PathValue("id"), 10, 64)
 	if err != nil {
-		fmt.Println(sid, err)
 		http.Error(w, "Invalid sale ID", http.StatusBadRequest)
 		return
 	}
+
 	order, err := models.Orders.Query(
 		models.SelectWhere.Orders.ID.EQ(id),
 		models.Preload.Order.Customer(
@@ -32,10 +30,10 @@ func GetSale(w http.ResponseWriter, r *http.Request) {
 		models.SelectThenLoad.Order.OrderPayments(),
 	).One(r.Context(), db)
 	if err != nil {
-		fmt.Println("Query: ", err)
 		http.Error(w, "Invalid sale ID", http.StatusBadRequest)
 		return
 	}
+
 	sale := common.Sale{
 		ID:             order.ID,
 		OrderDate:      order.OrderDate,
@@ -52,6 +50,7 @@ func GetSale(w http.ResponseWriter, r *http.Request) {
 	if order.CustomerID.IsValue() && order.R.Customer != nil {
 		sale.CustomerName = order.R.Customer.Name
 	}
+
 	for _, oi := range order.R.OrderItems {
 		sale.Items = append(sale.Items, common.SaleItem{
 			ID:              oi.ID,
@@ -67,6 +66,7 @@ func GetSale(w http.ResponseWriter, r *http.Request) {
 			UpdatedAt:       oi.UpdatedAt.GetOrZero(),
 		})
 	}
+
 	for _, op := range order.R.OrderPayments {
 		info := map[string]any{}
 		if op.PaymentInfo.IsValue() {

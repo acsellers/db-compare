@@ -112,9 +112,14 @@ const sqlHtml = computed(() => {
 </template>
 
 <style scoped>
+.shiki-container {
+    font-size: 11px;
+}
+
 /* Minor shiki adjustments to ensure it looks good */
 :deep(.shiki-container pre) {
     margin: 0;
     background: transparent !important;
+
 }
 </style>

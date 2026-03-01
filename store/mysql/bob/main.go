@@ -15,6 +15,8 @@ import (
 
 var (
 	db   bob.Executor
+	ldb  bob.Executor
+	root bob.Executor
 	conn *sql.DB
 )
 
@@ -25,7 +27,9 @@ func init() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	db = QueryLogger(bob.NewDB(conn))
+	db = bob.NewDB(conn)
+	root = db
+	ldb = QueryLogger(bob.NewDB(conn))
 }
 
 func main() {
@@ -47,10 +51,30 @@ func main() {
 	}
 
 	fmt.Println("Listening on :" + port)
-	log.Fatal(http.ListenAndServe(":"+port, nil))
+	if os.Getenv("BENCHMARK") == "true" {
+		log.Fatal(http.ListenAndServe(":"+port, nil))
+	} else {
+		log.Fatal(http.ListenAndServe(":"+port, &QueryLoggingHandler{Next: http.DefaultServeMux}))
+	}
 }
 
 var logQueries = false
+
+type QueryLoggingHandler struct {
+	Next http.Handler
+}
+
+func (qlh *QueryLoggingHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Query().Get("debug") != "" {
+		logQueries = true
+		db = ldb
+	}
+	qlh.Next.ServeHTTP(w, r)
+	if logQueries {
+		logQueries = false
+		db = root
+	}
+}
 
 func QueryLogger(db bob.DB) bob.Executor {
 	return &QueryLoggerExecutor{db: db}
