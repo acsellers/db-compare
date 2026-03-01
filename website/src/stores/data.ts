@@ -66,6 +66,8 @@ export const useDataStore = defineStore('data', () => {
     })
   )
   const md = markdownit();
+  const highlighterInstance = ref<any>(null);
+
   createHighlighterCore({
     themes: [
       import('@shikijs/themes/catppuccin-latte'),
@@ -73,6 +75,7 @@ export const useDataStore = defineStore('data', () => {
     ],
     langs: [
       import('@shikijs/langs/go'),
+      import('@shikijs/langs/sql'),
     ],
     engine: createOnigurumaEngine(() => import('shiki/wasm'))
   }).then((highlighter: any) => {
@@ -82,11 +85,12 @@ export const useDataStore = defineStore('data', () => {
         dark: 'catppuccin-macchiato'
       }
     }))
+    highlighterInstance.value = highlighter;
   })
 
   function renderMarkdown(markdown: string) {
     return md.render(markdown);
   }
 
-  return { libraries, features, subjects, renderMarkdown }
+  return { libraries, features, subjects, renderMarkdown, highlighterInstance }
 })
