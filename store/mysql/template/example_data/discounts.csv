@@ -1,0 +1,9 @@
+id,name,category,type,value
+1,$10 Off,general,fixed,10.00
+2,$20 Off,general,fixed,20.00
+3,$5 Off,general,fixed,5.00
+11,5% Off,general,percentage,0.05
+12,10% Off,general,percentage,0.10
+13,15% Off,general,percentage,0.15
+21,$100 Off,special,fixed,100.00
+22,50% Off,special,percentage,0.50

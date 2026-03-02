@@ -1,0 +1,301 @@
+name,address,city,state,zip,tax_rate
+Boston East Store,4516 Newbury St,Boston,MA,02329,0.06
+Phoenix East Depot,1434 Peoria Ave,Phoenix,AZ,85865,0.08
+Los Angeles Central Branch,3592 Santa Monica Blvd,Los Angeles,CA,94140,0.09
+Washington Central Depot,3267 Florida Ave,Washington,DC,20430,0.07
+San Diego Hilltop Facility,4567 Broadway,San Diego,CA,91308,0.085
+Nashville Riverside Hub,4562 Church St,Nashville,TN,37450,0.095
+Oklahoma City Metro Branch,1529 Shartel Ave,Oklahoma City,OK,73199,0.085
+Jacksonville Valley Facility,4343 Main St,Jacksonville,FL,34991,0.07
+San Francisco East Shop,1301 King St,San Francisco,CA,92402,0.0875
+Las Vegas Valley Facility,3160 Main St,Las Vegas,NV,88947,0.0825
+El Paso Uptown Location,1317 Campbell St,El Paso,TX,74128,0.0825
+Fort Worth Plaza Outlet,5987 Throckmorton St,Fort Worth,TX,76333,0.0825
+Jacksonville Downtown Location,1179 Water St,Jacksonville,FL,34603,0.07
+Philadelphia Uptown Office,7583 Girard Ave,Philadelphia,PA,17212,0.08
+Baltimore Uptown Hub,926 Guilford Ave,Baltimore,MD,20666,0.06
+Portland Metro Shop,4396 Stark St,Portland,OR,97217,0.08
+Baltimore Metro Center,8189 Paca St,Baltimore,MD,21917,0.06
+San Francisco West Location,2297 Folsom St,San Francisco,CA,96103,0.0875
+Seattle Plaza Facility,7029 10th Ave,Seattle,WA,98818,0.09
+Jacksonville Uptown Office,8358 Forsyth St,Jacksonville,FL,32375,0.07
+Oklahoma City North Branch,2514 Harvey Ave,Oklahoma City,OK,74623,0.085
+El Paso Riverside Facility,1050 Virginia St,El Paso,TX,76427,0.0825
+Washington Hilltop Depot,4129 Florida Ave,Washington,DC,20012,0.07
+El Paso East Depot,4381 Ochoa St,El Paso,TX,74214,0.0825
+San Jose Riverside Office,7443 Santa Clara St,San Jose,CA,95916,0.0875
+Louisville Plaza Depot,2937 Breckinridge St,Louisville,KY,40438,0.06
+Memphis Square Depot,9987 2nd St,Memphis,TN,37323,0.095
+Jacksonville Main Depot,8699 Main St,Jacksonville,FL,34456,0.07
+Austin Park Store,1842 Cameron Rd,Austin,TX,79910,0.0825
+San Jose Uptown Store,3956 Humboldt St,San Jose,CA,90646,0.0875
+Chicago Park Branch,8737 Clark St,Chicago,IL,60526,0.09
+El Paso Park Depot,2715 Florence St,El Paso,TX,77623,0.0825
+Memphis Riverside Center,8845 2nd St,Memphis,TN,38470,0.095
+San Jose Lakeside Hub,7187 Keyes St,San Jose,CA,93699,0.0875
+Houston Uptown Center,1059 Washington Ave,Houston,TX,73473,0.0825
+Denver Uptown Facility,3618 Broadway,Denver,CO,80146,0.0875
+Nashville North Center,1114 Broadway,Nashville,TN,37686,0.095
+Chicago Uptown Location,7963 Halsted St,Chicago,IL,62209,0.09
+Phoenix Park Center,7759 Glendale Ave,Phoenix,AZ,85390,0.08
+Houston East Shop,5814 Richmond Ave,Houston,TX,76668,0.0825
+San Francisco North Branch,1003 Brannan St,San Francisco,CA,95966,0.0875
+Austin East Center,3149 Burnet Rd,Austin,TX,77694,0.0825
+San Francisco West Shop,3016 Harrison St,San Francisco,CA,93790,0.0875
+San Diego South Outlet,9026 Market St,San Diego,CA,90415,0.085
+Boston Central Branch,3882 Boylston St,Boston,MA,02517,0.06
+Charlotte Park Center,6580 Tryon St,Charlotte,NC,27343,0.07
+Fort Worth Central Shop,4355 Grove St,Fort Worth,TX,75637,0.0825
+Columbus Park Office,3121 Civic Center Dr,Columbus,OH,43892,0.07
+Los Angeles North Hub,946 Hollywood Blvd,Los Angeles,CA,94786,0.09
+Charlotte Main Store,8330 College St,Charlotte,NC,28749,0.07
+Philadelphia South Facility,1123 Walnut St,Philadelphia,PA,18308,0.08
+Houston Uptown Facility,9750 Westheimer Rd,Houston,TX,78374,0.0825
+Chicago Riverside Facility,9270 Belmont Ave,Chicago,IL,61296,0.09
+Baltimore Plaza Center,5157 Guilford Ave,Baltimore,MD,21144,0.06
+Fort Worth West Location,7501 Cherry St,Fort Worth,TX,79460,0.0825
+Baltimore South Store,7518 Baltimore St,Baltimore,MD,21754,0.06
+Houston South Depot,3502 Bellaire Blvd,Houston,TX,75473,0.0825
+Phoenix Valley Branch,4012 Osborn Rd,Phoenix,AZ,85584,0.08
+Philadelphia Hilltop Depot,4966 Erie Ave,Philadelphia,PA,19334,0.08
+New York Square Branch,2210 Lexington Ave,New York,NY,10946,0.08875
+Louisville East Depot,2556 Muhammad Ali Blvd,Louisville,KY,41157,0.06
+Washington Downtown Hub,3345 Connecticut Ave,Washington,DC,20518,0.07
+Charlotte Plaza Store,1522 Stonewall St,Charlotte,NC,27873,0.07
+Las Vegas Plaza Store,68 4th St,Las Vegas,NV,89690,0.0825
+Phoenix Plaza Office,7249 Dunlap Ave,Phoenix,AZ,86446,0.08
+Columbus Central Branch,1242 Water St,Columbus,OH,45235,0.07
+Los Angeles Valley Facility,9062 Melrose Ave,Los Angeles,CA,93521,0.09
+Phoenix North Location,5984 Central Ave,Phoenix,AZ,85733,0.08
+San Antonio Uptown Branch,5804 Nacogdoches Rd,San Antonio,TX,76630,0.0825
+Washington West Center,2672 Independence Ave,Washington,DC,20423,0.07
+New York Main Hub,6755 Park Ave,New York,NY,12186,0.08875
+Philadelphia East Shop,644 Lehigh Ave,Philadelphia,PA,16823,0.08
+San Antonio Hilltop Hub,5010 St Marys St,San Antonio,TX,75127,0.0825
+New York Downtown Shop,5388 Lexington Ave,New York,NY,10569,0.08875
+Oklahoma City Plaza Hub,8356 Shartel Ave,Oklahoma City,OK,74392,0.085
+Las Vegas Metro Store,1899 3rd St,Las Vegas,NV,89083,0.0825
+Denver Plaza Store,1786 12th Ave,Denver,CO,80890,0.0875
+Jacksonville Metro Shop,9942 Bay St,Jacksonville,FL,32476,0.07
+Fort Worth Downtown Location,737 Macon St,Fort Worth,TX,73314,0.0825
+Indianapolis Downtown Hub,7076 Pennsylvania St,Indianapolis,IN,47944,0.07
+El Paso Metro Facility,5153 Stanton St,El Paso,TX,79197,0.0825
+Louisville Square Depot,5077 Broadway,Louisville,KY,41339,0.06
+Fort Worth Square Depot,2095 Taylor St,Fort Worth,TX,76745,0.0825
+El Paso Lakeside Office,9334 Florence St,El Paso,TX,76627,0.0825
+Seattle Central Location,4710 4th Ave,Seattle,WA,98881,0.09
+Portland Metro Outlet,7248 Davis St,Portland,OR,97692,0.08
+San Antonio Park Office,1399 San Pedro Ave,San Antonio,TX,77523,0.0825
+El Paso Metro Branch,3858 Florence St,El Paso,TX,75141,0.0825
+Portland Downtown Office,410 Burnside St,Portland,OR,97251,0.08
+Charlotte South Outlet,6800 Stonewall St,Charlotte,NC,28184,0.07
+San Antonio Lakeside Outlet,6557 St Marys St,San Antonio,TX,74509,0.0825
+Boston Central Branch 799,6975 Newbury St,Boston,MA,02281,0.06
+Portland Hilltop Store,9142 Pine St,Portland,OR,97869,0.08
+Houston Hilltop Office,7622 Bellaire Blvd,Houston,TX,77879,0.0825
+Washington Metro Outlet,8280 New York Ave,Washington,DC,20562,0.07
+San Francisco Main Outlet,7383 Harrison St,San Francisco,CA,96159,0.0875
+San Diego Plaza Depot,7949 F St,San Diego,CA,92250,0.085
+San Francisco South Location,3851 Harrison St,San Francisco,CA,92752,0.0875
+Austin South Office,2481 Burnet Rd,Austin,TX,76438,0.0825
+Nashville West Center,1062 James Robertson Pkwy,Nashville,TN,37844,0.095
+Austin Hilltop Shop,1030 Burnet Rd,Austin,TX,76742,0.0825
+Fort Worth Central Facility,6242 Grove St,Fort Worth,TX,73349,0.0825
+Jacksonville Square Shop,6875 Bay St,Jacksonville,FL,34239,0.07
+Portland Uptown Outlet,3605 Ash St,Portland,OR,97447,0.08
+Charlotte Central Shop,5517 Stonewall St,Charlotte,NC,28396,0.07
+Portland Lakeside Office,7667 Oak St,Portland,OR,97638,0.08
+Seattle Central Shop,9707 10th Ave,Seattle,WA,99358,0.09
+New York South Shop,2233 Bowery,New York,NY,11489,0.08875
+Los Angeles Plaza Shop,5373 Santa Monica Blvd,Los Angeles,CA,93725,0.09
+Austin Metro Shop,4568 Dessau Rd,Austin,TX,75367,0.0825
+Las Vegas South Outlet,327 Carson Ave,Las Vegas,NV,88954,0.0825
+Jacksonville Uptown Branch,669 Main St,Jacksonville,FL,33015,0.07
+San Antonio Central Facility,2506 St Marys St,San Antonio,TX,74335,0.0825
+Charlotte East Facility,3581 4th St,Charlotte,NC,28438,0.07
+Dallas Valley Office,9936 Henderson Ave,Dallas,TX,79428,0.0825
+Nashville East Office,5106 Commerce St,Nashville,TN,38195,0.095
+New York Square Facility,6159 Canal St,New York,NY,11625,0.08875
+Chicago Uptown Branch,4951 Fullerton Ave,Chicago,IL,60496,0.09
+Portland North Hub,8738 Couch St,Portland,OR,97678,0.08
+Jacksonville South Depot,5600 Main St,Jacksonville,FL,33723,0.07
+Las Vegas Park Branch,7112 4th St,Las Vegas,NV,89551,0.0825
+Louisville Hilltop Office,7145 Jefferson St,Louisville,KY,42140,0.06
+Boston Plaza Facility,8827 Huntington Ave,Boston,MA,02577,0.06
+Columbus Plaza Hub,4032 Front St,Columbus,OH,44143,0.07
+Louisville Hilltop Center,7623 Kentucky St,Louisville,KY,42502,0.06
+El Paso Lakeside Hub,480 Texas Ave,El Paso,TX,75963,0.0825
+Philadelphia Park Center,5823 South St,Philadelphia,PA,17789,0.08
+Dallas Plaza Depot,176 Fitzhugh Ave,Dallas,TX,74866,0.0825
+Chicago Uptown Shop,8014 Belmont Ave,Chicago,IL,60985,0.09
+Nashville Park Outlet,7352 Broadway,Nashville,TN,37200,0.095
+San Jose Uptown Shop,3996 William St,San Jose,CA,95440,0.0875
+Denver Valley Outlet,9078 13th Ave,Denver,CO,80705,0.0875
+Columbus Metro Hub,7444 Civic Center Dr,Columbus,OH,44256,0.07
+Dallas Uptown Branch,3165 Live Oak St,Dallas,TX,74280,0.0825
+Detroit Main Center,3555 Congress St,Detroit,MI,48567,0.06
+Detroit Square Branch,3190 Jefferson Ave,Detroit,MI,48466,0.06
+Jacksonville Main Location,241 Bay St,Jacksonville,FL,32521,0.07
+Dallas North Store,9076 Ross Ave,Dallas,TX,79014,0.0825
+Phoenix Park Branch,210 Peoria Ave,Phoenix,AZ,85583,0.08
+Charlotte Park Outlet,5592 Brevard St,Charlotte,NC,27111,0.07
+Dallas Park Branch,1080 Gaston Ave,Dallas,TX,77329,0.0825
+Chicago North Office,2454 Fullerton Ave,Chicago,IL,61245,0.09
+Chicago Uptown Branch 573,6828 Fullerton Ave,Chicago,IL,62442,0.09
+Portland Uptown Depot,6242 Davis St,Portland,OR,97454,0.08
+San Jose Riverside Location,9326 Humboldt St,San Jose,CA,90494,0.0875
+Washington East Center,3467 Connecticut Ave,Washington,DC,20084,0.07
+Philadelphia Uptown Office 567,1239 Chestnut St,Philadelphia,PA,15022,0.08
+Columbus Hilltop Facility,7709 Civic Center Dr,Columbus,OH,43134,0.07
+San Diego Square Location,7448 Market St,San Diego,CA,95632,0.085
+San Diego Plaza Facility,3251 B St,San Diego,CA,90941,0.085
+Seattle Uptown Office,4362 3rd Ave,Seattle,WA,98147,0.09
+Los Angeles Main Location,9759 Pico Blvd,Los Angeles,CA,92365,0.09
+San Francisco East Outlet,4992 Brannan St,San Francisco,CA,92231,0.0875
+Indianapolis Park Outlet,1327 South St,Indianapolis,IN,46082,0.07
+Louisville Riverside Hub,9901 Muhammad Ali Blvd,Louisville,KY,40108,0.06
+Chicago Uptown Facility,9629 Michigan Ave,Chicago,IL,62754,0.09
+Las Vegas Plaza Facility,669 1st St,Las Vegas,NV,89382,0.0825
+Indianapolis Hilltop Location,2983 South St,Indianapolis,IN,46893,0.07
+Boston Park Branch,7710 Beacon St,Boston,MA,02519,0.06
+Austin Metro Branch,2644 Cameron Rd,Austin,TX,76673,0.0825
+Nashville Park Location,6571 2nd Ave,Nashville,TN,37085,0.095
+San Francisco South Hub,4145 Bryant St,San Francisco,CA,90950,0.0875
+Oklahoma City Lakeside Depot,28 Western Ave,Oklahoma City,OK,73947,0.085
+Columbus North Center,8504 Broad St,Columbus,OH,45551,0.07
+Oklahoma City Park Outlet,855 Hudson Ave,Oklahoma City,OK,73547,0.085
+Seattle West Location,7188 8th Ave,Seattle,WA,98249,0.09
+New York Uptown Office,5101 Houston St,New York,NY,10113,0.08875
+Seattle Riverside Branch,3691 2nd Ave,Seattle,WA,98946,0.09
+Houston West Outlet,4791 Bellaire Blvd,Houston,TX,79079,0.0825
+Dallas Riverside Outlet,7746 Pacific Ave,Dallas,TX,77042,0.0825
+Seattle West Shop,3132 10th Ave,Seattle,WA,99041,0.09
+Detroit West Branch,4536 Lafayette Blvd,Detroit,MI,48697,0.06
+Baltimore Plaza Store,4644 Howard St,Baltimore,MD,21803,0.06
+Denver Park Office,7326 13th Ave,Denver,CO,80992,0.0875
+Jacksonville Metro Depot,8913 Adams St,Jacksonville,FL,33868,0.07
+Baltimore Metro Center 716,3922 Baltimore St,Baltimore,MD,21385,0.06
+San Diego Riverside Store,5223 A St,San Diego,CA,95778,0.085
+Baltimore Lakeside Shop,2502 Greene St,Baltimore,MD,20676,0.06
+Phoenix Metro Branch,7223 Camelback Rd,Phoenix,AZ,86078,0.08
+Baltimore Hilltop Store,2371 Paca St,Baltimore,MD,20917,0.06
+Chicago Park Location,5556 Fullerton Ave,Chicago,IL,62838,0.09
+Fort Worth South Hub,8752 Macon St,Fort Worth,TX,75895,0.0825
+Boston Park Depot,598 Tremont St,Boston,MA,02171,0.06
+San Diego Square Center,1490 B St,San Diego,CA,90807,0.085
+Oklahoma City East Outlet,2735 Walker Ave,Oklahoma City,OK,74851,0.085
+New York North Hub,929 Lexington Ave,New York,NY,12937,0.08875
+Jacksonville Riverside Office,4010 Bay St,Jacksonville,FL,33690,0.07
+Denver Main Office,2878 Lincoln St,Denver,CO,81249,0.0875
+Memphis Lakeside Facility,3955 Poplar Ave,Memphis,TN,38204,0.095
+Phoenix Uptown Outlet,4171 Northern Ave,Phoenix,AZ,85523,0.08
+El Paso Central Outlet,4722 San Antonio Ave,El Paso,TX,74595,0.0825
+Chicago Hilltop Hub,9636 Wabash Ave,Chicago,IL,62618,0.09
+Columbus Plaza Outlet,4959 Marconi Blvd,Columbus,OH,44576,0.07
+Memphis Park Branch,3896 Danny Thomas Blvd,Memphis,TN,38181,0.095
+Jacksonville Square Location,369 Adams St,Jacksonville,FL,33127,0.07
+New York North Facility,8148 Lexington Ave,New York,NY,11886,0.08875
+Washington Valley Center,3125 Maryland Ave,Washington,DC,20257,0.07
+El Paso West Branch,655 Florence St,El Paso,TX,79761,0.0825
+San Francisco North Facility,5987 Howard St,San Francisco,CA,90739,0.0875
+Baltimore Square Hub,6817 Calvert St,Baltimore,MD,21012,0.06
+Phoenix Valley Depot,8231 Thomas Rd,Phoenix,AZ,85337,0.08
+Dallas Park Location,5559 Commerce St,Dallas,TX,77137,0.0825
+Chicago West Center,6521 Belmont Ave,Chicago,IL,61499,0.09
+Chicago Lakeside Store,4342 Belmont Ave,Chicago,IL,60507,0.09
+San Francisco Valley Location,9587 Brannan St,San Francisco,CA,95231,0.0875
+Jacksonville East Center,7734 Main St,Jacksonville,FL,34540,0.07
+Louisville Metro Facility,3636 Market St,Louisville,KY,42605,0.06
+Las Vegas Hilltop Location,6699 Main St,Las Vegas,NV,89044,0.0825
+Los Angeles North Location,8081 Sunset Blvd,Los Angeles,CA,90797,0.09
+San Diego West Shop,7442 C St,San Diego,CA,95493,0.085
+Detroit Riverside Facility,2541 Lafayette Blvd,Detroit,MI,49342,0.06
+Houston Park Facility,6696 Main St,Houston,TX,73569,0.0825
+Nashville Valley Center,7274 1st Ave,Nashville,TN,37493,0.095
+Memphis Valley Branch,6028 Washington Ave,Memphis,TN,38330,0.095
+Jacksonville North Shop,4530 Market St,Jacksonville,FL,32503,0.07
+Memphis Hilltop Branch,3485 Adams Ave,Memphis,TN,37053,0.095
+Los Angeles Metro Center,2073 Pico Blvd,Los Angeles,CA,91682,0.09
+Chicago Downtown Facility,3548 Halsted St,Chicago,IL,61346,0.09
+Oklahoma City West Facility,56 Walker Ave,Oklahoma City,OK,74759,0.085
+Phoenix West Depot,4116 Indian School Rd,Phoenix,AZ,85226,0.08
+El Paso Central Office,253 Ochoa St,El Paso,TX,79772,0.0825
+Portland Uptown Facility,5314 Burnside St,Portland,OR,97179,0.08
+Dallas North Office,6907 Fitzhugh Ave,Dallas,TX,74232,0.0825
+Detroit South Outlet,7354 Fort St,Detroit,MI,49052,0.06
+Denver East Outlet,8264 Grant St,Denver,CO,81260,0.0875
+Los Angeles Square Outlet,520 Hollywood Blvd,Los Angeles,CA,93924,0.09
+Memphis Lakeside Shop,1778 Poplar Ave,Memphis,TN,38468,0.095
+Baltimore Hilltop Branch,1333 Eutaw St,Baltimore,MD,21846,0.06
+Phoenix South Office,4515 Peoria Ave,Phoenix,AZ,86297,0.08
+Denver Metro Shop,9797 13th Ave,Denver,CO,80604,0.0875
+San Francisco Riverside Branch,1884 King St,San Francisco,CA,95906,0.0875
+Memphis Downtown Shop,7408 2nd St,Memphis,TN,37857,0.095
+Austin Hilltop Shop 427,1567 Cameron Rd,Austin,TX,76797,0.0825
+Austin Plaza Hub,2510 Parmer Ln,Austin,TX,73850,0.0825
+Chicago South Branch,7085 State St,Chicago,IL,61527,0.09
+Portland West Depot,992 Flanders St,Portland,OR,97576,0.08
+Seattle Metro Branch,6740 6th Ave,Seattle,WA,99363,0.09
+Oklahoma City Riverside Store,4722 Penn Ave,Oklahoma City,OK,73640,0.085
+Jacksonville East Facility,8323 Market St,Jacksonville,FL,32636,0.07
+El Paso Park Center,1783 Ochoa St,El Paso,TX,77857,0.0825
+Jacksonville East Location,9416 Market St,Jacksonville,FL,33760,0.07
+Memphis Central Facility,4391 Main St,Memphis,TN,37379,0.095
+Dallas Square Hub,5761 Main St,Dallas,TX,74787,0.0825
+Memphis West Facility,6576 Front St,Memphis,TN,37300,0.095
+Detroit Central Branch,8701 Michigan Ave,Detroit,MI,48771,0.06
+Columbus Hilltop Hub,2588 Broad St,Columbus,OH,44277,0.07
+Detroit Metro Facility,9778 Gratiot Ave,Detroit,MI,49810,0.06
+Los Angeles West Office,825 Sunset Blvd,Los Angeles,CA,92230,0.09
+San Francisco Riverside Outlet,9956 Townsend St,San Francisco,CA,93393,0.0875
+Dallas Downtown Depot,1874 Live Oak St,Dallas,TX,76822,0.0825
+Houston Square Facility,7982 Bellaire Blvd,Houston,TX,78766,0.0825
+San Jose North Center,6485 Humboldt St,San Jose,CA,90449,0.0875
+New York Downtown Location,3470 Wall St,New York,NY,12094,0.08875
+San Jose Metro Branch,136 Virginia St,San Jose,CA,96120,0.0875
+Columbus Main Office,6239 Rich St,Columbus,OH,45883,0.07
+San Diego Valley Branch,6515 Broadway,San Diego,CA,93574,0.085
+New York Hilltop Branch,5139 Delancey St,New York,NY,13517,0.08875
+Denver Lakeside Shop,4753 Lincoln St,Denver,CO,80830,0.0875
+New York Metro Office,7548 Madison Ave,New York,NY,10722,0.08875
+Columbus East Center,7148 Main St,Columbus,OH,44641,0.07
+Indianapolis South Shop,5093 East St,Indianapolis,IN,46454,0.07
+Austin Main Branch,8373 Guadalupe St,Austin,TX,77647,0.0825
+Indianapolis Downtown Hub 361,2429 Alabama St,Indianapolis,IN,46211,0.07
+Phoenix Plaza Center,2852 Peoria Ave,Phoenix,AZ,85314,0.08
+Oklahoma City South Office,8105 Classen Blvd,Oklahoma City,OK,74546,0.085
+Denver Hilltop Facility,5305 Pennsylvania St,Denver,CO,80310,0.0875
+San Francisco South Outlet,7255 Harrison St,San Francisco,CA,92251,0.0875
+Denver North Hub,8322 Lincoln St,Denver,CO,80636,0.0875
+San Francisco Hilltop Store,942 Bryant St,San Francisco,CA,92352,0.0875
+Chicago South Facility,9743 Belmont Ave,Chicago,IL,61575,0.09
+San Francisco North Outlet,9376 Folsom St,San Francisco,CA,92634,0.0875
+Washington Park Depot,2481 Pennsylvania Ave,Washington,DC,20462,0.07
+Houston Metro Branch,8276 Shepherd Dr,Houston,TX,73621,0.0825
+San Diego Hilltop Outlet,8596 Ash St,San Diego,CA,94996,0.085
+Philadelphia Valley Hub,4644 Girard Ave,Philadelphia,PA,18349,0.08
+Oklahoma City Metro Facility,867 Dewey Ave,Oklahoma City,OK,73135,0.085
+Austin East Depot,6343 Metric Blvd,Austin,TX,75365,0.0825
+Detroit West Hub,1345 Washington Blvd,Detroit,MI,49360,0.06
+Phoenix Valley Location,6431 Indian School Rd,Phoenix,AZ,86219,0.08
+Nashville South Location,9167 James Robertson Pkwy,Nashville,TN,38327,0.095
+Portland Metro Office,8634 Stark St,Portland,OR,97662,0.08
+El Paso Riverside Depot,5938 Mesa St,El Paso,TX,76271,0.0825
+San Jose Main Center,5608 Virginia St,San Jose,CA,91573,0.0875
+San Diego West Office,1274 E St,San Diego,CA,90829,0.085
+Indianapolis North Hub,2157 South St,Indianapolis,IN,46772,0.07
+Phoenix Main Office,2722 Northern Ave,Phoenix,AZ,85090,0.08
+Columbus Valley Center,7287 Main St,Columbus,OH,44168,0.07
+Oklahoma City Hilltop Center,8759 Hudson Ave,Oklahoma City,OK,73634,0.085
+Portland Park Center,6036 Flanders St,Portland,OR,97452,0.08
+San Francisco Square Shop,8249 King St,San Francisco,CA,93430,0.0875
+Philadelphia Downtown Facility,2277 South St,Philadelphia,PA,15428,0.08
+Boston Park Hub,9095 Tremont St,Boston,MA,02629,0.06
+Memphis East Location,1384 Riverside Dr,Memphis,TN,37568,0.095
+San Francisco West Shop 95,3647 Townsend St,San Francisco,CA,92864,0.0875
+Baltimore Central Shop,882 Paca St,Baltimore,MD,21629,0.06
+Jacksonville Uptown Shop,1347 Washington St,Jacksonville,FL,32922,0.07
+New York Metro Branch,5503 Wall St,New York,NY,11128,0.08875
+Los Angeles Square Outlet 714,2283 Figueroa St,Los Angeles,CA,93675,0.09
+Washington Central Branch,321 Connecticut Ave,Washington,DC,20221,0.07
+Las Vegas West Depot,9985 Carson Ave,Las Vegas,NV,89334,0.0825

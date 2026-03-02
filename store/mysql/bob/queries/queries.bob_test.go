@@ -15,17 +15,17 @@ import (
 	testutils "github.com/stephenafamo/bob/test/utils"
 )
 
-func TestTypedSales(t *testing.T) {
+func TestCustomerSales(t *testing.T) {
 	t.Run("Base", func(t *testing.T) {
 		var sb strings.Builder
 
-		query := TypedSales(random_time_Time(nil), random_time_Time(nil))
+		query := CustomerSales(random_time_Time(nil), random_time_Time(nil))
 
 		if _, err := query.WriteQuery(t.Context(), &sb, 1); err != nil {
 			t.Fatal(err)
 		}
 
-		if diff := cmp.Diff(typedSalesSQL, sb.String()); diff != "" {
+		if diff := cmp.Diff(customerSalesSQL, sb.String()); diff != "" {
 			t.Fatalf("unexpected result (-got +want):\n%s", diff)
 		}
 	})
@@ -33,13 +33,13 @@ func TestTypedSales(t *testing.T) {
 	t.Run("Mod", func(t *testing.T) {
 		var sb strings.Builder
 
-		query := TypedSales(random_time_Time(nil), random_time_Time(nil))
+		query := CustomerSales(random_time_Time(nil), random_time_Time(nil))
 
 		if _, err := mysql.Select(query).WriteQuery(t.Context(), &sb, 1); err != nil {
 			t.Fatal(err)
 		}
 
-		queryDiff, err := testutils.QueryDiff(typedSalesSQL, sb.String(), formatQuery)
+		queryDiff, err := testutils.QueryDiff(customerSalesSQL, sb.String(), formatQuery)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -68,7 +68,292 @@ func TestTypedSales(t *testing.T) {
 			}
 		}()
 
-		query, args, err := bob.Build(ctxTx, mysql.Select(TypedSales(random_time_Time(nil), random_time_Time(nil))))
+		query, args, err := bob.Build(ctxTx, mysql.Select(CustomerSales(random_time_Time(nil), random_time_Time(nil))))
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		rows, err := tx.QueryContext(ctxTx, query, args...)
+		if err != nil {
+			t.Fatal(err)
+		}
+		defer rows.Close()
+
+		columns, err := rows.Columns()
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		if len(columns) != 4 {
+			t.Fatalf("expected %d columns, got %d", 4, len(columns))
+		}
+
+		if columns[0] != "id" {
+			t.Fatalf("expected column %d to be %s, got %s", 0, "id", columns[0])
+		}
+
+		if columns[1] != "name" {
+			t.Fatalf("expected column %d to be %s, got %s", 1, "name", columns[1])
+		}
+
+		if columns[2] != "total_sales" {
+			t.Fatalf("expected column %d to be %s, got %s", 2, "total_sales", columns[2])
+		}
+
+		if columns[3] != "total_orders" {
+			t.Fatalf("expected column %d to be %s, got %s", 3, "total_orders", columns[3])
+		}
+	})
+}
+
+func TestDailySoldItems(t *testing.T) {
+	t.Run("Base", func(t *testing.T) {
+		var sb strings.Builder
+
+		query := DailySoldItems(random_time_Time(nil))
+
+		if _, err := query.WriteQuery(t.Context(), &sb, 1); err != nil {
+			t.Fatal(err)
+		}
+
+		if diff := cmp.Diff(dailySoldItemsSQL, sb.String()); diff != "" {
+			t.Fatalf("unexpected result (-got +want):\n%s", diff)
+		}
+	})
+
+	t.Run("Mod", func(t *testing.T) {
+		var sb strings.Builder
+
+		query := DailySoldItems(random_time_Time(nil))
+
+		if _, err := mysql.Select(query).WriteQuery(t.Context(), &sb, 1); err != nil {
+			t.Fatal(err)
+		}
+
+		queryDiff, err := testutils.QueryDiff(dailySoldItemsSQL, sb.String(), formatQuery)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if queryDiff != "" {
+			fmt.Println(sb.String())
+			t.Fatalf("unexpected result (-got +want):\n%s", queryDiff)
+		}
+	})
+
+	t.Run("Scanning", func(t *testing.T) {
+		if testDB == nil {
+			t.Skip("skipping test, no DSN provided")
+		}
+
+		ctxTx, cancel := context.WithCancel(t.Context())
+		defer cancel()
+
+		tx, err := testDB.Begin(ctxTx)
+		if err != nil {
+			t.Fatalf("Error starting transaction: %v", err)
+		}
+
+		defer func() {
+			if err := tx.Rollback(ctxTx); err != nil {
+				t.Fatalf("Error rolling back transaction: %v", err)
+			}
+		}()
+
+		query, args, err := bob.Build(ctxTx, mysql.Select(DailySoldItems(random_time_Time(nil))))
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		rows, err := tx.QueryContext(ctxTx, query, args...)
+		if err != nil {
+			t.Fatal(err)
+		}
+		defer rows.Close()
+
+		columns, err := rows.Columns()
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		if len(columns) != 5 {
+			t.Fatalf("expected %d columns, got %d", 5, len(columns))
+		}
+
+		if columns[0] != "id" {
+			t.Fatalf("expected column %d to be %s, got %s", 0, "id", columns[0])
+		}
+
+		if columns[1] != "name" {
+			t.Fatalf("expected column %d to be %s, got %s", 1, "name", columns[1])
+		}
+
+		if columns[2] != "category" {
+			t.Fatalf("expected column %d to be %s, got %s", 2, "category", columns[2])
+		}
+
+		if columns[3] != "total_quantity" {
+			t.Fatalf("expected column %d to be %s, got %s", 3, "total_quantity", columns[3])
+		}
+
+		if columns[4] != "total_sales" {
+			t.Fatalf("expected column %d to be %s, got %s", 4, "total_sales", columns[4])
+		}
+	})
+}
+
+func TestGeneralSales(t *testing.T) {
+	t.Run("Base", func(t *testing.T) {
+		var sb strings.Builder
+
+		query := GeneralSales(random_time_Time(nil), random_time_Time(nil))
+
+		if _, err := query.WriteQuery(t.Context(), &sb, 1); err != nil {
+			t.Fatal(err)
+		}
+
+		if diff := cmp.Diff(generalSalesSQL, sb.String()); diff != "" {
+			t.Fatalf("unexpected result (-got +want):\n%s", diff)
+		}
+	})
+
+	t.Run("Mod", func(t *testing.T) {
+		var sb strings.Builder
+
+		query := GeneralSales(random_time_Time(nil), random_time_Time(nil))
+
+		if _, err := mysql.Select(query).WriteQuery(t.Context(), &sb, 1); err != nil {
+			t.Fatal(err)
+		}
+
+		queryDiff, err := testutils.QueryDiff(generalSalesSQL, sb.String(), formatQuery)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if queryDiff != "" {
+			fmt.Println(sb.String())
+			t.Fatalf("unexpected result (-got +want):\n%s", queryDiff)
+		}
+	})
+
+	t.Run("Scanning", func(t *testing.T) {
+		if testDB == nil {
+			t.Skip("skipping test, no DSN provided")
+		}
+
+		ctxTx, cancel := context.WithCancel(t.Context())
+		defer cancel()
+
+		tx, err := testDB.Begin(ctxTx)
+		if err != nil {
+			t.Fatalf("Error starting transaction: %v", err)
+		}
+
+		defer func() {
+			if err := tx.Rollback(ctxTx); err != nil {
+				t.Fatalf("Error rolling back transaction: %v", err)
+			}
+		}()
+
+		query, args, err := bob.Build(ctxTx, mysql.Select(GeneralSales(random_time_Time(nil), random_time_Time(nil))))
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		rows, err := tx.QueryContext(ctxTx, query, args...)
+		if err != nil {
+			t.Fatal(err)
+		}
+		defer rows.Close()
+
+		columns, err := rows.Columns()
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		if len(columns) != 6 {
+			t.Fatalf("expected %d columns, got %d", 6, len(columns))
+		}
+
+		if columns[0] != "title" {
+			t.Fatalf("expected column %d to be %s, got %s", 0, "title", columns[0])
+		}
+
+		if columns[1] != "report_order" {
+			t.Fatalf("expected column %d to be %s, got %s", 1, "report_order", columns[1])
+		}
+
+		if columns[2] != "name" {
+			t.Fatalf("expected column %d to be %s, got %s", 2, "name", columns[2])
+		}
+
+		if columns[3] != "order_count" {
+			t.Fatalf("expected column %d to be %s, got %s", 3, "order_count", columns[3])
+		}
+
+		if columns[4] != "quantity" {
+			t.Fatalf("expected column %d to be %s, got %s", 4, "quantity", columns[4])
+		}
+
+		if columns[5] != "total_sales" {
+			t.Fatalf("expected column %d to be %s, got %s", 5, "total_sales", columns[5])
+		}
+	})
+}
+
+func TestWeeklyTypedSales(t *testing.T) {
+	t.Run("Base", func(t *testing.T) {
+		var sb strings.Builder
+
+		query := WeeklyTypedSales(random_time_Time(nil), random_time_Time(nil))
+
+		if _, err := query.WriteQuery(t.Context(), &sb, 1); err != nil {
+			t.Fatal(err)
+		}
+
+		if diff := cmp.Diff(weeklyTypedSalesSQL, sb.String()); diff != "" {
+			t.Fatalf("unexpected result (-got +want):\n%s", diff)
+		}
+	})
+
+	t.Run("Mod", func(t *testing.T) {
+		var sb strings.Builder
+
+		query := WeeklyTypedSales(random_time_Time(nil), random_time_Time(nil))
+
+		if _, err := mysql.Select(query).WriteQuery(t.Context(), &sb, 1); err != nil {
+			t.Fatal(err)
+		}
+
+		queryDiff, err := testutils.QueryDiff(weeklyTypedSalesSQL, sb.String(), formatQuery)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if queryDiff != "" {
+			fmt.Println(sb.String())
+			t.Fatalf("unexpected result (-got +want):\n%s", queryDiff)
+		}
+	})
+
+	t.Run("Scanning", func(t *testing.T) {
+		if testDB == nil {
+			t.Skip("skipping test, no DSN provided")
+		}
+
+		ctxTx, cancel := context.WithCancel(t.Context())
+		defer cancel()
+
+		tx, err := testDB.Begin(ctxTx)
+		if err != nil {
+			t.Fatalf("Error starting transaction: %v", err)
+		}
+
+		defer func() {
+			if err := tx.Rollback(ctxTx); err != nil {
+				t.Fatalf("Error rolling back transaction: %v", err)
+			}
+		}()
+
+		query, args, err := bob.Build(ctxTx, mysql.Select(WeeklyTypedSales(random_time_Time(nil), random_time_Time(nil))))
 		if err != nil {
 			t.Fatal(err)
 		}

@@ -44,6 +44,11 @@ func main() {
 	http.HandleFunc("GET /reports/customer-sales/", CustomerSales)
 	http.HandleFunc("GET /reports/general-sales/", GeneralSales)
 	http.HandleFunc("GET /reports/typed-sales/", TypedSales)
+	http.HandleFunc("GET /reports/daily-sold-items2/", DailySoldItems2)
+	http.HandleFunc("GET /reports/daily-revenue2/", DailyRevenue2)
+	http.HandleFunc("GET /reports/customer-sales2/", CustomerSales2)
+	http.HandleFunc("GET /reports/general-sales2/", GeneralSales2)
+	http.HandleFunc("GET /reports/typed-sales2/", TypedSales2)
 
 	port := "8080"
 	if os.Getenv("PORT") != "" {

@@ -55,6 +55,14 @@ func random_int32(f *faker.Faker, limits ...string) int32 {
 	return f.Int32()
 }
 
+func random_int64(f *faker.Faker, limits ...string) int64 {
+	if f == nil {
+		f = &defaultFaker
+	}
+
+	return f.Int64()
+}
+
 func random_string(f *faker.Faker, limits ...string) string {
 	if f == nil {
 		f = &defaultFaker
