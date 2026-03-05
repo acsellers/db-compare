@@ -15,7 +15,7 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-var OrderCount = 30_000_000
+var OrderCount = 30_000 //_000
 
 type LocationData struct {
 	ID      int
@@ -58,6 +58,8 @@ var (
 	// customer to join location
 	customerLookup = map[int]int{}
 )
+
+var src = rand.New(rand.NewSource(42))
 
 func main() {
 	if os.Getenv("DATABASE_URL") == "" {
@@ -311,7 +313,7 @@ func LoadCustomers(db *sql.DB) {
 
 func GenerateOrders(db *sql.DB, count int) {
 	startDate := time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC)
-	endDate := time.Date(2025, 1, 1, 0, 0, 0, 0, time.UTC)
+	endDate := time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC)
 	perDay := 1 + count/int(endDate.Sub(startDate).Hours()/24)
 
 	for startDate.Before(endDate) {
@@ -321,7 +323,7 @@ func GenerateOrders(db *sql.DB, count int) {
 }
 func generateOrdersForDay(db *sql.DB, date time.Time, count int) {
 	for i := 0; i < count; i++ {
-		ot := rand.Intn(100)
+		ot := src.Intn(100)
 		switch {
 		case ot < 50:
 			// few items
@@ -339,8 +341,12 @@ func generateOrdersForDay(db *sql.DB, date time.Time, count int) {
 			// special discount
 			generateSpecialDiscountOrder(db, date)
 		default:
-			// big order
-			generateBigOrder(db, date)
+			// big order (0.2%)
+			if src.Intn(10) < 2 {
+				generateBigOrder(db, date)
+			} else {
+				generateDiscountedOrder(db, date)
+			}
 		}
 	}
 }
@@ -378,18 +384,18 @@ var orderId = 1
 func genOrderData(date time.Time) *orderData {
 	od := &orderData{
 		id:        orderId,
-		orderDate: date.Add(time.Second * time.Duration(rand.Intn(24*60*60))),
+		orderDate: date.Add(time.Second * time.Duration(src.Intn(24*60*60))),
 	}
-	if rand.Intn(10) < 5 {
-		ci := rand.Intn(len(customerLookup)) + 1
+	if src.Intn(10) < 5 {
+		ci := src.Intn(len(customerLookup)) + 1
 		od.customerID = &ci
-		if rand.Intn(10) < 8 {
+		if src.Intn(10) < 8 {
 			od.locationID = customerLookup[ci-1]
 		} else {
-			od.locationID = rand.Intn(len(locationLookup)) + 1
+			od.locationID = src.Intn(len(locationLookup)) + 1
 		}
 	} else {
-		od.locationID = rand.Intn(len(locationLookup)) + 1
+		od.locationID = src.Intn(len(locationLookup)) + 1
 	}
 	orderId++
 	return od
@@ -405,12 +411,43 @@ func (od *orderData) addItem(id int, qty int) {
 	od.orderItems = append(od.orderItems, oi)
 	od.subtotal += oi.itemTotal
 }
-func (od *orderData) addPayment(paymentType string, amount float64, paymentInfo json.RawMessage) {
-	od.orderPayments = append(od.orderPayments, orderPaymentData{
-		paymentType: paymentType,
-		amount:      amount,
-		paymentInfo: paymentInfo,
-	})
+func randomCardNumber() string {
+	return fmt.Sprintf("%016d", src.Int63())
+}
+func randomCardType() string {
+	return []string{"Visa", "Mastercard", "American Express", "Discover"}[src.Intn(4)]
+}
+func randomCardExpiry() string {
+	return fmt.Sprintf("%02d/%02d", src.Intn(12)+1, src.Intn(24)+25)
+}
+func (od *orderData) addPayment(paymentType string, amount float64) {
+	switch paymentType {
+	case "credit_card":
+		od.orderPayments = append(od.orderPayments, orderPaymentData{
+			paymentType: paymentType,
+			amount:      amount,
+			paymentInfo: []byte(`{"card_number": "` + randomCardNumber() + `", "card_type": "` + randomCardType() + `", "card_expiry": "` + randomCardExpiry() + `"}`),
+		})
+	case "purchase_order":
+		od.orderPayments = append(od.orderPayments, orderPaymentData{
+			paymentType: paymentType,
+			amount:      amount,
+			paymentInfo: []byte(`{"purchase_order": "` + fmt.Sprintf("%06d", src.Intn(1000000)) + `"}`),
+		})
+	case "gift_card":
+		od.orderPayments = append(od.orderPayments, orderPaymentData{
+			paymentType: paymentType,
+			amount:      amount,
+			paymentInfo: []byte(`{"gift_card": "` + fmt.Sprintf("%06d", src.Intn(1000000)) + `"}`),
+		})
+	case "cash":
+		od.orderPayments = append(od.orderPayments, orderPaymentData{
+			paymentType: paymentType,
+			amount:      amount,
+			paymentInfo: []byte("{}"),
+		})
+	}
+
 }
 func (od *orderData) calculateTotal() {
 	od.taxAmount = od.subtotal * locationLookup[od.locationID]
@@ -490,48 +527,48 @@ func insertPendingOrders(db *sql.DB) {
 }
 func generateNormalOrder(db *sql.DB, date time.Time) {
 	od := genOrderData(date)
-	for i := 0; i < rand.Intn(3)+2; i++ {
-		od.addItem(rand.Intn(len(productLookup))+1, rand.Intn(5)+1)
+	for i := 0; i < src.Intn(3)+2; i++ {
+		od.addItem(src.Intn(len(productLookup))+1, src.Intn(5)+1)
 	}
 	od.calculateTotal()
 	paymentAmount := od.total
-	if rand.Intn(10) == 0 && od.total > 100 {
-		amount := 10.0 * float64(rand.Intn(5)+1)
-		od.addPayment("gift_card", amount, []byte(`{"card_number": "1234567890123456"}`))
+	if src.Intn(10) == 0 && od.total > 100 {
+		amount := od.total * float64(src.Intn(100)) / 100.0
+		od.addPayment("gift_card", amount)
 		paymentAmount -= amount
 	}
-	if rand.Intn(5) == 0 {
-		od.addPayment("cash", paymentAmount, nil)
+	if src.Intn(5) == 0 {
+		od.addPayment("cash", paymentAmount)
 	} else {
-		od.addPayment("credit_card", paymentAmount, []byte(`{"card_number": "1234567890123456"}`))
+		od.addPayment("credit_card", paymentAmount)
 	}
 	od.insertOrder(db)
 }
 func generateSingleItemOrder(db *sql.DB, date time.Time) {
 	od := genOrderData(date)
-	od.addItem(rand.Intn(len(productLookup))+1, 1)
+	od.addItem(src.Intn(len(productLookup))+1, 1)
 	od.calculateTotal()
-	if rand.Intn(5) == 0 {
-		od.addPayment("cash", od.total, nil)
+	if src.Intn(5) == 0 {
+		od.addPayment("cash", od.total)
 	} else {
-		od.addPayment("credit_card", od.total, []byte(`{"card_number": "1234567890123456"}`))
+		od.addPayment("credit_card", od.total)
 	}
 	od.insertOrder(db)
 }
 func generateBulkOrder(db *sql.DB, date time.Time) {
 	od := genOrderData(date)
-	for i := 0; i < rand.Intn(12)+2; i++ {
-		od.addItem(rand.Intn(len(productLookup))+1, rand.Intn(500)+1)
+	for i := 0; i < src.Intn(12)+2; i++ {
+		od.addItem(src.Intn(len(productLookup))+1, src.Intn(500)+1)
 	}
 	od.calculateTotal()
-	od.addPayment("credit_card", od.total, []byte(`{"card_number": "1234567890123456"}`))
+	od.addPayment("credit_card", od.total)
 	od.insertOrder(db)
 }
 func getFixedDiscount(special bool, price float64, count int) (int, float64) {
 	if special {
 		return 21, 100.00
 	}
-	id := rand.Intn(3) + 1
+	id := src.Intn(3) + 1
 	switch id {
 	case 1:
 		return 1, 10.00
@@ -546,7 +583,7 @@ func getPercentDiscount(special bool, price float64, count int) (int, float64) {
 	if special {
 		return 22, 0.50
 	}
-	id := rand.Intn(3)
+	id := src.Intn(3)
 	amount := price * float64(count)
 	switch id {
 	case 0:
@@ -560,11 +597,11 @@ func getPercentDiscount(special bool, price float64, count int) (int, float64) {
 }
 func generateDiscountedOrder(db *sql.DB, date time.Time) {
 	od := genOrderData(date)
-	itemDiscount := rand.Intn(3) == 0
-	for i := 0; i < rand.Intn(3)+2; i++ {
-		od.addItem(rand.Intn(len(productLookup))+1, rand.Intn(5)+1)
+	itemDiscount := src.Intn(3) == 0
+	for i := 0; i < src.Intn(3)+2; i++ {
+		od.addItem(src.Intn(len(productLookup))+1, src.Intn(5)+1)
 		if itemDiscount && od.orderItems[len(od.orderItems)-1].itemTotal > 25 {
-			if rand.Intn(3) == 0 {
+			if src.Intn(3) == 0 {
 				did, amt := getFixedDiscount(false, od.orderItems[len(od.orderItems)-1].itemTotal, 0)
 				od.orderItems[len(od.orderItems)-1].discountID = &did
 				od.orderItems[len(od.orderItems)-1].discountAmount = amt
@@ -581,7 +618,7 @@ func generateDiscountedOrder(db *sql.DB, date time.Time) {
 	}
 	if !itemDiscount {
 		// percent discount
-		if rand.Intn(3) == 0 {
+		if src.Intn(3) == 0 {
 			did, amt := getPercentDiscount(false, od.subtotal, 1)
 			od.discountID = &did
 			od.discountAmount = amt
@@ -594,26 +631,26 @@ func generateDiscountedOrder(db *sql.DB, date time.Time) {
 	}
 	od.calculateTotal()
 	paymentAmount := od.total
-	if rand.Intn(10) == 0 && od.total > 100 {
-		amount := 10.0 * float64(rand.Intn(5)+1)
-		od.addPayment("gift_card", amount, []byte(`{"card_number": "1234567890123456"}`))
+	if src.Intn(10) == 0 && od.total > 50 {
+		amount := 10.0 * float64(src.Intn(5)+1)
+		od.addPayment("gift_card", amount)
 		paymentAmount -= amount
 	}
-	if rand.Intn(5) == 0 {
-		od.addPayment("cash", paymentAmount, nil)
+	if src.Intn(5) == 0 {
+		od.addPayment("cash", paymentAmount)
 	} else {
-		od.addPayment("credit_card", paymentAmount, []byte(`{"card_number": "1234567890123456"}`))
+		od.addPayment("credit_card", paymentAmount)
 	}
 	od.insertOrder(db)
 }
 func generateSpecialDiscountOrder(db *sql.DB, date time.Time) {
 	od := genOrderData(date)
-	itemDiscount := rand.Intn(3) == 0
-	id := rand.Intn(len(productLookup)) + 1
-	qty := rand.Intn(25) + int(100/productLookup[id])
+	itemDiscount := src.Intn(3) == 0
+	id := src.Intn(len(productLookup)) + 1
+	qty := src.Intn(25) + int(100/productLookup[id])
 	od.addItem(id, qty)
 	if itemDiscount && od.orderItems[len(od.orderItems)-1].price > 25 {
-		if rand.Intn(3) == 0 {
+		if src.Intn(3) == 0 {
 			did, amt := getFixedDiscount(true, od.orderItems[len(od.orderItems)-1].price, 0)
 			od.orderItems[len(od.orderItems)-1].discountID = &did
 			od.orderItems[len(od.orderItems)-1].discountAmount = amt
@@ -623,13 +660,13 @@ func generateSpecialDiscountOrder(db *sql.DB, date time.Time) {
 			od.orderItems[len(od.orderItems)-1].discountAmount = amt
 		}
 	}
-	for i := 0; i < rand.Intn(3)+2; i++ {
-		od.addItem(rand.Intn(len(productLookup))+1, rand.Intn(15)+1)
+	for i := 0; i < src.Intn(3)+2; i++ {
+		od.addItem(src.Intn(len(productLookup))+1, src.Intn(15)+1)
 	}
 
 	if !itemDiscount {
 		// percent discount
-		if rand.Intn(3) == 0 {
+		if src.Intn(3) == 0 {
 			did, amt := getPercentDiscount(true, od.subtotal, 1)
 			od.discountID = &did
 			od.discountAmount = amt
@@ -642,24 +679,24 @@ func generateSpecialDiscountOrder(db *sql.DB, date time.Time) {
 	}
 	od.calculateTotal()
 	paymentAmount := od.total
-	if rand.Intn(10) == 0 && od.total > 100 {
-		amount := 10.0 * float64(rand.Intn(5)+1)
-		od.addPayment("gift_card", amount, []byte(`{"card_number": "1234567890123456"}`))
+	if src.Intn(10) == 0 && od.total > 50 {
+		amount := od.total * float64(src.Intn(100)) / 100.0
+		od.addPayment("gift_card", amount)
 		paymentAmount -= amount
 	}
-	if rand.Intn(5) == 0 {
-		od.addPayment("cash", paymentAmount, nil)
+	if src.Intn(5) == 0 {
+		od.addPayment("cash", paymentAmount)
 	} else {
-		od.addPayment("credit_card", paymentAmount, []byte(`{"card_number": "1234567890123456"}`))
+		od.addPayment("credit_card", paymentAmount)
 	}
 	od.insertOrder(db)
 }
 func generateBigOrder(db *sql.DB, date time.Time) {
 	od := genOrderData(date)
-	for i := 0; i < rand.Intn(12)+2; i++ {
-		od.addItem(rand.Intn(len(productLookup))+1, rand.Intn(5_000)+10_000)
+	for i := 0; i < src.Intn(12)+2; i++ {
+		od.addItem(src.Intn(len(productLookup))+1, src.Intn(5_000)+10_000)
 	}
 	od.calculateTotal()
-	od.addPayment("credit_card", od.total, []byte(`{"card_number": "1234567890123456"}`))
+	od.addPayment("purchase_order", od.total)
 	od.insertOrder(db)
 }

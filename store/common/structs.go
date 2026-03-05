@@ -58,9 +58,15 @@ type OrderItem struct {
 	DiscountID *int64 `json:"discount_id"`
 }
 type OrderPayment struct {
-	PaymentType string         `json:"payment_type"`
-	Amount      float64        `json:"amount"`
-	PaymentInfo map[string]any `json:"payment_info"`
+	PaymentType string           `json:"payment_type"`
+	Amount      float64          `json:"amount"`
+	PaymentInfo OrderPaymentInfo `json:"payment_info"`
+}
+type OrderPaymentInfo struct {
+	CardNumber    string `json:"card_number"`
+	CardType      string `json:"card_type"`
+	CardExpiry    string `json:"card_expiry"`
+	PurchaseOrder string `json:"purchase_order"`
 }
 type ItemSummary struct {
 	Name          string    `json:"name" db:"name"`

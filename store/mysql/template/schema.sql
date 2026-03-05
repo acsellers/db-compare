@@ -105,7 +105,7 @@ ALTER TABLE order_items ADD FOREIGN KEY (discount_id) REFERENCES discounts(id);
 CREATE TABLE order_payments (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     order_id BIGINT NOT NULL,
-    payment_type varchar(12) NOT NULL,
+    payment_type varchar(16) NOT NULL,
     amount DECIMAL(20,2) NOT NULL,
     payment_info json COMMENT 'payments.Info',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -140,7 +140,8 @@ CREATE VIEW item_summaries as
 select p.id, p.name, p.category, o.order_type, o.order_date,
     sum(oi.quantity) as total_quantity,
     sum(oi.quantity * oi.price) as total_sales,
-    count(distinct oi.id) as order_count
+    count(distinct oi.id) as order_count,
+    o.location_id
 from products p
 inner join order_items oi on p.id = oi.product_id
 inner join orders o on oi.order_id = o.id
@@ -149,7 +150,8 @@ UNION
 select d.id, d.name, 'discounts', o.order_type, o.order_date,
 	count(o.id) as total_quantity,
 	-sum(o.discount_amount) as total_sales,
-	count(o.id) as order_count
+	count(o.id) as order_count,
+    o.location_id
 from discounts d
 inner join orders o on o.discount_id = d.id
 group by d.id, d.name, o.order_type, o.order_date 
@@ -157,7 +159,8 @@ UNION
 select d.id, d.name, 'discounts', o.order_type, o.order_date,
   count(oi.id) as total_quantity,
   -sum(oi.discount_amount) as total_sales,
-  count(distinct o.id) as order_count
+  count(distinct o.id) as order_count,
+  o.location_id
 from discounts d
 inner join order_items oi on oi.discount_id = d.id
 inner join orders o on o.id = oi.order_id 
@@ -166,14 +169,16 @@ UNION
 select NULL, 'Sales Tax', 'taxes', o.order_type, o.order_date,
   count(o.id) as total_quantity,
   sum(o.tax_amount) as total_sales,
-  count(o.id) as order_count
+  count(o.id) as order_count,
+  o.location_id
 from orders o
 group by o.order_type, o.order_date
 UNION
 select null, coalesce(pn.name, op.payment_type), 'payments', o.order_type, o.order_date,
   count(op.id) as total_quantity,
   -sum(op.amount) as total_sales,
-  count(distinct o.id) as order_count
+  count(distinct o.id) as order_count,
+  o.location_id
 from order_payments op
 inner join orders o on op.order_id  = o.id 
 left join payment_names pn on pn.payment_type = op.payment_type 

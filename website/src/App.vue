@@ -60,8 +60,11 @@ const items = ref([
                     Breakdown</span>
             </template>
             <template #end>
-                <a href="https://github.com/acsellers/db-compare" class="text-primary-700 mr-4 cursor-pointer"><i
-                        class="pi pi-github" style="font-size: 1.5rem;"></i></a>
+                <div class="flex flex-row items-center">
+                    <RouterLink to="/faq" class="text-primary-700 mr-4 cursor-pointer hover:text-primary-900 font-bold no-underline">FAQ</RouterLink>
+                    <a href="https://github.com/acsellers/db-compare" class="text-primary-700 mr-4 cursor-pointer"><i
+                            class="pi pi-github" style="font-size: 1.5rem;"></i></a>
+                </div>
             </template>
         </Menubar>
         <div class="layout-content mt-4">
@@ -69,3 +72,8 @@ const items = ref([
         </div>
     </div>
 </template>
+<style>
+a.no-underline {
+    text-decoration: none;
+}
+</style>
