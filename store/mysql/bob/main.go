@@ -33,22 +33,34 @@ func init() {
 }
 
 func main() {
-	http.HandleFunc("GET /sales/{id}", GetSale)
-	http.HandleFunc("POST /sales/$", CreateSale)
-	http.HandleFunc("POST /customers/$", BulkLoadCustomers)
-	http.HandleFunc("POST /customers/update", CustomerUpdate)
-	http.HandleFunc("POST /customers/update2", CustomerUpdate2)
-	http.HandleFunc("POST /sales/search", SaleSearch)
-	http.HandleFunc("GET /reports/daily-sold-items/", DailySoldItems)
-	http.HandleFunc("GET /reports/daily-revenue/", DailyRevenue)
-	http.HandleFunc("GET /reports/customer-sales/", CustomerSales)
-	http.HandleFunc("GET /reports/general-sales/", GeneralSales)
-	http.HandleFunc("GET /reports/typed-sales/", TypedSales)
-	http.HandleFunc("GET /reports/daily-sold-items2/", DailySoldItems2)
-	http.HandleFunc("GET /reports/daily-revenue2/", DailyRevenue2)
-	http.HandleFunc("GET /reports/customer-sales2/", CustomerSales2)
-	http.HandleFunc("GET /reports/general-sales2/", GeneralSales2)
-	http.HandleFunc("GET /reports/typed-sales2/", TypedSales2)
+	http.HandleFunc("GET /01/sales/{id}", GetSale)
+	http.HandleFunc("GET /01/sales/", GetSales)
+
+	http.HandleFunc("POST /02/sales/$", CreateSale)
+
+	http.HandleFunc("POST /03/sales/search", SaleSearch)
+
+	http.HandleFunc("POST /04/customers/$", BulkLoadCustomers)
+
+	http.HandleFunc("POST /05/customers/update", CustomerUpdate)
+	http.HandleFunc("POST /05/customers/update2", CustomerUpdate2)
+
+	http.HandleFunc("GET /06/customers/payment_cards/", JSONQuery)
+	http.HandleFunc("GET /06/webhook/update_payment", JSONUpdate)
+	http.HandleFunc("GET /06/locations/payments", JSONReport)
+
+	http.HandleFunc("GET /07/generic_report", WithQuery)
+
+	http.HandleFunc("GET /08/reports/daily-revenue/", DailyRevenue)
+	http.HandleFunc("GET /08/reports/customer-sales/", CustomerSales)
+	http.HandleFunc("GET /08/reports/customer-sales/alt", CustomerSales2)
+	http.HandleFunc("GET /08/reports/daily-sold-items/", DailySoldItems)
+	http.HandleFunc("GET /08/reports/daily-sold-items/alt", DailySoldItems2)
+
+	http.HandleFunc("GET /09/reports/general-sales/", GeneralSales)
+	http.HandleFunc("GET /09/reports/general-sales/alt", GeneralSales2)
+	http.HandleFunc("GET /09/reports/weekly-sales/", TypedSales)
+	http.HandleFunc("GET /09reports/weekly-sales/alt", TypedSales2)
 
 	port := "8080"
 	if os.Getenv("PORT") != "" {

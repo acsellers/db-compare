@@ -18,6 +18,9 @@ func BulkLoadCustomers(w http.ResponseWriter, r *http.Request) {
 	cr := csv.NewReader(file)
 	row, err := cr.Read()
 
+	for err == nil {
+		row, err = cr.Read()
+	}
 	/*
 		TODO:Read each row and insert it into the database.
 

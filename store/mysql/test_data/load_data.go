@@ -15,7 +15,7 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-var OrderCount = 30_000 //_000
+var OrderCount = 30_000_000
 
 type LocationData struct {
 	ID      int
@@ -54,7 +54,8 @@ var (
 	// location to tax rate
 	locationLookup = map[int]float64{}
 	// product to price
-	productLookup = map[int]float64{}
+	productLookup         = map[int]float64{}
+	productCategoryLookup = map[int]string{}
 	// customer to join location
 	customerLookup = map[int]int{}
 )
@@ -186,6 +187,7 @@ func LoadProducts(db *sql.DB) {
 			log.Fatal(err)
 		}
 		productLookup[id] = price
+		productCategoryLookup[id] = record[1]
 		products = append(products, ProductData{
 			ID:       id,
 			Name:     record[0],
@@ -320,6 +322,7 @@ func GenerateOrders(db *sql.DB, count int) {
 		generateOrdersForDay(db, startDate, perDay)
 		startDate = startDate.AddDate(0, 0, 1)
 	}
+	db.Exec("ALTER TABLE orders AUTO_INCREMENT = " + strconv.Itoa(orderId+1))
 }
 func generateOrdersForDay(db *sql.DB, date time.Time, count int) {
 	for i := 0; i < count; i++ {
@@ -402,6 +405,14 @@ func genOrderData(date time.Time) *orderData {
 }
 func (od *orderData) addItem(id int, qty int) {
 	price := productLookup[id]
+	category := productCategoryLookup[id]
+	if od.orderType == "" {
+		od.orderType = category
+	} else {
+		if od.orderType != category {
+			od.orderType = "mixed"
+		}
+	}
 	oi := orderItemData{
 		productID: id,
 		quantity:  qty,

@@ -34,6 +34,12 @@ func GetSale(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	sale := toSale(order)
+
+	json.NewEncoder(w).Encode(sale)
+}
+
+func toSale(order *models.Order) common.Sale {
 	sale := common.Sale{
 		ID:             order.ID,
 		OrderDate:      order.OrderDate,
@@ -50,7 +56,11 @@ func GetSale(w http.ResponseWriter, r *http.Request) {
 	if order.CustomerID.IsValue() && order.R.Customer != nil {
 		sale.CustomerName = order.R.Customer.Name
 	}
-
+	/*
+		if order.R.Location != nil {
+			sale.LocationName = order.R.Location.Name
+		}
+	*/
 	for _, oi := range order.R.OrderItems {
 		sale.Items = append(sale.Items, common.SaleItem{
 			ID:              oi.ID,
@@ -83,5 +93,5 @@ func GetSale(w http.ResponseWriter, r *http.Request) {
 		})
 	}
 
-	json.NewEncoder(w).Encode(sale)
+	return sale
 }
