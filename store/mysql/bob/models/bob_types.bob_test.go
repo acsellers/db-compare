@@ -28,6 +28,9 @@ var _ bob.HookableType = &Discount{}
 // Make sure the type ItemSummary runs hooks after queries
 var _ bob.HookableType = &ItemSummary{}
 
+// Make sure the type Location runs hooks after queries
+var _ bob.HookableType = &Location{}
+
 // Make sure the type OrderItem runs hooks after queries
 var _ bob.HookableType = &OrderItem{}
 

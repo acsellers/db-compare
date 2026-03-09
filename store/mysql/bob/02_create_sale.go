@@ -151,6 +151,7 @@ func CreateSale(w http.ResponseWriter, r *http.Request) {
 	orderSetter := &models.OrderSetter{
 		CustomerID:     omitnull.FromPtr(order.CustomerID),
 		DiscountID:     omitnull.FromPtr(order.DiscountID),
+		LocationID:     omitnull.From(order.LocationID),
 		OrderType:      omit.From(orderType),
 		Subtotal:       omit.From(subtotal),
 		DiscountAmount: omit.From(discountAmount),

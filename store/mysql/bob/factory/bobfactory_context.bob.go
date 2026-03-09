@@ -9,8 +9,10 @@ type contextKey string
 
 var (
 	// Relationship Contexts for customers
-	customerWithParentsCascadingCtx = newContextual[bool]("customerWithParentsCascading")
-	customerRelOrdersCtx            = newContextual[bool]("customers.orders.orders_ibfk_1")
+	customerWithParentsCascadingCtx    = newContextual[bool]("customerWithParentsCascading")
+	customerRelJoinLocationLocationCtx = newContextual[bool]("customers.locations.customers_ibfk_1")
+	customerRelLastLocationLocationCtx = newContextual[bool]("customers.locations.customers_ibfk_2")
+	customerRelOrdersCtx               = newContextual[bool]("customers.orders.orders_ibfk_1")
 
 	// Relationship Contexts for dim_date
 	dimDateWithParentsCascadingCtx = newContextual[bool]("dimDateWithParentsCascading")
@@ -22,6 +24,12 @@ var (
 
 	// Relationship Contexts for item_summaries
 	itemSummaryWithParentsCascadingCtx = newContextual[bool]("itemSummaryWithParentsCascading")
+
+	// Relationship Contexts for locations
+	locationWithParentsCascadingCtx     = newContextual[bool]("locationWithParentsCascading")
+	locationRelJoinLocationCustomersCtx = newContextual[bool]("customers.locations.customers_ibfk_1")
+	locationRelLastLocationCustomersCtx = newContextual[bool]("customers.locations.customers_ibfk_2")
+	locationRelOrdersCtx                = newContextual[bool]("locations.orders.orders_ibfk_3")
 
 	// Relationship Contexts for order_items
 	orderItemWithParentsCascadingCtx = newContextual[bool]("orderItemWithParentsCascading")
@@ -39,6 +47,7 @@ var (
 	orderRelOrderPaymentsCtx     = newContextual[bool]("order_payments.orders.order_payments_ibfk_1")
 	orderRelCustomerCtx          = newContextual[bool]("customers.orders.orders_ibfk_1")
 	orderRelDiscountCtx          = newContextual[bool]("discounts.orders.orders_ibfk_2")
+	orderRelLocationCtx          = newContextual[bool]("locations.orders.orders_ibfk_3")
 
 	// Relationship Contexts for payment_names
 	paymentNameWithParentsCascadingCtx = newContextual[bool]("paymentNameWithParentsCascading")

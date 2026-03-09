@@ -19,6 +19,7 @@ var Preload = getPreloaders()
 type preloaders struct {
 	Customer     customerPreloader
 	Discount     discountPreloader
+	Location     locationPreloader
 	OrderItem    orderItemPreloader
 	OrderPayment orderPaymentPreloader
 	Order        orderPreloader
@@ -29,6 +30,7 @@ func getPreloaders() preloaders {
 	return preloaders{
 		Customer:     buildCustomerPreloader(),
 		Discount:     buildDiscountPreloader(),
+		Location:     buildLocationPreloader(),
 		OrderItem:    buildOrderItemPreloader(),
 		OrderPayment: buildOrderPaymentPreloader(),
 		Order:        buildOrderPreloader(),
@@ -41,6 +43,7 @@ var SelectThenLoad = getThenLoaders[*dialect.SelectQuery]()
 type thenLoaders[Q orm.Loadable] struct {
 	Customer     customerThenLoader[Q]
 	Discount     discountThenLoader[Q]
+	Location     locationThenLoader[Q]
 	OrderItem    orderItemThenLoader[Q]
 	OrderPayment orderPaymentThenLoader[Q]
 	Order        orderThenLoader[Q]
@@ -51,6 +54,7 @@ func getThenLoaders[Q orm.Loadable]() thenLoaders[Q] {
 	return thenLoaders[Q]{
 		Customer:     buildCustomerThenLoader[Q](),
 		Discount:     buildDiscountThenLoader[Q](),
+		Location:     buildLocationThenLoader[Q](),
 		OrderItem:    buildOrderItemThenLoader[Q](),
 		OrderPayment: buildOrderPaymentThenLoader[Q](),
 		Order:        buildOrderThenLoader[Q](),

@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-func TypedSales(w http.ResponseWriter, r *http.Request) {
+func WeeklySalesReport(w http.ResponseWriter, r *http.Request) {
 	endDate := time.Now().Truncate(24 * time.Hour)
 	if r.URL.Query().Get("end_date") != "" {
 		endDate, _ = time.Parse("2006-01-02", r.URL.Query().Get("end_date"))

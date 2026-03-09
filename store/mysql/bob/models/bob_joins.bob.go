@@ -34,6 +34,7 @@ func (j joinSet[Q]) AliasedAs(alias string) joinSet[Q] {
 type joins[Q dialect.Joinable] struct {
 	Customers     joinSet[customerJoins[Q]]
 	Discounts     joinSet[discountJoins[Q]]
+	Locations     joinSet[locationJoins[Q]]
 	OrderItems    joinSet[orderItemJoins[Q]]
 	OrderPayments joinSet[orderPaymentJoins[Q]]
 	Orders        joinSet[orderJoins[Q]]
@@ -52,6 +53,7 @@ func getJoins[Q dialect.Joinable]() joins[Q] {
 	return joins[Q]{
 		Customers:     buildJoinSet[customerJoins[Q]](Customers.Columns, buildCustomerJoins),
 		Discounts:     buildJoinSet[discountJoins[Q]](Discounts.Columns, buildDiscountJoins),
+		Locations:     buildJoinSet[locationJoins[Q]](Locations.Columns, buildLocationJoins),
 		OrderItems:    buildJoinSet[orderItemJoins[Q]](OrderItems.Columns, buildOrderItemJoins),
 		OrderPayments: buildJoinSet[orderPaymentJoins[Q]](OrderPayments.Columns, buildOrderPaymentJoins),
 		Orders:        buildJoinSet[orderJoins[Q]](Orders.Columns, buildOrderJoins),

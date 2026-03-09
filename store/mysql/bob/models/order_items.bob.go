@@ -33,6 +33,7 @@ type OrderItem struct {
 	Quantity       int32               `db:"quantity" `
 	Price          decimal.Decimal     `db:"price" `
 	DiscountAmount decimal.Decimal     `db:"discount_amount" `
+	ItemTotal      decimal.Decimal     `db:"item_total" `
 	CreatedAt      null.Val[time.Time] `db:"created_at" `
 	UpdatedAt      null.Val[time.Time] `db:"updated_at" `
 
@@ -59,7 +60,7 @@ type orderItemR struct {
 func buildOrderItemColumns(alias string) orderItemColumns {
 	return orderItemColumns{
 		ColumnsExpr: expr.NewColumnsExpr(
-			"id", "order_id", "product_id", "discount_id", "quantity", "price", "discount_amount", "created_at", "updated_at",
+			"id", "order_id", "product_id", "discount_id", "quantity", "price", "discount_amount", "item_total", "created_at", "updated_at",
 		).WithParent("order_items"),
 		tableAlias:     alias,
 		ID:             mysql.Quote(alias, "id"),
@@ -69,6 +70,7 @@ func buildOrderItemColumns(alias string) orderItemColumns {
 		Quantity:       mysql.Quote(alias, "quantity"),
 		Price:          mysql.Quote(alias, "price"),
 		DiscountAmount: mysql.Quote(alias, "discount_amount"),
+		ItemTotal:      mysql.Quote(alias, "item_total"),
 		CreatedAt:      mysql.Quote(alias, "created_at"),
 		UpdatedAt:      mysql.Quote(alias, "updated_at"),
 	}
@@ -84,6 +86,7 @@ type orderItemColumns struct {
 	Quantity       mysql.Expression
 	Price          mysql.Expression
 	DiscountAmount mysql.Expression
+	ItemTotal      mysql.Expression
 	CreatedAt      mysql.Expression
 	UpdatedAt      mysql.Expression
 }
@@ -107,12 +110,13 @@ type OrderItemSetter struct {
 	Quantity       omit.Val[int32]           `db:"quantity" `
 	Price          omit.Val[decimal.Decimal] `db:"price" `
 	DiscountAmount omit.Val[decimal.Decimal] `db:"discount_amount" `
+	ItemTotal      omit.Val[decimal.Decimal] `db:"item_total" `
 	CreatedAt      omitnull.Val[time.Time]   `db:"created_at" `
 	UpdatedAt      omitnull.Val[time.Time]   `db:"updated_at" `
 }
 
 func (s OrderItemSetter) SetColumns() []string {
-	vals := make([]string, 0, 9)
+	vals := make([]string, 0, 10)
 	if s.ID.IsValue() {
 		vals = append(vals, "id")
 	}
@@ -133,6 +137,9 @@ func (s OrderItemSetter) SetColumns() []string {
 	}
 	if s.DiscountAmount.IsValue() {
 		vals = append(vals, "discount_amount")
+	}
+	if s.ItemTotal.IsValue() {
+		vals = append(vals, "item_total")
 	}
 	if !s.CreatedAt.IsUnset() {
 		vals = append(vals, "created_at")
@@ -164,6 +171,9 @@ func (s OrderItemSetter) Overwrite(t *OrderItem) {
 	}
 	if s.DiscountAmount.IsValue() {
 		t.DiscountAmount = s.DiscountAmount.MustGet()
+	}
+	if s.ItemTotal.IsValue() {
+		t.ItemTotal = s.ItemTotal.MustGet()
 	}
 	if !s.CreatedAt.IsUnset() {
 		t.CreatedAt = s.CreatedAt.MustGetNull()
@@ -215,6 +225,11 @@ func (s *OrderItemSetter) Apply(q *dialect.InsertQuery) {
 			}
 			return mysql.Arg(s.DiscountAmount.MustGet()).WriteSQL(ctx, w, d, start)
 		}), bob.ExpressionFunc(func(ctx context.Context, w io.StringWriter, d bob.Dialect, start int) ([]any, error) {
+			if !(s.ItemTotal.IsValue()) {
+				return mysql.Raw("DEFAULT").WriteSQL(ctx, w, d, start)
+			}
+			return mysql.Arg(s.ItemTotal.MustGet()).WriteSQL(ctx, w, d, start)
+		}), bob.ExpressionFunc(func(ctx context.Context, w io.StringWriter, d bob.Dialect, start int) ([]any, error) {
 			if !(!s.CreatedAt.IsUnset()) {
 				return mysql.Raw("DEFAULT").WriteSQL(ctx, w, d, start)
 			}
@@ -232,7 +247,7 @@ func (s OrderItemSetter) UpdateMod() bob.Mod[*dialect.UpdateQuery] {
 }
 
 func (s OrderItemSetter) Expressions(prefix ...string) []bob.Expression {
-	exprs := make([]bob.Expression, 0, 9)
+	exprs := make([]bob.Expression, 0, 10)
 
 	if s.ID.IsValue() {
 		exprs = append(exprs, expr.Join{Sep: " = ", Exprs: []bob.Expression{
@@ -280,6 +295,13 @@ func (s OrderItemSetter) Expressions(prefix ...string) []bob.Expression {
 		exprs = append(exprs, expr.Join{Sep: " = ", Exprs: []bob.Expression{
 			mysql.Quote(append(prefix, "discount_amount")...),
 			mysql.Arg(s.DiscountAmount),
+		}})
+	}
+
+	if s.ItemTotal.IsValue() {
+		exprs = append(exprs, expr.Join{Sep: " = ", Exprs: []bob.Expression{
+			mysql.Quote(append(prefix, "item_total")...),
+			mysql.Arg(s.ItemTotal),
 		}})
 	}
 
@@ -732,6 +754,7 @@ type orderItemWhere[Q mysql.Filterable] struct {
 	Quantity       mysql.WhereMod[Q, int32]
 	Price          mysql.WhereMod[Q, decimal.Decimal]
 	DiscountAmount mysql.WhereMod[Q, decimal.Decimal]
+	ItemTotal      mysql.WhereMod[Q, decimal.Decimal]
 	CreatedAt      mysql.WhereNullMod[Q, time.Time]
 	UpdatedAt      mysql.WhereNullMod[Q, time.Time]
 }
@@ -749,6 +772,7 @@ func buildOrderItemWhere[Q mysql.Filterable](cols orderItemColumns) orderItemWhe
 		Quantity:       mysql.Where[Q, int32](cols.Quantity),
 		Price:          mysql.Where[Q, decimal.Decimal](cols.Price),
 		DiscountAmount: mysql.Where[Q, decimal.Decimal](cols.DiscountAmount),
+		ItemTotal:      mysql.Where[Q, decimal.Decimal](cols.ItemTotal),
 		CreatedAt:      mysql.WhereNull[Q, time.Time](cols.CreatedAt),
 		UpdatedAt:      mysql.WhereNull[Q, time.Time](cols.UpdatedAt),
 	}

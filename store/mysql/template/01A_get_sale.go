@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+
+	"github.com/acsellers/golang-db-compare/store/common"
 )
 
 func GetSale(w http.ResponseWriter, r *http.Request) {
@@ -23,6 +25,6 @@ func GetSale(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// TODO: output the sale structs from common
-
+	sale := common.Sale{}
 	json.NewEncoder(w).Encode(sale)
 }

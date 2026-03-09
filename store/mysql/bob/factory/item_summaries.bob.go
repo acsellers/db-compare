@@ -34,14 +34,15 @@ func (mods ItemSummaryModSlice) Apply(ctx context.Context, n *ItemSummaryTemplat
 // ItemSummaryTemplate is an object representing the database table.
 // all columns are optional and should be set by mods
 type ItemSummaryTemplate struct {
-	ID            func() null.Val[int64]
-	Name          func() string
-	Category      func() string
-	OrderType     func() string
-	OrderDate     func() time.Time
-	TotalQuantity func() null.Val[decimal.Decimal]
-	TotalSales    func() null.Val[decimal.Decimal]
-	OrderCount    func() int64
+	ID             func() null.Val[int64]
+	Name           func() string
+	Category       func() string
+	OrderType      func() string
+	DateOOrderDate func() null.Val[time.Time]
+	TotalQuantity  func() null.Val[decimal.Decimal]
+	TotalSales     func() null.Val[decimal.Decimal]
+	OrderCount     func() int64
+	LocationID     func() null.Val[int64]
 
 	f *Factory
 
@@ -77,8 +78,8 @@ func (o ItemSummaryTemplate) Build() *models.ItemSummary {
 	if o.OrderType != nil {
 		m.OrderType = o.OrderType()
 	}
-	if o.OrderDate != nil {
-		m.OrderDate = o.OrderDate()
+	if o.DateOOrderDate != nil {
+		m.DateOOrderDate = o.DateOOrderDate()
 	}
 	if o.TotalQuantity != nil {
 		m.TotalQuantity = o.TotalQuantity()
@@ -88,6 +89,9 @@ func (o ItemSummaryTemplate) Build() *models.ItemSummary {
 	}
 	if o.OrderCount != nil {
 		m.OrderCount = o.OrderCount()
+	}
+	if o.LocationID != nil {
+		m.LocationID = o.LocationID()
 	}
 
 	o.setModelRels(m)
@@ -119,10 +123,11 @@ func (m itemSummaryMods) RandomizeAllColumns(f *faker.Faker) ItemSummaryMod {
 		ItemSummaryMods.RandomName(f),
 		ItemSummaryMods.RandomCategory(f),
 		ItemSummaryMods.RandomOrderType(f),
-		ItemSummaryMods.RandomOrderDate(f),
+		ItemSummaryMods.RandomDateOOrderDate(f),
 		ItemSummaryMods.RandomTotalQuantity(f),
 		ItemSummaryMods.RandomTotalSales(f),
 		ItemSummaryMods.RandomOrderCount(f),
+		ItemSummaryMods.RandomLocationID(f),
 	}
 }
 
@@ -273,32 +278,54 @@ func (m itemSummaryMods) RandomOrderType(f *faker.Faker) ItemSummaryMod {
 }
 
 // Set the model columns to this value
-func (m itemSummaryMods) OrderDate(val time.Time) ItemSummaryMod {
+func (m itemSummaryMods) DateOOrderDate(val null.Val[time.Time]) ItemSummaryMod {
 	return ItemSummaryModFunc(func(_ context.Context, o *ItemSummaryTemplate) {
-		o.OrderDate = func() time.Time { return val }
+		o.DateOOrderDate = func() null.Val[time.Time] { return val }
 	})
 }
 
 // Set the Column from the function
-func (m itemSummaryMods) OrderDateFunc(f func() time.Time) ItemSummaryMod {
+func (m itemSummaryMods) DateOOrderDateFunc(f func() null.Val[time.Time]) ItemSummaryMod {
 	return ItemSummaryModFunc(func(_ context.Context, o *ItemSummaryTemplate) {
-		o.OrderDate = f
+		o.DateOOrderDate = f
 	})
 }
 
 // Clear any values for the column
-func (m itemSummaryMods) UnsetOrderDate() ItemSummaryMod {
+func (m itemSummaryMods) UnsetDateOOrderDate() ItemSummaryMod {
 	return ItemSummaryModFunc(func(_ context.Context, o *ItemSummaryTemplate) {
-		o.OrderDate = nil
+		o.DateOOrderDate = nil
 	})
 }
 
 // Generates a random value for the column using the given faker
 // if faker is nil, a default faker is used
-func (m itemSummaryMods) RandomOrderDate(f *faker.Faker) ItemSummaryMod {
+// The generated value is sometimes null
+func (m itemSummaryMods) RandomDateOOrderDate(f *faker.Faker) ItemSummaryMod {
 	return ItemSummaryModFunc(func(_ context.Context, o *ItemSummaryTemplate) {
-		o.OrderDate = func() time.Time {
-			return random_time_Time(f)
+		o.DateOOrderDate = func() null.Val[time.Time] {
+			if f == nil {
+				f = &defaultFaker
+			}
+
+			val := random_time_Time(f)
+			return null.From(val)
+		}
+	})
+}
+
+// Generates a random value for the column using the given faker
+// if faker is nil, a default faker is used
+// The generated value is never null
+func (m itemSummaryMods) RandomDateOOrderDateNotNull(f *faker.Faker) ItemSummaryMod {
+	return ItemSummaryModFunc(func(_ context.Context, o *ItemSummaryTemplate) {
+		o.DateOOrderDate = func() null.Val[time.Time] {
+			if f == nil {
+				f = &defaultFaker
+			}
+
+			val := random_time_Time(f)
+			return null.From(val)
 		}
 	})
 }
@@ -387,7 +414,7 @@ func (m itemSummaryMods) RandomTotalSales(f *faker.Faker) ItemSummaryMod {
 				f = &defaultFaker
 			}
 
-			val := random_decimal_Decimal(f, "42", "2")
+			val := random_decimal_Decimal(f, "52", "2")
 			return null.From(val)
 		}
 	})
@@ -403,7 +430,7 @@ func (m itemSummaryMods) RandomTotalSalesNotNull(f *faker.Faker) ItemSummaryMod 
 				f = &defaultFaker
 			}
 
-			val := random_decimal_Decimal(f, "42", "2")
+			val := random_decimal_Decimal(f, "52", "2")
 			return null.From(val)
 		}
 	})
@@ -436,6 +463,59 @@ func (m itemSummaryMods) RandomOrderCount(f *faker.Faker) ItemSummaryMod {
 	return ItemSummaryModFunc(func(_ context.Context, o *ItemSummaryTemplate) {
 		o.OrderCount = func() int64 {
 			return random_int64(f)
+		}
+	})
+}
+
+// Set the model columns to this value
+func (m itemSummaryMods) LocationID(val null.Val[int64]) ItemSummaryMod {
+	return ItemSummaryModFunc(func(_ context.Context, o *ItemSummaryTemplate) {
+		o.LocationID = func() null.Val[int64] { return val }
+	})
+}
+
+// Set the Column from the function
+func (m itemSummaryMods) LocationIDFunc(f func() null.Val[int64]) ItemSummaryMod {
+	return ItemSummaryModFunc(func(_ context.Context, o *ItemSummaryTemplate) {
+		o.LocationID = f
+	})
+}
+
+// Clear any values for the column
+func (m itemSummaryMods) UnsetLocationID() ItemSummaryMod {
+	return ItemSummaryModFunc(func(_ context.Context, o *ItemSummaryTemplate) {
+		o.LocationID = nil
+	})
+}
+
+// Generates a random value for the column using the given faker
+// if faker is nil, a default faker is used
+// The generated value is sometimes null
+func (m itemSummaryMods) RandomLocationID(f *faker.Faker) ItemSummaryMod {
+	return ItemSummaryModFunc(func(_ context.Context, o *ItemSummaryTemplate) {
+		o.LocationID = func() null.Val[int64] {
+			if f == nil {
+				f = &defaultFaker
+			}
+
+			val := random_int64(f)
+			return null.From(val)
+		}
+	})
+}
+
+// Generates a random value for the column using the given faker
+// if faker is nil, a default faker is used
+// The generated value is never null
+func (m itemSummaryMods) RandomLocationIDNotNull(f *faker.Faker) ItemSummaryMod {
+	return ItemSummaryModFunc(func(_ context.Context, o *ItemSummaryTemplate) {
+		o.LocationID = func() null.Val[int64] {
+			if f == nil {
+				f = &defaultFaker
+			}
+
+			val := random_int64(f)
+			return null.From(val)
 		}
 	})
 }

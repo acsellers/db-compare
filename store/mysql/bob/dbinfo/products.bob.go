@@ -71,6 +71,19 @@ var Products = Table[
 		},
 	},
 	Indexes: productIndexes{
+		IdxProductsCategory: index{
+			Type: "BTREE",
+			Name: "idx_products_category",
+			Columns: []indexColumn{
+				{
+					Name:         "category",
+					Desc:         null.FromCond(false, true),
+					IsExpression: false,
+				},
+			},
+			Unique:  false,
+			Comment: "",
+		},
 		PRIMARY: index{
 			Type: "BTREE",
 			Name: "PRIMARY",
@@ -110,12 +123,13 @@ func (c productColumns) AsSlice() []column {
 }
 
 type productIndexes struct {
-	PRIMARY index
+	IdxProductsCategory index
+	PRIMARY             index
 }
 
 func (i productIndexes) AsSlice() []index {
 	return []index{
-		i.PRIMARY,
+		i.IdxProductsCategory, i.PRIMARY,
 	}
 }
 

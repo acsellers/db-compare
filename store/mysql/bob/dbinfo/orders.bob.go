@@ -26,7 +26,7 @@ var Orders = Table[
 		},
 		OrderDate: column{
 			Name:      "order_date",
-			DBType:    "date",
+			DBType:    "datetime",
 			Default:   "",
 			Comment:   "",
 			Nullable:  false,
@@ -62,7 +62,7 @@ var Orders = Table[
 		},
 		Subtotal: column{
 			Name:      "subtotal",
-			DBType:    "decimal(10,2)",
+			DBType:    "decimal(20,2)",
 			Default:   "",
 			Comment:   "",
 			Nullable:  false,
@@ -71,7 +71,7 @@ var Orders = Table[
 		},
 		DiscountAmount: column{
 			Name:      "discount_amount",
-			DBType:    "decimal(10,2)",
+			DBType:    "decimal(20,2)",
 			Default:   "",
 			Comment:   "",
 			Nullable:  false,
@@ -80,7 +80,7 @@ var Orders = Table[
 		},
 		TaxAmount: column{
 			Name:      "tax_amount",
-			DBType:    "decimal(10,2)",
+			DBType:    "decimal(20,2)",
 			Default:   "",
 			Comment:   "",
 			Nullable:  false,
@@ -89,10 +89,19 @@ var Orders = Table[
 		},
 		Total: column{
 			Name:      "total",
-			DBType:    "decimal(10,2)",
+			DBType:    "decimal(20,2)",
 			Default:   "",
 			Comment:   "",
 			Nullable:  false,
+			Generated: false,
+			AutoIncr:  false,
+		},
+		LocationID: column{
+			Name:      "location_id",
+			DBType:    "bigint",
+			Default:   "",
+			Comment:   "",
+			Nullable:  true,
 			Generated: false,
 			AutoIncr:  false,
 		},
@@ -116,9 +125,9 @@ var Orders = Table[
 		},
 	},
 	Indexes: orderIndexes{
-		CustomerID: index{
+		IdxOrdersCustomerID: index{
 			Type: "BTREE",
-			Name: "customer_id",
+			Name: "idx_orders_customer_id",
 			Columns: []indexColumn{
 				{
 					Name:         "customer_id",
@@ -129,12 +138,38 @@ var Orders = Table[
 			Unique:  false,
 			Comment: "",
 		},
-		DiscountID: index{
+		IdxOrdersDiscountID: index{
 			Type: "BTREE",
-			Name: "discount_id",
+			Name: "idx_orders_discount_id",
 			Columns: []indexColumn{
 				{
 					Name:         "discount_id",
+					Desc:         null.FromCond(false, true),
+					IsExpression: false,
+				},
+			},
+			Unique:  false,
+			Comment: "",
+		},
+		IdxOrdersOrderDate: index{
+			Type: "BTREE",
+			Name: "idx_orders_order_date",
+			Columns: []indexColumn{
+				{
+					Name:         "order_date",
+					Desc:         null.FromCond(false, true),
+					IsExpression: false,
+				},
+			},
+			Unique:  false,
+			Comment: "",
+		},
+		LocationID: index{
+			Type: "BTREE",
+			Name: "location_id",
+			Columns: []indexColumn{
+				{
+					Name:         "location_id",
 					Desc:         null.FromCond(false, true),
 					IsExpression: false,
 				},
@@ -180,6 +215,15 @@ var Orders = Table[
 			ForeignTable:   "discounts",
 			ForeignColumns: []string{"id"},
 		},
+		OrdersIbfk3: foreignKey{
+			constraint: constraint{
+				Name:    "orders_ibfk_3",
+				Columns: []string{"location_id"},
+				Comment: "",
+			},
+			ForeignTable:   "locations",
+			ForeignColumns: []string{"id"},
+		},
 	},
 
 	Comment: "",
@@ -195,36 +239,40 @@ type orderColumns struct {
 	DiscountAmount column
 	TaxAmount      column
 	Total          column
+	LocationID     column
 	CreatedAt      column
 	UpdatedAt      column
 }
 
 func (c orderColumns) AsSlice() []column {
 	return []column{
-		c.ID, c.OrderDate, c.CustomerID, c.DiscountID, c.OrderType, c.Subtotal, c.DiscountAmount, c.TaxAmount, c.Total, c.CreatedAt, c.UpdatedAt,
+		c.ID, c.OrderDate, c.CustomerID, c.DiscountID, c.OrderType, c.Subtotal, c.DiscountAmount, c.TaxAmount, c.Total, c.LocationID, c.CreatedAt, c.UpdatedAt,
 	}
 }
 
 type orderIndexes struct {
-	CustomerID index
-	DiscountID index
-	PRIMARY    index
+	IdxOrdersCustomerID index
+	IdxOrdersDiscountID index
+	IdxOrdersOrderDate  index
+	LocationID          index
+	PRIMARY             index
 }
 
 func (i orderIndexes) AsSlice() []index {
 	return []index{
-		i.CustomerID, i.DiscountID, i.PRIMARY,
+		i.IdxOrdersCustomerID, i.IdxOrdersDiscountID, i.IdxOrdersOrderDate, i.LocationID, i.PRIMARY,
 	}
 }
 
 type orderForeignKeys struct {
 	OrdersIbfk1 foreignKey
 	OrdersIbfk2 foreignKey
+	OrdersIbfk3 foreignKey
 }
 
 func (f orderForeignKeys) AsSlice() []foreignKey {
 	return []foreignKey{
-		f.OrdersIbfk1, f.OrdersIbfk2,
+		f.OrdersIbfk1, f.OrdersIbfk2, f.OrdersIbfk3,
 	}
 }
 

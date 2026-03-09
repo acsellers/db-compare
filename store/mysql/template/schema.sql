@@ -85,6 +85,7 @@ CREATE INDEX idx_orders_customer_id ON orders (customer_id);
 CREATE INDEX idx_orders_discount_id ON orders (discount_id);
 ALTER TABLE orders ADD FOREIGN KEY (customer_id) REFERENCES customers(id);
 ALTER TABLE orders ADD FOREIGN KEY (discount_id) REFERENCES discounts(id);
+ALTER TABLE orders ADD FOREIGN KEY (location_id) REFERENCES locations(id);
 
 CREATE TABLE order_items (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,

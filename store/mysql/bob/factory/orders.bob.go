@@ -47,6 +47,7 @@ type OrderTemplate struct {
 	DiscountAmount func() decimal.Decimal
 	TaxAmount      func() decimal.Decimal
 	Total          func() decimal.Decimal
+	LocationID     func() null.Val[int64]
 	CreatedAt      func() null.Val[time.Time]
 	UpdatedAt      func() null.Val[time.Time]
 
@@ -61,6 +62,7 @@ type orderR struct {
 	OrderPayments []*orderROrderPaymentsR
 	Customer      *orderRCustomerR
 	Discount      *orderRDiscountR
+	Location      *orderRLocationR
 }
 
 type orderROrderItemsR struct {
@@ -76,6 +78,9 @@ type orderRCustomerR struct {
 }
 type orderRDiscountR struct {
 	o *DiscountTemplate
+}
+type orderRLocationR struct {
+	o *LocationTemplate
 }
 
 // Apply mods to the OrderTemplate
@@ -127,6 +132,13 @@ func (t OrderTemplate) setModelRels(o *models.Order) {
 		o.DiscountID = null.From(rel.ID) // h2
 		o.R.Discount = rel
 	}
+
+	if t.r.Location != nil {
+		rel := t.r.Location.o.Build()
+		rel.R.Orders = append(rel.R.Orders, o)
+		o.LocationID = null.From(rel.ID) // h2
+		o.R.Location = rel
+	}
 }
 
 // BuildSetter returns an *models.OrderSetter
@@ -169,6 +181,10 @@ func (o OrderTemplate) BuildSetter() *models.OrderSetter {
 	if o.Total != nil {
 		val := o.Total()
 		m.Total = omit.From(val)
+	}
+	if o.LocationID != nil {
+		val := o.LocationID()
+		m.LocationID = omitnull.FromNull(val)
 	}
 	if o.CreatedAt != nil {
 		val := o.CreatedAt()
@@ -227,6 +243,9 @@ func (o OrderTemplate) Build() *models.Order {
 	if o.Total != nil {
 		m.Total = o.Total()
 	}
+	if o.LocationID != nil {
+		m.LocationID = o.LocationID()
+	}
 	if o.CreatedAt != nil {
 		m.CreatedAt = o.CreatedAt()
 	}
@@ -262,19 +281,19 @@ func ensureCreatableOrder(m *models.OrderSetter) {
 		m.OrderType = omit.From(val)
 	}
 	if !(m.Subtotal.IsValue()) {
-		val := random_decimal_Decimal(nil, "10", "2")
+		val := random_decimal_Decimal(nil, "20", "2")
 		m.Subtotal = omit.From(val)
 	}
 	if !(m.DiscountAmount.IsValue()) {
-		val := random_decimal_Decimal(nil, "10", "2")
+		val := random_decimal_Decimal(nil, "20", "2")
 		m.DiscountAmount = omit.From(val)
 	}
 	if !(m.TaxAmount.IsValue()) {
-		val := random_decimal_Decimal(nil, "10", "2")
+		val := random_decimal_Decimal(nil, "20", "2")
 		m.TaxAmount = omit.From(val)
 	}
 	if !(m.Total.IsValue()) {
-		val := random_decimal_Decimal(nil, "10", "2")
+		val := random_decimal_Decimal(nil, "20", "2")
 		m.Total = omit.From(val)
 	}
 }
@@ -356,6 +375,25 @@ func (o *OrderTemplate) insertOptRels(ctx context.Context, exec bob.Executor, m 
 				return err
 			}
 			err = m.AttachDiscount(ctx, exec, rel3)
+			if err != nil {
+				return err
+			}
+		}
+
+	}
+
+	isLocationDone, _ := orderRelLocationCtx.Value(ctx)
+	if !isLocationDone && o.r.Location != nil {
+		ctx = orderRelLocationCtx.WithValue(ctx, true)
+		if o.r.Location.o.alreadyPersisted {
+			m.R.Location = o.r.Location.o.Build()
+		} else {
+			var rel4 *models.Location
+			rel4, err = o.r.Location.o.Create(ctx, exec)
+			if err != nil {
+				return err
+			}
+			err = m.AttachLocation(ctx, exec, rel4)
 			if err != nil {
 				return err
 			}
@@ -464,6 +502,7 @@ func (m orderMods) RandomizeAllColumns(f *faker.Faker) OrderMod {
 		OrderMods.RandomDiscountAmount(f),
 		OrderMods.RandomTaxAmount(f),
 		OrderMods.RandomTotal(f),
+		OrderMods.RandomLocationID(f),
 		OrderMods.RandomCreatedAt(f),
 		OrderMods.RandomUpdatedAt(f),
 	}
@@ -694,7 +733,7 @@ func (m orderMods) UnsetSubtotal() OrderMod {
 func (m orderMods) RandomSubtotal(f *faker.Faker) OrderMod {
 	return OrderModFunc(func(_ context.Context, o *OrderTemplate) {
 		o.Subtotal = func() decimal.Decimal {
-			return random_decimal_Decimal(f, "10", "2")
+			return random_decimal_Decimal(f, "20", "2")
 		}
 	})
 }
@@ -725,7 +764,7 @@ func (m orderMods) UnsetDiscountAmount() OrderMod {
 func (m orderMods) RandomDiscountAmount(f *faker.Faker) OrderMod {
 	return OrderModFunc(func(_ context.Context, o *OrderTemplate) {
 		o.DiscountAmount = func() decimal.Decimal {
-			return random_decimal_Decimal(f, "10", "2")
+			return random_decimal_Decimal(f, "20", "2")
 		}
 	})
 }
@@ -756,7 +795,7 @@ func (m orderMods) UnsetTaxAmount() OrderMod {
 func (m orderMods) RandomTaxAmount(f *faker.Faker) OrderMod {
 	return OrderModFunc(func(_ context.Context, o *OrderTemplate) {
 		o.TaxAmount = func() decimal.Decimal {
-			return random_decimal_Decimal(f, "10", "2")
+			return random_decimal_Decimal(f, "20", "2")
 		}
 	})
 }
@@ -787,7 +826,60 @@ func (m orderMods) UnsetTotal() OrderMod {
 func (m orderMods) RandomTotal(f *faker.Faker) OrderMod {
 	return OrderModFunc(func(_ context.Context, o *OrderTemplate) {
 		o.Total = func() decimal.Decimal {
-			return random_decimal_Decimal(f, "10", "2")
+			return random_decimal_Decimal(f, "20", "2")
+		}
+	})
+}
+
+// Set the model columns to this value
+func (m orderMods) LocationID(val null.Val[int64]) OrderMod {
+	return OrderModFunc(func(_ context.Context, o *OrderTemplate) {
+		o.LocationID = func() null.Val[int64] { return val }
+	})
+}
+
+// Set the Column from the function
+func (m orderMods) LocationIDFunc(f func() null.Val[int64]) OrderMod {
+	return OrderModFunc(func(_ context.Context, o *OrderTemplate) {
+		o.LocationID = f
+	})
+}
+
+// Clear any values for the column
+func (m orderMods) UnsetLocationID() OrderMod {
+	return OrderModFunc(func(_ context.Context, o *OrderTemplate) {
+		o.LocationID = nil
+	})
+}
+
+// Generates a random value for the column using the given faker
+// if faker is nil, a default faker is used
+// The generated value is sometimes null
+func (m orderMods) RandomLocationID(f *faker.Faker) OrderMod {
+	return OrderModFunc(func(_ context.Context, o *OrderTemplate) {
+		o.LocationID = func() null.Val[int64] {
+			if f == nil {
+				f = &defaultFaker
+			}
+
+			val := random_int64(f)
+			return null.From(val)
+		}
+	})
+}
+
+// Generates a random value for the column using the given faker
+// if faker is nil, a default faker is used
+// The generated value is never null
+func (m orderMods) RandomLocationIDNotNull(f *faker.Faker) OrderMod {
+	return OrderModFunc(func(_ context.Context, o *OrderTemplate) {
+		o.LocationID = func() null.Val[int64] {
+			if f == nil {
+				f = &defaultFaker
+			}
+
+			val := random_int64(f)
+			return null.From(val)
 		}
 	})
 }
@@ -914,6 +1006,11 @@ func (m orderMods) WithParentsCascading() OrderMod {
 			related := o.f.NewDiscountWithContext(ctx, DiscountMods.WithParentsCascading())
 			m.WithDiscount(related).Apply(ctx, o)
 		}
+		{
+
+			related := o.f.NewLocationWithContext(ctx, LocationMods.WithParentsCascading())
+			m.WithLocation(related).Apply(ctx, o)
+		}
 	})
 }
 
@@ -974,6 +1071,36 @@ func (m orderMods) WithExistingDiscount(em *models.Discount) OrderMod {
 func (m orderMods) WithoutDiscount() OrderMod {
 	return OrderModFunc(func(ctx context.Context, o *OrderTemplate) {
 		o.r.Discount = nil
+	})
+}
+
+func (m orderMods) WithLocation(rel *LocationTemplate) OrderMod {
+	return OrderModFunc(func(ctx context.Context, o *OrderTemplate) {
+		o.r.Location = &orderRLocationR{
+			o: rel,
+		}
+	})
+}
+
+func (m orderMods) WithNewLocation(mods ...LocationMod) OrderMod {
+	return OrderModFunc(func(ctx context.Context, o *OrderTemplate) {
+		related := o.f.NewLocationWithContext(ctx, mods...)
+
+		m.WithLocation(related).Apply(ctx, o)
+	})
+}
+
+func (m orderMods) WithExistingLocation(em *models.Location) OrderMod {
+	return OrderModFunc(func(ctx context.Context, o *OrderTemplate) {
+		o.r.Location = &orderRLocationR{
+			o: o.f.FromExistingLocation(em),
+		}
+	})
+}
+
+func (m orderMods) WithoutLocation() OrderMod {
+	return OrderModFunc(func(ctx context.Context, o *OrderTemplate) {
+		o.r.Location = nil
 	})
 }
 

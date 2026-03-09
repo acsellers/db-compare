@@ -9,6 +9,8 @@ type Sale struct {
 	OrderDate      time.Time     `json:"order_date"`
 	CustomerID     *int64        `json:"customer_id"`
 	CustomerName   string        `json:"customer_name"`
+	LocationID     int64         `json:"location_id"`
+	LocationName   string        `json:"location_name"`
 	DiscountID     *int64        `json:"discount_id"`
 	OrderType      string        `json:"order_type"`
 	Subtotal       float64       `json:"subtotal"`
@@ -48,6 +50,7 @@ type SalePayment struct {
 type Order struct {
 	CustomerID    *int64         `json:"customer_id"`
 	DiscountID    *int64         `json:"discount_id"`
+	LocationID    int64          `json:"location_id"`
 	ExpectedTotal float64        `json:"expected_total"`
 	Items         []OrderItem    `json:"items"`
 	Payments      []OrderPayment `json:"payments"`

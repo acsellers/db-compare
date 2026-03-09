@@ -19,6 +19,9 @@ func GetSale(w http.ResponseWriter, r *http.Request) {
 
 	order, err := models.Orders.Query(
 		models.SelectWhere.Orders.ID.EQ(id),
+		models.Preload.Order.Location(
+			mysql.PreloadOnly("name"),
+		),
 		models.Preload.Order.Customer(
 			mysql.PreloadOnly("name"),
 		),
@@ -56,11 +59,11 @@ func toSale(order *models.Order) common.Sale {
 	if order.CustomerID.IsValue() && order.R.Customer != nil {
 		sale.CustomerName = order.R.Customer.Name
 	}
-	/*
-		if order.R.Location != nil {
-			sale.LocationName = order.R.Location.Name
-		}
-	*/
+
+	if order.R.Location != nil {
+		sale.LocationName = order.R.Location.Name
+	}
+
 	for _, oi := range order.R.OrderItems {
 		sale.Items = append(sale.Items, common.SaleItem{
 			ID:              oi.ID,

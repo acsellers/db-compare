@@ -80,6 +80,19 @@ var Discounts = Table[
 		},
 	},
 	Indexes: discountIndexes{
+		IdxDiscountsCategory: index{
+			Type: "BTREE",
+			Name: "idx_discounts_category",
+			Columns: []indexColumn{
+				{
+					Name:         "category",
+					Desc:         null.FromCond(false, true),
+					IsExpression: false,
+				},
+			},
+			Unique:  false,
+			Comment: "",
+		},
 		PRIMARY: index{
 			Type: "BTREE",
 			Name: "PRIMARY",
@@ -120,12 +133,13 @@ func (c discountColumns) AsSlice() []column {
 }
 
 type discountIndexes struct {
-	PRIMARY index
+	IdxDiscountsCategory index
+	PRIMARY              index
 }
 
 func (i discountIndexes) AsSlice() []index {
 	return []index{
-		i.PRIMARY,
+		i.IdxDiscountsCategory, i.PRIMARY,
 	}
 }
 

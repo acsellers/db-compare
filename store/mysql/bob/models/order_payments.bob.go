@@ -28,10 +28,11 @@ import (
 
 // OrderPayment is an object representing the database table.
 type OrderPayment struct {
-	ID          int64                                 `db:"id,pk,autoincr" `
-	OrderID     int64                                 `db:"order_id" `
-	PaymentType string                                `db:"payment_type" `
-	Amount      decimal.Decimal                       `db:"amount" `
+	ID          int64           `db:"id,pk,autoincr" `
+	OrderID     int64           `db:"order_id" `
+	PaymentType string          `db:"payment_type" `
+	Amount      decimal.Decimal `db:"amount" `
+	// payments.Info
 	PaymentInfo null.Val[types.JSON[json.RawMessage]] `db:"payment_info" `
 	CreatedAt   null.Val[time.Time]                   `db:"created_at" `
 	UpdatedAt   null.Val[time.Time]                   `db:"updated_at" `

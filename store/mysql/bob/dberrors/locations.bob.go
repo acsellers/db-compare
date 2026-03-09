@@ -3,24 +3,24 @@
 
 package dberrors
 
-var CustomerErrors = &customerErrors{
+var LocationErrors = &locationErrors{
 	ErrUniquePrimary: &UniqueConstraintError{
 		schema:  "",
-		table:   "customers",
+		table:   "locations",
 		columns: []string{"id"},
 		s:       "PRIMARY",
 	},
 
-	ErrUniqueExternalId: &UniqueConstraintError{
+	ErrUniqueName: &UniqueConstraintError{
 		schema:  "",
-		table:   "customers",
-		columns: []string{"external_id"},
-		s:       "external_id",
+		table:   "locations",
+		columns: []string{"name"},
+		s:       "name",
 	},
 }
 
-type customerErrors struct {
+type locationErrors struct {
 	ErrUniquePrimary *UniqueConstraintError
 
-	ErrUniqueExternalId *UniqueConstraintError
+	ErrUniqueName *UniqueConstraintError
 }

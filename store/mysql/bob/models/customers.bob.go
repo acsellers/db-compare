@@ -30,6 +30,9 @@ type Customer struct {
 	Phone          null.Val[string]    `db:"phone" `
 	Email          null.Val[string]    `db:"email" `
 	MarketingOptIn null.Val[bool]      `db:"marketing_opt_in" `
+	ExternalID     null.Val[string]    `db:"external_id" `
+	JoinLocationID null.Val[int64]     `db:"join_location_id" `
+	LastLocationID null.Val[int64]     `db:"last_location_id" `
 	CreatedAt      null.Val[time.Time] `db:"created_at" `
 	UpdatedAt      null.Val[time.Time] `db:"updated_at" `
 
@@ -41,20 +44,22 @@ type Customer struct {
 type CustomerSlice []*Customer
 
 // Customers contains methods to work with the customers table
-var Customers = mysql.NewTablex[*Customer, CustomerSlice, *CustomerSetter]("customers", buildCustomerColumns("customers"), []string{"id"})
+var Customers = mysql.NewTablex[*Customer, CustomerSlice, *CustomerSetter]("customers", buildCustomerColumns("customers"), []string{"id"}, []string{"external_id"})
 
 // CustomersQuery is a query on the customers table
 type CustomersQuery = *mysql.ViewQuery[*Customer, CustomerSlice]
 
 // customerR is where relationships are stored.
 type customerR struct {
-	Orders OrderSlice // orders_ibfk_1
+	JoinLocationLocation *Location  // customers_ibfk_1
+	LastLocationLocation *Location  // customers_ibfk_2
+	Orders               OrderSlice // orders_ibfk_1
 }
 
 func buildCustomerColumns(alias string) customerColumns {
 	return customerColumns{
 		ColumnsExpr: expr.NewColumnsExpr(
-			"id", "name", "phone", "email", "marketing_opt_in", "created_at", "updated_at",
+			"id", "name", "phone", "email", "marketing_opt_in", "external_id", "join_location_id", "last_location_id", "created_at", "updated_at",
 		).WithParent("customers"),
 		tableAlias:     alias,
 		ID:             mysql.Quote(alias, "id"),
@@ -62,6 +67,9 @@ func buildCustomerColumns(alias string) customerColumns {
 		Phone:          mysql.Quote(alias, "phone"),
 		Email:          mysql.Quote(alias, "email"),
 		MarketingOptIn: mysql.Quote(alias, "marketing_opt_in"),
+		ExternalID:     mysql.Quote(alias, "external_id"),
+		JoinLocationID: mysql.Quote(alias, "join_location_id"),
+		LastLocationID: mysql.Quote(alias, "last_location_id"),
 		CreatedAt:      mysql.Quote(alias, "created_at"),
 		UpdatedAt:      mysql.Quote(alias, "updated_at"),
 	}
@@ -75,6 +83,9 @@ type customerColumns struct {
 	Phone          mysql.Expression
 	Email          mysql.Expression
 	MarketingOptIn mysql.Expression
+	ExternalID     mysql.Expression
+	JoinLocationID mysql.Expression
+	LastLocationID mysql.Expression
 	CreatedAt      mysql.Expression
 	UpdatedAt      mysql.Expression
 }
@@ -96,12 +107,15 @@ type CustomerSetter struct {
 	Phone          omitnull.Val[string]    `db:"phone" `
 	Email          omitnull.Val[string]    `db:"email" `
 	MarketingOptIn omitnull.Val[bool]      `db:"marketing_opt_in" `
+	ExternalID     omitnull.Val[string]    `db:"external_id" `
+	JoinLocationID omitnull.Val[int64]     `db:"join_location_id" `
+	LastLocationID omitnull.Val[int64]     `db:"last_location_id" `
 	CreatedAt      omitnull.Val[time.Time] `db:"created_at" `
 	UpdatedAt      omitnull.Val[time.Time] `db:"updated_at" `
 }
 
 func (s CustomerSetter) SetColumns() []string {
-	vals := make([]string, 0, 7)
+	vals := make([]string, 0, 10)
 	if s.ID.IsValue() {
 		vals = append(vals, "id")
 	}
@@ -116,6 +130,15 @@ func (s CustomerSetter) SetColumns() []string {
 	}
 	if !s.MarketingOptIn.IsUnset() {
 		vals = append(vals, "marketing_opt_in")
+	}
+	if !s.ExternalID.IsUnset() {
+		vals = append(vals, "external_id")
+	}
+	if !s.JoinLocationID.IsUnset() {
+		vals = append(vals, "join_location_id")
+	}
+	if !s.LastLocationID.IsUnset() {
+		vals = append(vals, "last_location_id")
 	}
 	if !s.CreatedAt.IsUnset() {
 		vals = append(vals, "created_at")
@@ -141,6 +164,15 @@ func (s CustomerSetter) Overwrite(t *Customer) {
 	}
 	if !s.MarketingOptIn.IsUnset() {
 		t.MarketingOptIn = s.MarketingOptIn.MustGetNull()
+	}
+	if !s.ExternalID.IsUnset() {
+		t.ExternalID = s.ExternalID.MustGetNull()
+	}
+	if !s.JoinLocationID.IsUnset() {
+		t.JoinLocationID = s.JoinLocationID.MustGetNull()
+	}
+	if !s.LastLocationID.IsUnset() {
+		t.LastLocationID = s.LastLocationID.MustGetNull()
 	}
 	if !s.CreatedAt.IsUnset() {
 		t.CreatedAt = s.CreatedAt.MustGetNull()
@@ -182,6 +214,21 @@ func (s *CustomerSetter) Apply(q *dialect.InsertQuery) {
 			}
 			return mysql.Arg(s.MarketingOptIn.MustGetNull()).WriteSQL(ctx, w, d, start)
 		}), bob.ExpressionFunc(func(ctx context.Context, w io.StringWriter, d bob.Dialect, start int) ([]any, error) {
+			if !(!s.ExternalID.IsUnset()) {
+				return mysql.Raw("DEFAULT").WriteSQL(ctx, w, d, start)
+			}
+			return mysql.Arg(s.ExternalID.MustGetNull()).WriteSQL(ctx, w, d, start)
+		}), bob.ExpressionFunc(func(ctx context.Context, w io.StringWriter, d bob.Dialect, start int) ([]any, error) {
+			if !(!s.JoinLocationID.IsUnset()) {
+				return mysql.Raw("DEFAULT").WriteSQL(ctx, w, d, start)
+			}
+			return mysql.Arg(s.JoinLocationID.MustGetNull()).WriteSQL(ctx, w, d, start)
+		}), bob.ExpressionFunc(func(ctx context.Context, w io.StringWriter, d bob.Dialect, start int) ([]any, error) {
+			if !(!s.LastLocationID.IsUnset()) {
+				return mysql.Raw("DEFAULT").WriteSQL(ctx, w, d, start)
+			}
+			return mysql.Arg(s.LastLocationID.MustGetNull()).WriteSQL(ctx, w, d, start)
+		}), bob.ExpressionFunc(func(ctx context.Context, w io.StringWriter, d bob.Dialect, start int) ([]any, error) {
 			if !(!s.CreatedAt.IsUnset()) {
 				return mysql.Raw("DEFAULT").WriteSQL(ctx, w, d, start)
 			}
@@ -199,7 +246,7 @@ func (s CustomerSetter) UpdateMod() bob.Mod[*dialect.UpdateQuery] {
 }
 
 func (s CustomerSetter) Expressions(prefix ...string) []bob.Expression {
-	exprs := make([]bob.Expression, 0, 7)
+	exprs := make([]bob.Expression, 0, 10)
 
 	if s.ID.IsValue() {
 		exprs = append(exprs, expr.Join{Sep: " = ", Exprs: []bob.Expression{
@@ -233,6 +280,27 @@ func (s CustomerSetter) Expressions(prefix ...string) []bob.Expression {
 		exprs = append(exprs, expr.Join{Sep: " = ", Exprs: []bob.Expression{
 			mysql.Quote(append(prefix, "marketing_opt_in")...),
 			mysql.Arg(s.MarketingOptIn),
+		}})
+	}
+
+	if !s.ExternalID.IsUnset() {
+		exprs = append(exprs, expr.Join{Sep: " = ", Exprs: []bob.Expression{
+			mysql.Quote(append(prefix, "external_id")...),
+			mysql.Arg(s.ExternalID),
+		}})
+	}
+
+	if !s.JoinLocationID.IsUnset() {
+		exprs = append(exprs, expr.Join{Sep: " = ", Exprs: []bob.Expression{
+			mysql.Quote(append(prefix, "join_location_id")...),
+			mysql.Arg(s.JoinLocationID),
+		}})
+	}
+
+	if !s.LastLocationID.IsUnset() {
+		exprs = append(exprs, expr.Join{Sep: " = ", Exprs: []bob.Expression{
+			mysql.Quote(append(prefix, "last_location_id")...),
+			mysql.Arg(s.LastLocationID),
 		}})
 	}
 
@@ -476,6 +544,44 @@ func (o CustomerSlice) ReloadAll(ctx context.Context, exec bob.Executor) error {
 	return nil
 }
 
+// JoinLocationLocation starts a query for related objects on locations
+func (o *Customer) JoinLocationLocation(mods ...bob.Mod[*dialect.SelectQuery]) LocationsQuery {
+	return Locations.Query(append(mods,
+		sm.Where(Locations.Columns.ID.EQ(mysql.Arg(o.JoinLocationID))),
+	)...)
+}
+
+func (os CustomerSlice) JoinLocationLocation(mods ...bob.Mod[*dialect.SelectQuery]) LocationsQuery {
+	PKArgSlice := make([]bob.Expression, len(os))
+	for i, o := range os {
+		PKArgSlice[i] = mysql.ArgGroup(o.JoinLocationID)
+	}
+	PKArgExpr := mysql.Group(PKArgSlice...)
+
+	return Locations.Query(append(mods,
+		sm.Where(mysql.Group(Locations.Columns.ID).OP("IN", PKArgExpr)),
+	)...)
+}
+
+// LastLocationLocation starts a query for related objects on locations
+func (o *Customer) LastLocationLocation(mods ...bob.Mod[*dialect.SelectQuery]) LocationsQuery {
+	return Locations.Query(append(mods,
+		sm.Where(Locations.Columns.ID.EQ(mysql.Arg(o.LastLocationID))),
+	)...)
+}
+
+func (os CustomerSlice) LastLocationLocation(mods ...bob.Mod[*dialect.SelectQuery]) LocationsQuery {
+	PKArgSlice := make([]bob.Expression, len(os))
+	for i, o := range os {
+		PKArgSlice[i] = mysql.ArgGroup(o.LastLocationID)
+	}
+	PKArgExpr := mysql.Group(PKArgSlice...)
+
+	return Locations.Query(append(mods,
+		sm.Where(mysql.Group(Locations.Columns.ID).OP("IN", PKArgExpr)),
+	)...)
+}
+
 // Orders starts a query for related objects on orders
 func (o *Customer) Orders(mods ...bob.Mod[*dialect.SelectQuery]) OrdersQuery {
 	return Orders.Query(append(mods,
@@ -493,6 +599,102 @@ func (os CustomerSlice) Orders(mods ...bob.Mod[*dialect.SelectQuery]) OrdersQuer
 	return Orders.Query(append(mods,
 		sm.Where(mysql.Group(Orders.Columns.CustomerID).OP("IN", PKArgExpr)),
 	)...)
+}
+
+func attachCustomerJoinLocationLocation0(ctx context.Context, exec bob.Executor, count int, customer0 *Customer, location1 *Location) (*Customer, error) {
+	setter := &CustomerSetter{
+		JoinLocationID: omitnull.From(location1.ID),
+	}
+
+	err := customer0.Update(ctx, exec, setter)
+	if err != nil {
+		return nil, fmt.Errorf("attachCustomerJoinLocationLocation0: %w", err)
+	}
+
+	return customer0, nil
+}
+
+func (customer0 *Customer) InsertJoinLocationLocation(ctx context.Context, exec bob.Executor, related *LocationSetter) error {
+	var err error
+
+	location1, err := Locations.Insert(related).One(ctx, exec)
+	if err != nil {
+		return fmt.Errorf("inserting related objects: %w", err)
+	}
+
+	_, err = attachCustomerJoinLocationLocation0(ctx, exec, 1, customer0, location1)
+	if err != nil {
+		return err
+	}
+
+	customer0.R.JoinLocationLocation = location1
+
+	location1.R.JoinLocationCustomers = append(location1.R.JoinLocationCustomers, customer0)
+
+	return nil
+}
+
+func (customer0 *Customer) AttachJoinLocationLocation(ctx context.Context, exec bob.Executor, location1 *Location) error {
+	var err error
+
+	_, err = attachCustomerJoinLocationLocation0(ctx, exec, 1, customer0, location1)
+	if err != nil {
+		return err
+	}
+
+	customer0.R.JoinLocationLocation = location1
+
+	location1.R.JoinLocationCustomers = append(location1.R.JoinLocationCustomers, customer0)
+
+	return nil
+}
+
+func attachCustomerLastLocationLocation0(ctx context.Context, exec bob.Executor, count int, customer0 *Customer, location1 *Location) (*Customer, error) {
+	setter := &CustomerSetter{
+		LastLocationID: omitnull.From(location1.ID),
+	}
+
+	err := customer0.Update(ctx, exec, setter)
+	if err != nil {
+		return nil, fmt.Errorf("attachCustomerLastLocationLocation0: %w", err)
+	}
+
+	return customer0, nil
+}
+
+func (customer0 *Customer) InsertLastLocationLocation(ctx context.Context, exec bob.Executor, related *LocationSetter) error {
+	var err error
+
+	location1, err := Locations.Insert(related).One(ctx, exec)
+	if err != nil {
+		return fmt.Errorf("inserting related objects: %w", err)
+	}
+
+	_, err = attachCustomerLastLocationLocation0(ctx, exec, 1, customer0, location1)
+	if err != nil {
+		return err
+	}
+
+	customer0.R.LastLocationLocation = location1
+
+	location1.R.LastLocationCustomers = append(location1.R.LastLocationCustomers, customer0)
+
+	return nil
+}
+
+func (customer0 *Customer) AttachLastLocationLocation(ctx context.Context, exec bob.Executor, location1 *Location) error {
+	var err error
+
+	_, err = attachCustomerLastLocationLocation0(ctx, exec, 1, customer0, location1)
+	if err != nil {
+		return err
+	}
+
+	customer0.R.LastLocationLocation = location1
+
+	location1.R.LastLocationCustomers = append(location1.R.LastLocationCustomers, customer0)
+
+	return nil
 }
 
 func insertCustomerOrders0(ctx context.Context, exec bob.Executor, orders1 []*OrderSetter, customer0 *Customer) (OrderSlice, error) {
@@ -569,6 +771,9 @@ type customerWhere[Q mysql.Filterable] struct {
 	Phone          mysql.WhereNullMod[Q, string]
 	Email          mysql.WhereNullMod[Q, string]
 	MarketingOptIn mysql.WhereNullMod[Q, bool]
+	ExternalID     mysql.WhereNullMod[Q, string]
+	JoinLocationID mysql.WhereNullMod[Q, int64]
+	LastLocationID mysql.WhereNullMod[Q, int64]
 	CreatedAt      mysql.WhereNullMod[Q, time.Time]
 	UpdatedAt      mysql.WhereNullMod[Q, time.Time]
 }
@@ -584,6 +789,9 @@ func buildCustomerWhere[Q mysql.Filterable](cols customerColumns) customerWhere[
 		Phone:          mysql.WhereNull[Q, string](cols.Phone),
 		Email:          mysql.WhereNull[Q, string](cols.Email),
 		MarketingOptIn: mysql.WhereNull[Q, bool](cols.MarketingOptIn),
+		ExternalID:     mysql.WhereNull[Q, string](cols.ExternalID),
+		JoinLocationID: mysql.WhereNull[Q, int64](cols.JoinLocationID),
+		LastLocationID: mysql.WhereNull[Q, int64](cols.LastLocationID),
 		CreatedAt:      mysql.WhereNull[Q, time.Time](cols.CreatedAt),
 		UpdatedAt:      mysql.WhereNull[Q, time.Time](cols.UpdatedAt),
 	}
@@ -595,6 +803,30 @@ func (o *Customer) Preload(name string, retrieved any) error {
 	}
 
 	switch name {
+	case "JoinLocationLocation":
+		rel, ok := retrieved.(*Location)
+		if !ok {
+			return fmt.Errorf("customer cannot load %T as %q", retrieved, name)
+		}
+
+		o.R.JoinLocationLocation = rel
+
+		if rel != nil {
+			rel.R.JoinLocationCustomers = CustomerSlice{o}
+		}
+		return nil
+	case "LastLocationLocation":
+		rel, ok := retrieved.(*Location)
+		if !ok {
+			return fmt.Errorf("customer cannot load %T as %q", retrieved, name)
+		}
+
+		o.R.LastLocationLocation = rel
+
+		if rel != nil {
+			rel.R.LastLocationCustomers = CustomerSlice{o}
+		}
+		return nil
 	case "Orders":
 		rels, ok := retrieved.(OrderSlice)
 		if !ok {
@@ -614,22 +846,72 @@ func (o *Customer) Preload(name string, retrieved any) error {
 	}
 }
 
-type customerPreloader struct{}
+type customerPreloader struct {
+	JoinLocationLocation func(...mysql.PreloadOption) mysql.Preloader
+	LastLocationLocation func(...mysql.PreloadOption) mysql.Preloader
+}
 
 func buildCustomerPreloader() customerPreloader {
-	return customerPreloader{}
+	return customerPreloader{
+		JoinLocationLocation: func(opts ...mysql.PreloadOption) mysql.Preloader {
+			return mysql.Preload[*Location, LocationSlice](mysql.PreloadRel{
+				Name: "JoinLocationLocation",
+				Sides: []mysql.PreloadSide{
+					{
+						From:        Customers,
+						To:          Locations,
+						FromColumns: []string{"join_location_id"},
+						ToColumns:   []string{"id"},
+					},
+				},
+			}, Locations.Columns.Names(), opts...)
+		},
+		LastLocationLocation: func(opts ...mysql.PreloadOption) mysql.Preloader {
+			return mysql.Preload[*Location, LocationSlice](mysql.PreloadRel{
+				Name: "LastLocationLocation",
+				Sides: []mysql.PreloadSide{
+					{
+						From:        Customers,
+						To:          Locations,
+						FromColumns: []string{"last_location_id"},
+						ToColumns:   []string{"id"},
+					},
+				},
+			}, Locations.Columns.Names(), opts...)
+		},
+	}
 }
 
 type customerThenLoader[Q orm.Loadable] struct {
-	Orders func(...bob.Mod[*dialect.SelectQuery]) orm.Loader[Q]
+	JoinLocationLocation func(...bob.Mod[*dialect.SelectQuery]) orm.Loader[Q]
+	LastLocationLocation func(...bob.Mod[*dialect.SelectQuery]) orm.Loader[Q]
+	Orders               func(...bob.Mod[*dialect.SelectQuery]) orm.Loader[Q]
 }
 
 func buildCustomerThenLoader[Q orm.Loadable]() customerThenLoader[Q] {
+	type JoinLocationLocationLoadInterface interface {
+		LoadJoinLocationLocation(context.Context, bob.Executor, ...bob.Mod[*dialect.SelectQuery]) error
+	}
+	type LastLocationLocationLoadInterface interface {
+		LoadLastLocationLocation(context.Context, bob.Executor, ...bob.Mod[*dialect.SelectQuery]) error
+	}
 	type OrdersLoadInterface interface {
 		LoadOrders(context.Context, bob.Executor, ...bob.Mod[*dialect.SelectQuery]) error
 	}
 
 	return customerThenLoader[Q]{
+		JoinLocationLocation: thenLoadBuilder[Q](
+			"JoinLocationLocation",
+			func(ctx context.Context, exec bob.Executor, retrieved JoinLocationLocationLoadInterface, mods ...bob.Mod[*dialect.SelectQuery]) error {
+				return retrieved.LoadJoinLocationLocation(ctx, exec, mods...)
+			},
+		),
+		LastLocationLocation: thenLoadBuilder[Q](
+			"LastLocationLocation",
+			func(ctx context.Context, exec bob.Executor, retrieved LastLocationLocationLoadInterface, mods ...bob.Mod[*dialect.SelectQuery]) error {
+				return retrieved.LoadLastLocationLocation(ctx, exec, mods...)
+			},
+		),
 		Orders: thenLoadBuilder[Q](
 			"Orders",
 			func(ctx context.Context, exec bob.Executor, retrieved OrdersLoadInterface, mods ...bob.Mod[*dialect.SelectQuery]) error {
@@ -637,6 +919,116 @@ func buildCustomerThenLoader[Q orm.Loadable]() customerThenLoader[Q] {
 			},
 		),
 	}
+}
+
+// LoadJoinLocationLocation loads the customer's JoinLocationLocation into the .R struct
+func (o *Customer) LoadJoinLocationLocation(ctx context.Context, exec bob.Executor, mods ...bob.Mod[*dialect.SelectQuery]) error {
+	if o == nil {
+		return nil
+	}
+
+	// Reset the relationship
+	o.R.JoinLocationLocation = nil
+
+	related, err := o.JoinLocationLocation(mods...).One(ctx, exec)
+	if err != nil {
+		return err
+	}
+
+	related.R.JoinLocationCustomers = CustomerSlice{o}
+
+	o.R.JoinLocationLocation = related
+	return nil
+}
+
+// LoadJoinLocationLocation loads the customer's JoinLocationLocation into the .R struct
+func (os CustomerSlice) LoadJoinLocationLocation(ctx context.Context, exec bob.Executor, mods ...bob.Mod[*dialect.SelectQuery]) error {
+	if len(os) == 0 {
+		return nil
+	}
+
+	locations, err := os.JoinLocationLocation(mods...).All(ctx, exec)
+	if err != nil {
+		return err
+	}
+
+	for _, o := range os {
+		if o == nil {
+			continue
+		}
+
+		for _, rel := range locations {
+			if !o.JoinLocationID.IsValue() {
+				continue
+			}
+
+			if !(o.JoinLocationID.IsValue() && o.JoinLocationID.MustGet() == rel.ID) {
+				continue
+			}
+
+			rel.R.JoinLocationCustomers = append(rel.R.JoinLocationCustomers, o)
+
+			o.R.JoinLocationLocation = rel
+			break
+		}
+	}
+
+	return nil
+}
+
+// LoadLastLocationLocation loads the customer's LastLocationLocation into the .R struct
+func (o *Customer) LoadLastLocationLocation(ctx context.Context, exec bob.Executor, mods ...bob.Mod[*dialect.SelectQuery]) error {
+	if o == nil {
+		return nil
+	}
+
+	// Reset the relationship
+	o.R.LastLocationLocation = nil
+
+	related, err := o.LastLocationLocation(mods...).One(ctx, exec)
+	if err != nil {
+		return err
+	}
+
+	related.R.LastLocationCustomers = CustomerSlice{o}
+
+	o.R.LastLocationLocation = related
+	return nil
+}
+
+// LoadLastLocationLocation loads the customer's LastLocationLocation into the .R struct
+func (os CustomerSlice) LoadLastLocationLocation(ctx context.Context, exec bob.Executor, mods ...bob.Mod[*dialect.SelectQuery]) error {
+	if len(os) == 0 {
+		return nil
+	}
+
+	locations, err := os.LastLocationLocation(mods...).All(ctx, exec)
+	if err != nil {
+		return err
+	}
+
+	for _, o := range os {
+		if o == nil {
+			continue
+		}
+
+		for _, rel := range locations {
+			if !o.LastLocationID.IsValue() {
+				continue
+			}
+
+			if !(o.LastLocationID.IsValue() && o.LastLocationID.MustGet() == rel.ID) {
+				continue
+			}
+
+			rel.R.LastLocationCustomers = append(rel.R.LastLocationCustomers, o)
+
+			o.R.LastLocationLocation = rel
+			break
+		}
+	}
+
+	return nil
 }
 
 // LoadOrders loads the customer's Orders into the .R struct
@@ -704,8 +1096,10 @@ func (os CustomerSlice) LoadOrders(ctx context.Context, exec bob.Executor, mods 
 }
 
 type customerJoins[Q dialect.Joinable] struct {
-	typ    string
-	Orders modAs[Q, orderColumns]
+	typ                  string
+	JoinLocationLocation modAs[Q, locationColumns]
+	LastLocationLocation modAs[Q, locationColumns]
+	Orders               modAs[Q, orderColumns]
 }
 
 func (j customerJoins[Q]) aliasedAs(alias string) customerJoins[Q] {
@@ -715,6 +1109,34 @@ func (j customerJoins[Q]) aliasedAs(alias string) customerJoins[Q] {
 func buildCustomerJoins[Q dialect.Joinable](cols customerColumns, typ string) customerJoins[Q] {
 	return customerJoins[Q]{
 		typ: typ,
+		JoinLocationLocation: modAs[Q, locationColumns]{
+			c: Locations.Columns,
+			f: func(to locationColumns) bob.Mod[Q] {
+				mods := make(mods.QueryMods[Q], 0, 1)
+
+				{
+					mods = append(mods, dialect.Join[Q](typ, Locations.Name().As(to.Alias())).On(
+						to.ID.EQ(cols.JoinLocationID),
+					))
+				}
+
+				return mods
+			},
+		},
+		LastLocationLocation: modAs[Q, locationColumns]{
+			c: Locations.Columns,
+			f: func(to locationColumns) bob.Mod[Q] {
+				mods := make(mods.QueryMods[Q], 0, 1)
+
+				{
+					mods = append(mods, dialect.Join[Q](typ, Locations.Name().As(to.Alias())).On(
+						to.ID.EQ(cols.LastLocationID),
+					))
+				}
+
+				return mods
+			},
+		},
 		Orders: modAs[Q, orderColumns]{
 			c: Orders.Columns,
 			f: func(to orderColumns) bob.Mod[Q] {

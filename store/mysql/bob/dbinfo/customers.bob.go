@@ -60,6 +60,33 @@ var Customers = Table[
 			Generated: false,
 			AutoIncr:  false,
 		},
+		ExternalID: column{
+			Name:      "external_id",
+			DBType:    "varchar(12)",
+			Default:   "",
+			Comment:   "",
+			Nullable:  true,
+			Generated: false,
+			AutoIncr:  false,
+		},
+		JoinLocationID: column{
+			Name:      "join_location_id",
+			DBType:    "bigint",
+			Default:   "",
+			Comment:   "",
+			Nullable:  true,
+			Generated: false,
+			AutoIncr:  false,
+		},
+		LastLocationID: column{
+			Name:      "last_location_id",
+			DBType:    "bigint",
+			Default:   "",
+			Comment:   "",
+			Nullable:  true,
+			Generated: false,
+			AutoIncr:  false,
+		},
 		CreatedAt: column{
 			Name:      "created_at",
 			DBType:    "timestamp",
@@ -80,6 +107,58 @@ var Customers = Table[
 		},
 	},
 	Indexes: customerIndexes{
+		ExternalID: index{
+			Type: "BTREE",
+			Name: "external_id",
+			Columns: []indexColumn{
+				{
+					Name:         "external_id",
+					Desc:         null.FromCond(false, true),
+					IsExpression: false,
+				},
+			},
+			Unique:  true,
+			Comment: "",
+		},
+		IdxCustomersExternalID: index{
+			Type: "BTREE",
+			Name: "idx_customers_external_id",
+			Columns: []indexColumn{
+				{
+					Name:         "external_id",
+					Desc:         null.FromCond(false, true),
+					IsExpression: false,
+				},
+			},
+			Unique:  false,
+			Comment: "",
+		},
+		JoinLocationID: index{
+			Type: "BTREE",
+			Name: "join_location_id",
+			Columns: []indexColumn{
+				{
+					Name:         "join_location_id",
+					Desc:         null.FromCond(false, true),
+					IsExpression: false,
+				},
+			},
+			Unique:  false,
+			Comment: "",
+		},
+		LastLocationID: index{
+			Type: "BTREE",
+			Name: "last_location_id",
+			Columns: []indexColumn{
+				{
+					Name:         "last_location_id",
+					Desc:         null.FromCond(false, true),
+					IsExpression: false,
+				},
+			},
+			Unique:  false,
+			Comment: "",
+		},
 		PRIMARY: index{
 			Type: "BTREE",
 			Name: "PRIMARY",
@@ -99,6 +178,33 @@ var Customers = Table[
 		Columns: []string{"id"},
 		Comment: "",
 	},
+	ForeignKeys: customerForeignKeys{
+		CustomersIbfk1: foreignKey{
+			constraint: constraint{
+				Name:    "customers_ibfk_1",
+				Columns: []string{"join_location_id"},
+				Comment: "",
+			},
+			ForeignTable:   "locations",
+			ForeignColumns: []string{"id"},
+		},
+		CustomersIbfk2: foreignKey{
+			constraint: constraint{
+				Name:    "customers_ibfk_2",
+				Columns: []string{"last_location_id"},
+				Comment: "",
+			},
+			ForeignTable:   "locations",
+			ForeignColumns: []string{"id"},
+		},
+	},
+	Uniques: customerUniques{
+		ExternalID: constraint{
+			Name:    "external_id",
+			Columns: []string{"external_id"},
+			Comment: "",
+		},
+	},
 
 	Comment: "",
 }
@@ -109,36 +215,52 @@ type customerColumns struct {
 	Phone          column
 	Email          column
 	MarketingOptIn column
+	ExternalID     column
+	JoinLocationID column
+	LastLocationID column
 	CreatedAt      column
 	UpdatedAt      column
 }
 
 func (c customerColumns) AsSlice() []column {
 	return []column{
-		c.ID, c.Name, c.Phone, c.Email, c.MarketingOptIn, c.CreatedAt, c.UpdatedAt,
+		c.ID, c.Name, c.Phone, c.Email, c.MarketingOptIn, c.ExternalID, c.JoinLocationID, c.LastLocationID, c.CreatedAt, c.UpdatedAt,
 	}
 }
 
 type customerIndexes struct {
-	PRIMARY index
+	ExternalID             index
+	IdxCustomersExternalID index
+	JoinLocationID         index
+	LastLocationID         index
+	PRIMARY                index
 }
 
 func (i customerIndexes) AsSlice() []index {
 	return []index{
-		i.PRIMARY,
+		i.ExternalID, i.IdxCustomersExternalID, i.JoinLocationID, i.LastLocationID, i.PRIMARY,
 	}
 }
 
-type customerForeignKeys struct{}
-
-func (f customerForeignKeys) AsSlice() []foreignKey {
-	return []foreignKey{}
+type customerForeignKeys struct {
+	CustomersIbfk1 foreignKey
+	CustomersIbfk2 foreignKey
 }
 
-type customerUniques struct{}
+func (f customerForeignKeys) AsSlice() []foreignKey {
+	return []foreignKey{
+		f.CustomersIbfk1, f.CustomersIbfk2,
+	}
+}
+
+type customerUniques struct {
+	ExternalID constraint
+}
 
 func (u customerUniques) AsSlice() []constraint {
-	return []constraint{}
+	return []constraint{
+		u.ExternalID,
+	}
 }
 
 type customerChecks struct{}

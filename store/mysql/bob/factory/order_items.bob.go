@@ -45,6 +45,7 @@ type OrderItemTemplate struct {
 	Quantity       func() int32
 	Price          func() decimal.Decimal
 	DiscountAmount func() decimal.Decimal
+	ItemTotal      func() decimal.Decimal
 	CreatedAt      func() null.Val[time.Time]
 	UpdatedAt      func() null.Val[time.Time]
 
@@ -135,6 +136,10 @@ func (o OrderItemTemplate) BuildSetter() *models.OrderItemSetter {
 		val := o.DiscountAmount()
 		m.DiscountAmount = omit.From(val)
 	}
+	if o.ItemTotal != nil {
+		val := o.ItemTotal()
+		m.ItemTotal = omit.From(val)
+	}
 	if o.CreatedAt != nil {
 		val := o.CreatedAt()
 		m.CreatedAt = omitnull.FromNull(val)
@@ -186,6 +191,9 @@ func (o OrderItemTemplate) Build() *models.OrderItem {
 	if o.DiscountAmount != nil {
 		m.DiscountAmount = o.DiscountAmount()
 	}
+	if o.ItemTotal != nil {
+		m.ItemTotal = o.ItemTotal()
+	}
 	if o.CreatedAt != nil {
 		m.CreatedAt = o.CreatedAt()
 	}
@@ -225,12 +233,16 @@ func ensureCreatableOrderItem(m *models.OrderItemSetter) {
 		m.Quantity = omit.From(val)
 	}
 	if !(m.Price.IsValue()) {
-		val := random_decimal_Decimal(nil, "10", "2")
+		val := random_decimal_Decimal(nil, "20", "2")
 		m.Price = omit.From(val)
 	}
 	if !(m.DiscountAmount.IsValue()) {
-		val := random_decimal_Decimal(nil, "10", "2")
+		val := random_decimal_Decimal(nil, "20", "2")
 		m.DiscountAmount = omit.From(val)
+	}
+	if !(m.ItemTotal.IsValue()) {
+		val := random_decimal_Decimal(nil, "20", "2")
+		m.ItemTotal = omit.From(val)
 	}
 }
 
@@ -395,6 +407,7 @@ func (m orderItemMods) RandomizeAllColumns(f *faker.Faker) OrderItemMod {
 		OrderItemMods.RandomQuantity(f),
 		OrderItemMods.RandomPrice(f),
 		OrderItemMods.RandomDiscountAmount(f),
+		OrderItemMods.RandomItemTotal(f),
 		OrderItemMods.RandomCreatedAt(f),
 		OrderItemMods.RandomUpdatedAt(f),
 	}
@@ -603,7 +616,7 @@ func (m orderItemMods) UnsetPrice() OrderItemMod {
 func (m orderItemMods) RandomPrice(f *faker.Faker) OrderItemMod {
 	return OrderItemModFunc(func(_ context.Context, o *OrderItemTemplate) {
 		o.Price = func() decimal.Decimal {
-			return random_decimal_Decimal(f, "10", "2")
+			return random_decimal_Decimal(f, "20", "2")
 		}
 	})
 }
@@ -634,7 +647,38 @@ func (m orderItemMods) UnsetDiscountAmount() OrderItemMod {
 func (m orderItemMods) RandomDiscountAmount(f *faker.Faker) OrderItemMod {
 	return OrderItemModFunc(func(_ context.Context, o *OrderItemTemplate) {
 		o.DiscountAmount = func() decimal.Decimal {
-			return random_decimal_Decimal(f, "10", "2")
+			return random_decimal_Decimal(f, "20", "2")
+		}
+	})
+}
+
+// Set the model columns to this value
+func (m orderItemMods) ItemTotal(val decimal.Decimal) OrderItemMod {
+	return OrderItemModFunc(func(_ context.Context, o *OrderItemTemplate) {
+		o.ItemTotal = func() decimal.Decimal { return val }
+	})
+}
+
+// Set the Column from the function
+func (m orderItemMods) ItemTotalFunc(f func() decimal.Decimal) OrderItemMod {
+	return OrderItemModFunc(func(_ context.Context, o *OrderItemTemplate) {
+		o.ItemTotal = f
+	})
+}
+
+// Clear any values for the column
+func (m orderItemMods) UnsetItemTotal() OrderItemMod {
+	return OrderItemModFunc(func(_ context.Context, o *OrderItemTemplate) {
+		o.ItemTotal = nil
+	})
+}
+
+// Generates a random value for the column using the given faker
+// if faker is nil, a default faker is used
+func (m orderItemMods) RandomItemTotal(f *faker.Faker) OrderItemMod {
+	return OrderItemModFunc(func(_ context.Context, o *OrderItemTemplate) {
+		o.ItemTotal = func() decimal.Decimal {
+			return random_decimal_Decimal(f, "20", "2")
 		}
 	})
 }

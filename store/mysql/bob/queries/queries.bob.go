@@ -115,7 +115,7 @@ var dailySoldItemsSQL = formattedQueries_queries[461:675]
 
 type DailySoldItemsQuery = orm.ModQuery[*dialect.SelectQuery, dailySoldItems, DailySoldItemsRow, []DailySoldItemsRow, dailySoldItemsTransformer]
 
-func DailySoldItems(OrderDate time.Time) *DailySoldItemsQuery {
+func DailySoldItems(OrderDate string) *DailySoldItemsQuery {
 	var expressionTypArgs dailySoldItems
 
 	expressionTypArgs.OrderDate = mysql.Arg(OrderDate)
@@ -196,7 +196,7 @@ var generalSalesSQL = formattedQueries_queries[694:1152]
 
 type GeneralSalesQuery = orm.ModQuery[*dialect.SelectQuery, generalSales, GeneralSalesRow, []GeneralSalesRow, generalSalesTransformer]
 
-func GeneralSales(OrderDate time.Time, OrderDate2 time.Time) *GeneralSalesQuery {
+func GeneralSales(OrderDate string, OrderDate2 string) *GeneralSalesQuery {
 	var expressionTypArgs generalSales
 
 	expressionTypArgs.OrderDate = mysql.Arg(OrderDate)
@@ -290,7 +290,7 @@ var weeklyTypedSalesSQL = formattedQueries_queries[1175:1802]
 
 type WeeklyTypedSalesQuery = orm.ModQuery[*dialect.SelectQuery, weeklyTypedSales, WeeklyTypedSalesRow, []WeeklyTypedSalesRow, weeklyTypedSalesTransformer]
 
-func WeeklyTypedSales(StartDate time.Time, EndDate time.Time) *WeeklyTypedSalesQuery {
+func WeeklyTypedSales(StartDate string, EndDate string) *WeeklyTypedSalesQuery {
 	var expressionTypArgs weeklyTypedSales
 
 	expressionTypArgs.StartDate = mysql.Arg(StartDate)

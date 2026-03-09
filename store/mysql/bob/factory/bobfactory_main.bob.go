@@ -19,6 +19,7 @@ type Factory struct {
 	baseDimDateMods        DimDateModSlice
 	baseDiscountMods       DiscountModSlice
 	baseItemSummaryMods    ItemSummaryModSlice
+	baseLocationMods       LocationModSlice
 	baseOrderItemMods      OrderItemModSlice
 	baseOrderPaymentMods   OrderPaymentModSlice
 	baseOrderMods          OrderModSlice
@@ -55,10 +56,19 @@ func (f *Factory) FromExistingCustomer(m *models.Customer) *CustomerTemplate {
 	o.Phone = func() null.Val[string] { return m.Phone }
 	o.Email = func() null.Val[string] { return m.Email }
 	o.MarketingOptIn = func() null.Val[bool] { return m.MarketingOptIn }
+	o.ExternalID = func() null.Val[string] { return m.ExternalID }
+	o.JoinLocationID = func() null.Val[int64] { return m.JoinLocationID }
+	o.LastLocationID = func() null.Val[int64] { return m.LastLocationID }
 	o.CreatedAt = func() null.Val[time.Time] { return m.CreatedAt }
 	o.UpdatedAt = func() null.Val[time.Time] { return m.UpdatedAt }
 
 	ctx := context.Background()
+	if m.R.JoinLocationLocation != nil {
+		CustomerMods.WithExistingJoinLocationLocation(m.R.JoinLocationLocation).Apply(ctx, o)
+	}
+	if m.R.LastLocationLocation != nil {
+		CustomerMods.WithExistingLastLocationLocation(m.R.LastLocationLocation).Apply(ctx, o)
+	}
 	if len(m.R.Orders) > 0 {
 		CustomerMods.AddExistingOrders(m.R.Orders...).Apply(ctx, o)
 	}
@@ -159,10 +169,54 @@ func (f *Factory) FromExistingItemSummary(m *models.ItemSummary) *ItemSummaryTem
 	o.Name = func() string { return m.Name }
 	o.Category = func() string { return m.Category }
 	o.OrderType = func() string { return m.OrderType }
-	o.OrderDate = func() time.Time { return m.OrderDate }
+	o.DateOOrderDate = func() null.Val[time.Time] { return m.DateOOrderDate }
 	o.TotalQuantity = func() null.Val[decimal.Decimal] { return m.TotalQuantity }
 	o.TotalSales = func() null.Val[decimal.Decimal] { return m.TotalSales }
 	o.OrderCount = func() int64 { return m.OrderCount }
+	o.LocationID = func() null.Val[int64] { return m.LocationID }
+
+	return o
+}
+
+func (f *Factory) NewLocation(mods ...LocationMod) *LocationTemplate {
+	return f.NewLocationWithContext(context.Background(), mods...)
+}
+
+func (f *Factory) NewLocationWithContext(ctx context.Context, mods ...LocationMod) *LocationTemplate {
+	o := &LocationTemplate{f: f}
+
+	if f != nil {
+		f.baseLocationMods.Apply(ctx, o)
+	}
+
+	LocationModSlice(mods).Apply(ctx, o)
+
+	return o
+}
+
+func (f *Factory) FromExistingLocation(m *models.Location) *LocationTemplate {
+	o := &LocationTemplate{f: f, alreadyPersisted: true}
+
+	o.ID = func() int64 { return m.ID }
+	o.Name = func() string { return m.Name }
+	o.Address = func() string { return m.Address }
+	o.City = func() string { return m.City }
+	o.State = func() string { return m.State }
+	o.Zip = func() string { return m.Zip }
+	o.TaxRate = func() decimal.Decimal { return m.TaxRate }
+	o.CreatedAt = func() null.Val[time.Time] { return m.CreatedAt }
+	o.UpdatedAt = func() null.Val[time.Time] { return m.UpdatedAt }
+
+	ctx := context.Background()
+	if len(m.R.JoinLocationCustomers) > 0 {
+		LocationMods.AddExistingJoinLocationCustomers(m.R.JoinLocationCustomers...).Apply(ctx, o)
+	}
+	if len(m.R.LastLocationCustomers) > 0 {
+		LocationMods.AddExistingLastLocationCustomers(m.R.LastLocationCustomers...).Apply(ctx, o)
+	}
+	if len(m.R.Orders) > 0 {
+		LocationMods.AddExistingOrders(m.R.Orders...).Apply(ctx, o)
+	}
 
 	return o
 }
@@ -193,6 +247,7 @@ func (f *Factory) FromExistingOrderItem(m *models.OrderItem) *OrderItemTemplate 
 	o.Quantity = func() int32 { return m.Quantity }
 	o.Price = func() decimal.Decimal { return m.Price }
 	o.DiscountAmount = func() decimal.Decimal { return m.DiscountAmount }
+	o.ItemTotal = func() decimal.Decimal { return m.ItemTotal }
 	o.CreatedAt = func() null.Val[time.Time] { return m.CreatedAt }
 	o.UpdatedAt = func() null.Val[time.Time] { return m.UpdatedAt }
 
@@ -273,6 +328,7 @@ func (f *Factory) FromExistingOrder(m *models.Order) *OrderTemplate {
 	o.DiscountAmount = func() decimal.Decimal { return m.DiscountAmount }
 	o.TaxAmount = func() decimal.Decimal { return m.TaxAmount }
 	o.Total = func() decimal.Decimal { return m.Total }
+	o.LocationID = func() null.Val[int64] { return m.LocationID }
 	o.CreatedAt = func() null.Val[time.Time] { return m.CreatedAt }
 	o.UpdatedAt = func() null.Val[time.Time] { return m.UpdatedAt }
 
@@ -288,6 +344,9 @@ func (f *Factory) FromExistingOrder(m *models.Order) *OrderTemplate {
 	}
 	if m.R.Discount != nil {
 		OrderMods.WithExistingDiscount(m.R.Discount).Apply(ctx, o)
+	}
+	if m.R.Location != nil {
+		OrderMods.WithExistingLocation(m.R.Location).Apply(ctx, o)
 	}
 
 	return o
@@ -415,6 +474,14 @@ func (f *Factory) ClearBaseItemSummaryMods() {
 
 func (f *Factory) AddBaseItemSummaryMod(mods ...ItemSummaryMod) {
 	f.baseItemSummaryMods = append(f.baseItemSummaryMods, mods...)
+}
+
+func (f *Factory) ClearBaseLocationMods() {
+	f.baseLocationMods = nil
+}
+
+func (f *Factory) AddBaseLocationMod(mods ...LocationMod) {
+	f.baseLocationMods = append(f.baseLocationMods, mods...)
 }
 
 func (f *Factory) ClearBaseOrderItemMods() {

@@ -49,12 +49,12 @@ var ItemSummaries = Table[
 			Generated: false,
 			AutoIncr:  false,
 		},
-		OrderDate: column{
-			Name:      "order_date",
+		DateOOrderDate: column{
+			Name:      "date(o.order_date)",
 			DBType:    "date",
-			Default:   "0000-00-00",
+			Default:   "",
 			Comment:   "",
-			Nullable:  false,
+			Nullable:  true,
 			Generated: false,
 			AutoIncr:  false,
 		},
@@ -69,7 +69,7 @@ var ItemSummaries = Table[
 		},
 		TotalSales: column{
 			Name:      "total_sales",
-			DBType:    "decimal(42,2)",
+			DBType:    "decimal(52,2)",
 			Default:   "",
 			Comment:   "",
 			Nullable:  true,
@@ -85,25 +85,35 @@ var ItemSummaries = Table[
 			Generated: false,
 			AutoIncr:  false,
 		},
+		LocationID: column{
+			Name:      "location_id",
+			DBType:    "bigint",
+			Default:   "",
+			Comment:   "",
+			Nullable:  true,
+			Generated: false,
+			AutoIncr:  false,
+		},
 	},
 
 	Comment: "",
 }
 
 type itemSummaryColumns struct {
-	ID            column
-	Name          column
-	Category      column
-	OrderType     column
-	OrderDate     column
-	TotalQuantity column
-	TotalSales    column
-	OrderCount    column
+	ID             column
+	Name           column
+	Category       column
+	OrderType      column
+	DateOOrderDate column
+	TotalQuantity  column
+	TotalSales     column
+	OrderCount     column
+	LocationID     column
 }
 
 func (c itemSummaryColumns) AsSlice() []column {
 	return []column{
-		c.ID, c.Name, c.Category, c.OrderType, c.OrderDate, c.TotalQuantity, c.TotalSales, c.OrderCount,
+		c.ID, c.Name, c.Category, c.OrderType, c.DateOOrderDate, c.TotalQuantity, c.TotalSales, c.OrderCount, c.LocationID,
 	}
 }
 

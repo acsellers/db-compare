@@ -16,14 +16,15 @@ import (
 
 // ItemSummary is an object representing the database table.
 type ItemSummary struct {
-	ID            null.Val[int64]           `db:"id" `
-	Name          string                    `db:"name" `
-	Category      string                    `db:"category" `
-	OrderType     string                    `db:"order_type" `
-	OrderDate     time.Time                 `db:"order_date" `
-	TotalQuantity null.Val[decimal.Decimal] `db:"total_quantity" `
-	TotalSales    null.Val[decimal.Decimal] `db:"total_sales" `
-	OrderCount    int64                     `db:"order_count" `
+	ID             null.Val[int64]           `db:"id" `
+	Name           string                    `db:"name" `
+	Category       string                    `db:"category" `
+	OrderType      string                    `db:"order_type" `
+	DateOOrderDate null.Val[time.Time]       `db:"date(o.order_date)" `
+	TotalQuantity  null.Val[decimal.Decimal] `db:"total_quantity" `
+	TotalSales     null.Val[decimal.Decimal] `db:"total_sales" `
+	OrderCount     int64                     `db:"order_count" `
+	LocationID     null.Val[int64]           `db:"location_id" `
 }
 
 // ItemSummarySlice is an alias for a slice of pointers to ItemSummary.
@@ -39,31 +40,33 @@ type ItemSummariesQuery = *mysql.ViewQuery[*ItemSummary, ItemSummarySlice]
 func buildItemSummaryColumns(alias string) itemSummaryColumns {
 	return itemSummaryColumns{
 		ColumnsExpr: expr.NewColumnsExpr(
-			"id", "name", "category", "order_type", "order_date", "total_quantity", "total_sales", "order_count",
+			"id", "name", "category", "order_type", "date(o.order_date)", "total_quantity", "total_sales", "order_count", "location_id",
 		).WithParent("item_summaries"),
-		tableAlias:    alias,
-		ID:            mysql.Quote(alias, "id"),
-		Name:          mysql.Quote(alias, "name"),
-		Category:      mysql.Quote(alias, "category"),
-		OrderType:     mysql.Quote(alias, "order_type"),
-		OrderDate:     mysql.Quote(alias, "order_date"),
-		TotalQuantity: mysql.Quote(alias, "total_quantity"),
-		TotalSales:    mysql.Quote(alias, "total_sales"),
-		OrderCount:    mysql.Quote(alias, "order_count"),
+		tableAlias:     alias,
+		ID:             mysql.Quote(alias, "id"),
+		Name:           mysql.Quote(alias, "name"),
+		Category:       mysql.Quote(alias, "category"),
+		OrderType:      mysql.Quote(alias, "order_type"),
+		DateOOrderDate: mysql.Quote(alias, "date(o.order_date)"),
+		TotalQuantity:  mysql.Quote(alias, "total_quantity"),
+		TotalSales:     mysql.Quote(alias, "total_sales"),
+		OrderCount:     mysql.Quote(alias, "order_count"),
+		LocationID:     mysql.Quote(alias, "location_id"),
 	}
 }
 
 type itemSummaryColumns struct {
 	expr.ColumnsExpr
-	tableAlias    string
-	ID            mysql.Expression
-	Name          mysql.Expression
-	Category      mysql.Expression
-	OrderType     mysql.Expression
-	OrderDate     mysql.Expression
-	TotalQuantity mysql.Expression
-	TotalSales    mysql.Expression
-	OrderCount    mysql.Expression
+	tableAlias     string
+	ID             mysql.Expression
+	Name           mysql.Expression
+	Category       mysql.Expression
+	OrderType      mysql.Expression
+	DateOOrderDate mysql.Expression
+	TotalQuantity  mysql.Expression
+	TotalSales     mysql.Expression
+	OrderCount     mysql.Expression
+	LocationID     mysql.Expression
 }
 
 func (c itemSummaryColumns) Alias() string {
@@ -99,14 +102,15 @@ func (o ItemSummarySlice) AfterQueryHook(ctx context.Context, exec bob.Executor,
 }
 
 type itemSummaryWhere[Q mysql.Filterable] struct {
-	ID            mysql.WhereNullMod[Q, int64]
-	Name          mysql.WhereMod[Q, string]
-	Category      mysql.WhereMod[Q, string]
-	OrderType     mysql.WhereMod[Q, string]
-	OrderDate     mysql.WhereMod[Q, time.Time]
-	TotalQuantity mysql.WhereNullMod[Q, decimal.Decimal]
-	TotalSales    mysql.WhereNullMod[Q, decimal.Decimal]
-	OrderCount    mysql.WhereMod[Q, int64]
+	ID             mysql.WhereNullMod[Q, int64]
+	Name           mysql.WhereMod[Q, string]
+	Category       mysql.WhereMod[Q, string]
+	OrderType      mysql.WhereMod[Q, string]
+	DateOOrderDate mysql.WhereNullMod[Q, time.Time]
+	TotalQuantity  mysql.WhereNullMod[Q, decimal.Decimal]
+	TotalSales     mysql.WhereNullMod[Q, decimal.Decimal]
+	OrderCount     mysql.WhereMod[Q, int64]
+	LocationID     mysql.WhereNullMod[Q, int64]
 }
 
 func (itemSummaryWhere[Q]) AliasedAs(alias string) itemSummaryWhere[Q] {
@@ -115,13 +119,14 @@ func (itemSummaryWhere[Q]) AliasedAs(alias string) itemSummaryWhere[Q] {
 
 func buildItemSummaryWhere[Q mysql.Filterable](cols itemSummaryColumns) itemSummaryWhere[Q] {
 	return itemSummaryWhere[Q]{
-		ID:            mysql.WhereNull[Q, int64](cols.ID),
-		Name:          mysql.Where[Q, string](cols.Name),
-		Category:      mysql.Where[Q, string](cols.Category),
-		OrderType:     mysql.Where[Q, string](cols.OrderType),
-		OrderDate:     mysql.Where[Q, time.Time](cols.OrderDate),
-		TotalQuantity: mysql.WhereNull[Q, decimal.Decimal](cols.TotalQuantity),
-		TotalSales:    mysql.WhereNull[Q, decimal.Decimal](cols.TotalSales),
-		OrderCount:    mysql.Where[Q, int64](cols.OrderCount),
+		ID:             mysql.WhereNull[Q, int64](cols.ID),
+		Name:           mysql.Where[Q, string](cols.Name),
+		Category:       mysql.Where[Q, string](cols.Category),
+		OrderType:      mysql.Where[Q, string](cols.OrderType),
+		DateOOrderDate: mysql.WhereNull[Q, time.Time](cols.DateOOrderDate),
+		TotalQuantity:  mysql.WhereNull[Q, decimal.Decimal](cols.TotalQuantity),
+		TotalSales:     mysql.WhereNull[Q, decimal.Decimal](cols.TotalSales),
+		OrderCount:     mysql.Where[Q, int64](cols.OrderCount),
+		LocationID:     mysql.WhereNull[Q, int64](cols.LocationID),
 	}
 }

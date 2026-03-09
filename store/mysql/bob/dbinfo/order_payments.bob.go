@@ -35,7 +35,7 @@ var OrderPayments = Table[
 		},
 		PaymentType: column{
 			Name:      "payment_type",
-			DBType:    "varchar(12)",
+			DBType:    "varchar(1)",
 			Default:   "",
 			Comment:   "",
 			Nullable:  false,
@@ -44,7 +44,7 @@ var OrderPayments = Table[
 		},
 		Amount: column{
 			Name:      "amount",
-			DBType:    "decimal(10,2)",
+			DBType:    "decimal(20,2)",
 			Default:   "",
 			Comment:   "",
 			Nullable:  false,
@@ -55,7 +55,7 @@ var OrderPayments = Table[
 			Name:      "payment_info",
 			DBType:    "json",
 			Default:   "",
-			Comment:   "",
+			Comment:   "payments.Info",
 			Nullable:  true,
 			Generated: false,
 			AutoIncr:  false,

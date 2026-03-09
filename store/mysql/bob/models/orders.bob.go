@@ -35,6 +35,7 @@ type Order struct {
 	DiscountAmount decimal.Decimal     `db:"discount_amount" `
 	TaxAmount      decimal.Decimal     `db:"tax_amount" `
 	Total          decimal.Decimal     `db:"total" `
+	LocationID     null.Val[int64]     `db:"location_id" `
 	CreatedAt      null.Val[time.Time] `db:"created_at" `
 	UpdatedAt      null.Val[time.Time] `db:"updated_at" `
 
@@ -57,12 +58,13 @@ type orderR struct {
 	OrderPayments OrderPaymentSlice // order_payments_ibfk_1
 	Customer      *Customer         // orders_ibfk_1
 	Discount      *Discount         // orders_ibfk_2
+	Location      *Location         // orders_ibfk_3
 }
 
 func buildOrderColumns(alias string) orderColumns {
 	return orderColumns{
 		ColumnsExpr: expr.NewColumnsExpr(
-			"id", "order_date", "customer_id", "discount_id", "order_type", "subtotal", "discount_amount", "tax_amount", "total", "created_at", "updated_at",
+			"id", "order_date", "customer_id", "discount_id", "order_type", "subtotal", "discount_amount", "tax_amount", "total", "location_id", "created_at", "updated_at",
 		).WithParent("orders"),
 		tableAlias:     alias,
 		ID:             mysql.Quote(alias, "id"),
@@ -74,6 +76,7 @@ func buildOrderColumns(alias string) orderColumns {
 		DiscountAmount: mysql.Quote(alias, "discount_amount"),
 		TaxAmount:      mysql.Quote(alias, "tax_amount"),
 		Total:          mysql.Quote(alias, "total"),
+		LocationID:     mysql.Quote(alias, "location_id"),
 		CreatedAt:      mysql.Quote(alias, "created_at"),
 		UpdatedAt:      mysql.Quote(alias, "updated_at"),
 	}
@@ -91,6 +94,7 @@ type orderColumns struct {
 	DiscountAmount mysql.Expression
 	TaxAmount      mysql.Expression
 	Total          mysql.Expression
+	LocationID     mysql.Expression
 	CreatedAt      mysql.Expression
 	UpdatedAt      mysql.Expression
 }
@@ -116,12 +120,13 @@ type OrderSetter struct {
 	DiscountAmount omit.Val[decimal.Decimal] `db:"discount_amount" `
 	TaxAmount      omit.Val[decimal.Decimal] `db:"tax_amount" `
 	Total          omit.Val[decimal.Decimal] `db:"total" `
+	LocationID     omitnull.Val[int64]       `db:"location_id" `
 	CreatedAt      omitnull.Val[time.Time]   `db:"created_at" `
 	UpdatedAt      omitnull.Val[time.Time]   `db:"updated_at" `
 }
 
 func (s OrderSetter) SetColumns() []string {
-	vals := make([]string, 0, 11)
+	vals := make([]string, 0, 12)
 	if s.ID.IsValue() {
 		vals = append(vals, "id")
 	}
@@ -148,6 +153,9 @@ func (s OrderSetter) SetColumns() []string {
 	}
 	if s.Total.IsValue() {
 		vals = append(vals, "total")
+	}
+	if !s.LocationID.IsUnset() {
+		vals = append(vals, "location_id")
 	}
 	if !s.CreatedAt.IsUnset() {
 		vals = append(vals, "created_at")
@@ -185,6 +193,9 @@ func (s OrderSetter) Overwrite(t *Order) {
 	}
 	if s.Total.IsValue() {
 		t.Total = s.Total.MustGet()
+	}
+	if !s.LocationID.IsUnset() {
+		t.LocationID = s.LocationID.MustGetNull()
 	}
 	if !s.CreatedAt.IsUnset() {
 		t.CreatedAt = s.CreatedAt.MustGetNull()
@@ -246,6 +257,11 @@ func (s *OrderSetter) Apply(q *dialect.InsertQuery) {
 			}
 			return mysql.Arg(s.Total.MustGet()).WriteSQL(ctx, w, d, start)
 		}), bob.ExpressionFunc(func(ctx context.Context, w io.StringWriter, d bob.Dialect, start int) ([]any, error) {
+			if !(!s.LocationID.IsUnset()) {
+				return mysql.Raw("DEFAULT").WriteSQL(ctx, w, d, start)
+			}
+			return mysql.Arg(s.LocationID.MustGetNull()).WriteSQL(ctx, w, d, start)
+		}), bob.ExpressionFunc(func(ctx context.Context, w io.StringWriter, d bob.Dialect, start int) ([]any, error) {
 			if !(!s.CreatedAt.IsUnset()) {
 				return mysql.Raw("DEFAULT").WriteSQL(ctx, w, d, start)
 			}
@@ -263,7 +279,7 @@ func (s OrderSetter) UpdateMod() bob.Mod[*dialect.UpdateQuery] {
 }
 
 func (s OrderSetter) Expressions(prefix ...string) []bob.Expression {
-	exprs := make([]bob.Expression, 0, 11)
+	exprs := make([]bob.Expression, 0, 12)
 
 	if s.ID.IsValue() {
 		exprs = append(exprs, expr.Join{Sep: " = ", Exprs: []bob.Expression{
@@ -325,6 +341,13 @@ func (s OrderSetter) Expressions(prefix ...string) []bob.Expression {
 		exprs = append(exprs, expr.Join{Sep: " = ", Exprs: []bob.Expression{
 			mysql.Quote(append(prefix, "total")...),
 			mysql.Arg(s.Total),
+		}})
+	}
+
+	if !s.LocationID.IsUnset() {
+		exprs = append(exprs, expr.Join{Sep: " = ", Exprs: []bob.Expression{
+			mysql.Quote(append(prefix, "location_id")...),
+			mysql.Arg(s.LocationID),
 		}})
 	}
 
@@ -644,6 +667,25 @@ func (os OrderSlice) Discount(mods ...bob.Mod[*dialect.SelectQuery]) DiscountsQu
 	)...)
 }
 
+// Location starts a query for related objects on locations
+func (o *Order) Location(mods ...bob.Mod[*dialect.SelectQuery]) LocationsQuery {
+	return Locations.Query(append(mods,
+		sm.Where(Locations.Columns.ID.EQ(mysql.Arg(o.LocationID))),
+	)...)
+}
+
+func (os OrderSlice) Location(mods ...bob.Mod[*dialect.SelectQuery]) LocationsQuery {
+	PKArgSlice := make([]bob.Expression, len(os))
+	for i, o := range os {
+		PKArgSlice[i] = mysql.ArgGroup(o.LocationID)
+	}
+	PKArgExpr := mysql.Group(PKArgSlice...)
+
+	return Locations.Query(append(mods,
+		sm.Where(mysql.Group(Locations.Columns.ID).OP("IN", PKArgExpr)),
+	)...)
+}
+
 func insertOrderOrderItems0(ctx context.Context, exec bob.Executor, orderItems1 []*OrderItemSetter, order0 *Order) (OrderItemSlice, error) {
 	for i := range orderItems1 {
 		orderItems1[i].OrderID = omit.From(order0.ID)
@@ -876,6 +918,54 @@ func (order0 *Order) AttachDiscount(ctx context.Context, exec bob.Executor, disc
 	return nil
 }
 
+func attachOrderLocation0(ctx context.Context, exec bob.Executor, count int, order0 *Order, location1 *Location) (*Order, error) {
+	setter := &OrderSetter{
+		LocationID: omitnull.From(location1.ID),
+	}
+
+	err := order0.Update(ctx, exec, setter)
+	if err != nil {
+		return nil, fmt.Errorf("attachOrderLocation0: %w", err)
+	}
+
+	return order0, nil
+}
+
+func (order0 *Order) InsertLocation(ctx context.Context, exec bob.Executor, related *LocationSetter) error {
+	var err error
+
+	location1, err := Locations.Insert(related).One(ctx, exec)
+	if err != nil {
+		return fmt.Errorf("inserting related objects: %w", err)
+	}
+
+	_, err = attachOrderLocation0(ctx, exec, 1, order0, location1)
+	if err != nil {
+		return err
+	}
+
+	order0.R.Location = location1
+
+	location1.R.Orders = append(location1.R.Orders, order0)
+
+	return nil
+}
+
+func (order0 *Order) AttachLocation(ctx context.Context, exec bob.Executor, location1 *Location) error {
+	var err error
+
+	_, err = attachOrderLocation0(ctx, exec, 1, order0, location1)
+	if err != nil {
+		return err
+	}
+
+	order0.R.Location = location1
+
+	location1.R.Orders = append(location1.R.Orders, order0)
+
+	return nil
+}
+
 type orderWhere[Q mysql.Filterable] struct {
 	ID             mysql.WhereMod[Q, int64]
 	OrderDate      mysql.WhereMod[Q, time.Time]
@@ -886,6 +976,7 @@ type orderWhere[Q mysql.Filterable] struct {
 	DiscountAmount mysql.WhereMod[Q, decimal.Decimal]
 	TaxAmount      mysql.WhereMod[Q, decimal.Decimal]
 	Total          mysql.WhereMod[Q, decimal.Decimal]
+	LocationID     mysql.WhereNullMod[Q, int64]
 	CreatedAt      mysql.WhereNullMod[Q, time.Time]
 	UpdatedAt      mysql.WhereNullMod[Q, time.Time]
 }
@@ -905,6 +996,7 @@ func buildOrderWhere[Q mysql.Filterable](cols orderColumns) orderWhere[Q] {
 		DiscountAmount: mysql.Where[Q, decimal.Decimal](cols.DiscountAmount),
 		TaxAmount:      mysql.Where[Q, decimal.Decimal](cols.TaxAmount),
 		Total:          mysql.Where[Q, decimal.Decimal](cols.Total),
+		LocationID:     mysql.WhereNull[Q, int64](cols.LocationID),
 		CreatedAt:      mysql.WhereNull[Q, time.Time](cols.CreatedAt),
 		UpdatedAt:      mysql.WhereNull[Q, time.Time](cols.UpdatedAt),
 	}
@@ -968,6 +1060,18 @@ func (o *Order) Preload(name string, retrieved any) error {
 			rel.R.Orders = OrderSlice{o}
 		}
 		return nil
+	case "Location":
+		rel, ok := retrieved.(*Location)
+		if !ok {
+			return fmt.Errorf("order cannot load %T as %q", retrieved, name)
+		}
+
+		o.R.Location = rel
+
+		if rel != nil {
+			rel.R.Orders = OrderSlice{o}
+		}
+		return nil
 	default:
 		return fmt.Errorf("order has no relationship %q", name)
 	}
@@ -976,6 +1080,7 @@ func (o *Order) Preload(name string, retrieved any) error {
 type orderPreloader struct {
 	Customer func(...mysql.PreloadOption) mysql.Preloader
 	Discount func(...mysql.PreloadOption) mysql.Preloader
+	Location func(...mysql.PreloadOption) mysql.Preloader
 }
 
 func buildOrderPreloader() orderPreloader {
@@ -1006,6 +1111,19 @@ func buildOrderPreloader() orderPreloader {
 				},
 			}, Discounts.Columns.Names(), opts...)
 		},
+		Location: func(opts ...mysql.PreloadOption) mysql.Preloader {
+			return mysql.Preload[*Location, LocationSlice](mysql.PreloadRel{
+				Name: "Location",
+				Sides: []mysql.PreloadSide{
+					{
+						From:        Orders,
+						To:          Locations,
+						FromColumns: []string{"location_id"},
+						ToColumns:   []string{"id"},
+					},
+				},
+			}, Locations.Columns.Names(), opts...)
+		},
 	}
 }
 
@@ -1014,6 +1132,7 @@ type orderThenLoader[Q orm.Loadable] struct {
 	OrderPayments func(...bob.Mod[*dialect.SelectQuery]) orm.Loader[Q]
 	Customer      func(...bob.Mod[*dialect.SelectQuery]) orm.Loader[Q]
 	Discount      func(...bob.Mod[*dialect.SelectQuery]) orm.Loader[Q]
+	Location      func(...bob.Mod[*dialect.SelectQuery]) orm.Loader[Q]
 }
 
 func buildOrderThenLoader[Q orm.Loadable]() orderThenLoader[Q] {
@@ -1028,6 +1147,9 @@ func buildOrderThenLoader[Q orm.Loadable]() orderThenLoader[Q] {
 	}
 	type DiscountLoadInterface interface {
 		LoadDiscount(context.Context, bob.Executor, ...bob.Mod[*dialect.SelectQuery]) error
+	}
+	type LocationLoadInterface interface {
+		LoadLocation(context.Context, bob.Executor, ...bob.Mod[*dialect.SelectQuery]) error
 	}
 
 	return orderThenLoader[Q]{
@@ -1053,6 +1175,12 @@ func buildOrderThenLoader[Q orm.Loadable]() orderThenLoader[Q] {
 			"Discount",
 			func(ctx context.Context, exec bob.Executor, retrieved DiscountLoadInterface, mods ...bob.Mod[*dialect.SelectQuery]) error {
 				return retrieved.LoadDiscount(ctx, exec, mods...)
+			},
+		),
+		Location: thenLoadBuilder[Q](
+			"Location",
+			func(ctx context.Context, exec bob.Executor, retrieved LocationLoadInterface, mods ...bob.Mod[*dialect.SelectQuery]) error {
+				return retrieved.LoadLocation(ctx, exec, mods...)
 			},
 		),
 	}
@@ -1290,12 +1418,68 @@ func (os OrderSlice) LoadDiscount(ctx context.Context, exec bob.Executor, mods .
 	return nil
 }
 
+// LoadLocation loads the order's Location into the .R struct
+func (o *Order) LoadLocation(ctx context.Context, exec bob.Executor, mods ...bob.Mod[*dialect.SelectQuery]) error {
+	if o == nil {
+		return nil
+	}
+
+	// Reset the relationship
+	o.R.Location = nil
+
+	related, err := o.Location(mods...).One(ctx, exec)
+	if err != nil {
+		return err
+	}
+
+	related.R.Orders = OrderSlice{o}
+
+	o.R.Location = related
+	return nil
+}
+
+// LoadLocation loads the order's Location into the .R struct
+func (os OrderSlice) LoadLocation(ctx context.Context, exec bob.Executor, mods ...bob.Mod[*dialect.SelectQuery]) error {
+	if len(os) == 0 {
+		return nil
+	}
+
+	locations, err := os.Location(mods...).All(ctx, exec)
+	if err != nil {
+		return err
+	}
+
+	for _, o := range os {
+		if o == nil {
+			continue
+		}
+
+		for _, rel := range locations {
+			if !o.LocationID.IsValue() {
+				continue
+			}
+
+			if !(o.LocationID.IsValue() && o.LocationID.MustGet() == rel.ID) {
+				continue
+			}
+
+			rel.R.Orders = append(rel.R.Orders, o)
+
+			o.R.Location = rel
+			break
+		}
+	}
+
+	return nil
+}
+
 type orderJoins[Q dialect.Joinable] struct {
 	typ           string
 	OrderItems    modAs[Q, orderItemColumns]
 	OrderPayments modAs[Q, orderPaymentColumns]
 	Customer      modAs[Q, customerColumns]
 	Discount      modAs[Q, discountColumns]
+	Location      modAs[Q, locationColumns]
 }
 
 func (j orderJoins[Q]) aliasedAs(alias string) orderJoins[Q] {
@@ -1355,6 +1539,20 @@ func buildOrderJoins[Q dialect.Joinable](cols orderColumns, typ string) orderJoi
 				{
 					mods = append(mods, dialect.Join[Q](typ, Discounts.Name().As(to.Alias())).On(
 						to.ID.EQ(cols.DiscountID),
+					))
+				}
+
+				return mods
+			},
+		},
+		Location: modAs[Q, locationColumns]{
+			c: Locations.Columns,
+			f: func(to locationColumns) bob.Mod[Q] {
+				mods := make(mods.QueryMods[Q], 0, 1)
+
+				{
+					mods = append(mods, dialect.Join[Q](typ, Locations.Name().As(to.Alias())).On(
+						to.ID.EQ(cols.LocationID),
 					))
 				}
 

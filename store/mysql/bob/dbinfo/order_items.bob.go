@@ -62,7 +62,7 @@ var OrderItems = Table[
 		},
 		Price: column{
 			Name:      "price",
-			DBType:    "decimal(10,2)",
+			DBType:    "decimal(20,2)",
 			Default:   "",
 			Comment:   "",
 			Nullable:  false,
@@ -71,7 +71,16 @@ var OrderItems = Table[
 		},
 		DiscountAmount: column{
 			Name:      "discount_amount",
-			DBType:    "decimal(10,2)",
+			DBType:    "decimal(20,2)",
+			Default:   "",
+			Comment:   "",
+			Nullable:  false,
+			Generated: false,
+			AutoIncr:  false,
+		},
+		ItemTotal: column{
+			Name:      "item_total",
+			DBType:    "decimal(20,2)",
 			Default:   "",
 			Comment:   "",
 			Nullable:  false,
@@ -197,13 +206,14 @@ type orderItemColumns struct {
 	Quantity       column
 	Price          column
 	DiscountAmount column
+	ItemTotal      column
 	CreatedAt      column
 	UpdatedAt      column
 }
 
 func (c orderItemColumns) AsSlice() []column {
 	return []column{
-		c.ID, c.OrderID, c.ProductID, c.DiscountID, c.Quantity, c.Price, c.DiscountAmount, c.CreatedAt, c.UpdatedAt,
+		c.ID, c.OrderID, c.ProductID, c.DiscountID, c.Quantity, c.Price, c.DiscountAmount, c.ItemTotal, c.CreatedAt, c.UpdatedAt,
 	}
 }
 

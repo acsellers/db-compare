@@ -110,7 +110,7 @@ func TestDailySoldItems(t *testing.T) {
 	t.Run("Base", func(t *testing.T) {
 		var sb strings.Builder
 
-		query := DailySoldItems(random_time_Time(nil))
+		query := DailySoldItems(random_string(nil))
 
 		if _, err := query.WriteQuery(t.Context(), &sb, 1); err != nil {
 			t.Fatal(err)
@@ -124,7 +124,7 @@ func TestDailySoldItems(t *testing.T) {
 	t.Run("Mod", func(t *testing.T) {
 		var sb strings.Builder
 
-		query := DailySoldItems(random_time_Time(nil))
+		query := DailySoldItems(random_string(nil))
 
 		if _, err := mysql.Select(query).WriteQuery(t.Context(), &sb, 1); err != nil {
 			t.Fatal(err)
@@ -159,7 +159,7 @@ func TestDailySoldItems(t *testing.T) {
 			}
 		}()
 
-		query, args, err := bob.Build(ctxTx, mysql.Select(DailySoldItems(random_time_Time(nil))))
+		query, args, err := bob.Build(ctxTx, mysql.Select(DailySoldItems(random_string(nil))))
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -205,7 +205,7 @@ func TestGeneralSales(t *testing.T) {
 	t.Run("Base", func(t *testing.T) {
 		var sb strings.Builder
 
-		query := GeneralSales(random_time_Time(nil), random_time_Time(nil))
+		query := GeneralSales(random_string(nil), random_string(nil))
 
 		if _, err := query.WriteQuery(t.Context(), &sb, 1); err != nil {
 			t.Fatal(err)
@@ -219,7 +219,7 @@ func TestGeneralSales(t *testing.T) {
 	t.Run("Mod", func(t *testing.T) {
 		var sb strings.Builder
 
-		query := GeneralSales(random_time_Time(nil), random_time_Time(nil))
+		query := GeneralSales(random_string(nil), random_string(nil))
 
 		if _, err := mysql.Select(query).WriteQuery(t.Context(), &sb, 1); err != nil {
 			t.Fatal(err)
@@ -254,7 +254,7 @@ func TestGeneralSales(t *testing.T) {
 			}
 		}()
 
-		query, args, err := bob.Build(ctxTx, mysql.Select(GeneralSales(random_time_Time(nil), random_time_Time(nil))))
+		query, args, err := bob.Build(ctxTx, mysql.Select(GeneralSales(random_string(nil), random_string(nil))))
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -304,7 +304,7 @@ func TestWeeklyTypedSales(t *testing.T) {
 	t.Run("Base", func(t *testing.T) {
 		var sb strings.Builder
 
-		query := WeeklyTypedSales(random_time_Time(nil), random_time_Time(nil))
+		query := WeeklyTypedSales(random_string(nil), random_string(nil))
 
 		if _, err := query.WriteQuery(t.Context(), &sb, 1); err != nil {
 			t.Fatal(err)
@@ -318,7 +318,7 @@ func TestWeeklyTypedSales(t *testing.T) {
 	t.Run("Mod", func(t *testing.T) {
 		var sb strings.Builder
 
-		query := WeeklyTypedSales(random_time_Time(nil), random_time_Time(nil))
+		query := WeeklyTypedSales(random_string(nil), random_string(nil))
 
 		if _, err := mysql.Select(query).WriteQuery(t.Context(), &sb, 1); err != nil {
 			t.Fatal(err)
@@ -353,7 +353,7 @@ func TestWeeklyTypedSales(t *testing.T) {
 			}
 		}()
 
-		query, args, err := bob.Build(ctxTx, mysql.Select(WeeklyTypedSales(random_time_Time(nil), random_time_Time(nil))))
+		query, args, err := bob.Build(ctxTx, mysql.Select(WeeklyTypedSales(random_string(nil), random_string(nil))))
 		if err != nil {
 			t.Fatal(err)
 		}

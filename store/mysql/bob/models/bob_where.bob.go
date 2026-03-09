@@ -21,6 +21,7 @@ func Where[Q mysql.Filterable]() struct {
 	DimDates        dimDateWhere[Q]
 	Discounts       discountWhere[Q]
 	ItemSummaries   itemSummaryWhere[Q]
+	Locations       locationWhere[Q]
 	OrderItems      orderItemWhere[Q]
 	OrderPayments   orderPaymentWhere[Q]
 	Orders          orderWhere[Q]
@@ -33,6 +34,7 @@ func Where[Q mysql.Filterable]() struct {
 		DimDates        dimDateWhere[Q]
 		Discounts       discountWhere[Q]
 		ItemSummaries   itemSummaryWhere[Q]
+		Locations       locationWhere[Q]
 		OrderItems      orderItemWhere[Q]
 		OrderPayments   orderPaymentWhere[Q]
 		Orders          orderWhere[Q]
@@ -44,6 +46,7 @@ func Where[Q mysql.Filterable]() struct {
 		DimDates:        buildDimDateWhere[Q](DimDates.Columns),
 		Discounts:       buildDiscountWhere[Q](Discounts.Columns),
 		ItemSummaries:   buildItemSummaryWhere[Q](ItemSummaries.Columns),
+		Locations:       buildLocationWhere[Q](Locations.Columns),
 		OrderItems:      buildOrderItemWhere[Q](OrderItems.Columns),
 		OrderPayments:   buildOrderPaymentWhere[Q](OrderPayments.Columns),
 		Orders:          buildOrderWhere[Q](Orders.Columns),

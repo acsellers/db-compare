@@ -8,11 +8,9 @@ import (
 	"os"
 
 	_ "github.com/go-sql-driver/mysql"
-	"github.com/stephenafamo/bob"
 )
 
 var (
-	db   bob.Executor
 	conn *sql.DB
 )
 
@@ -23,21 +21,33 @@ func init() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	db = QueryLogger(bob.NewDB(conn))
 }
 
 func main() {
-	http.HandleFunc("GET /sales/{id}", GetSale)
-	http.HandleFunc("POST /sales/$", CreateSale)
-	http.HandleFunc("POST /customers/$", BulkLoadCustomers)
-	http.HandleFunc("POST /customers/update", CustomerUpdate)
-	http.HandleFunc("POST /customers/update2", CustomerUpdate2)
-	http.HandleFunc("POST /sales/search", SaleSearch)
-	http.HandleFunc("GET /reports/daily-sold-items/", DailySoldItems)
-	http.HandleFunc("GET /reports/daily-revenue/", DailyRevenue)
-	http.HandleFunc("GET /reports/customer-sales/", CustomerSales)
-	http.HandleFunc("GET /reports/general-sales/", GeneralSales)
-	http.HandleFunc("GET /reports/typed-sales/", TypedSales)
+	http.HandleFunc("GET /01/sales/{id}", GetSale)
+	http.HandleFunc("GET /01/sales/", GetSales)
+
+	http.HandleFunc("POST /02/sales/$", CreateSale)
+
+	http.HandleFunc("POST /03/sales/search", SaleSearch)
+
+	http.HandleFunc("POST /04/customers/$", BulkLoadCustomers)
+
+	http.HandleFunc("POST /05/customers/update", CustomerUpdate)
+	http.HandleFunc("POST /05/customers/update2", CustomerUpdate2)
+
+	http.HandleFunc("GET /06/customers/payment_cards/", JSONQuery)
+	http.HandleFunc("GET /06/webhook/update_payment", JSONUpdate)
+	http.HandleFunc("GET /06/locations/payments", JSONReport)
+
+	http.HandleFunc("GET /07/generic_report", WithQuery)
+
+	http.HandleFunc("GET /08/reports/daily-revenue/", DailyRevenue)
+	http.HandleFunc("GET /08/reports/customer-sales/", CustomerSales)
+	http.HandleFunc("GET /08/reports/daily-sold-items/", DailySoldItems)
+
+	http.HandleFunc("GET /09/reports/general-sales/", GeneralSales)
+	http.HandleFunc("GET /09/reports/weekly-sales/", WeeklySalesReport)
 
 	port := "8080"
 	if os.Getenv("PORT") != "" {

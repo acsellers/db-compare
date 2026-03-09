@@ -42,6 +42,9 @@ type CustomerTemplate struct {
 	Phone          func() null.Val[string]
 	Email          func() null.Val[string]
 	MarketingOptIn func() null.Val[bool]
+	ExternalID     func() null.Val[string]
+	JoinLocationID func() null.Val[int64]
+	LastLocationID func() null.Val[int64]
 	CreatedAt      func() null.Val[time.Time]
 	UpdatedAt      func() null.Val[time.Time]
 
@@ -52,9 +55,17 @@ type CustomerTemplate struct {
 }
 
 type customerR struct {
-	Orders []*customerROrdersR
+	JoinLocationLocation *customerRJoinLocationLocationR
+	LastLocationLocation *customerRLastLocationLocationR
+	Orders               []*customerROrdersR
 }
 
+type customerRJoinLocationLocationR struct {
+	o *LocationTemplate
+}
+type customerRLastLocationLocationR struct {
+	o *LocationTemplate
+}
 type customerROrdersR struct {
 	number int
 	o      *OrderTemplate
@@ -70,6 +81,20 @@ func (o *CustomerTemplate) Apply(ctx context.Context, mods ...CustomerMod) {
 // setModelRels creates and sets the relationships on *models.Customer
 // according to the relationships in the template. Nothing is inserted into the db
 func (t CustomerTemplate) setModelRels(o *models.Customer) {
+	if t.r.JoinLocationLocation != nil {
+		rel := t.r.JoinLocationLocation.o.Build()
+		rel.R.JoinLocationCustomers = append(rel.R.JoinLocationCustomers, o)
+		o.JoinLocationID = null.From(rel.ID) // h2
+		o.R.JoinLocationLocation = rel
+	}
+
+	if t.r.LastLocationLocation != nil {
+		rel := t.r.LastLocationLocation.o.Build()
+		rel.R.LastLocationCustomers = append(rel.R.LastLocationCustomers, o)
+		o.LastLocationID = null.From(rel.ID) // h2
+		o.R.LastLocationLocation = rel
+	}
+
 	if t.r.Orders != nil {
 		rel := models.OrderSlice{}
 		for _, r := range t.r.Orders {
@@ -108,6 +133,18 @@ func (o CustomerTemplate) BuildSetter() *models.CustomerSetter {
 	if o.MarketingOptIn != nil {
 		val := o.MarketingOptIn()
 		m.MarketingOptIn = omitnull.FromNull(val)
+	}
+	if o.ExternalID != nil {
+		val := o.ExternalID()
+		m.ExternalID = omitnull.FromNull(val)
+	}
+	if o.JoinLocationID != nil {
+		val := o.JoinLocationID()
+		m.JoinLocationID = omitnull.FromNull(val)
+	}
+	if o.LastLocationID != nil {
+		val := o.LastLocationID()
+		m.LastLocationID = omitnull.FromNull(val)
 	}
 	if o.CreatedAt != nil {
 		val := o.CreatedAt()
@@ -154,6 +191,15 @@ func (o CustomerTemplate) Build() *models.Customer {
 	if o.MarketingOptIn != nil {
 		m.MarketingOptIn = o.MarketingOptIn()
 	}
+	if o.ExternalID != nil {
+		m.ExternalID = o.ExternalID()
+	}
+	if o.JoinLocationID != nil {
+		m.JoinLocationID = o.JoinLocationID()
+	}
+	if o.LastLocationID != nil {
+		m.LastLocationID = o.LastLocationID()
+	}
 	if o.CreatedAt != nil {
 		m.CreatedAt = o.CreatedAt()
 	}
@@ -192,6 +238,44 @@ func ensureCreatableCustomer(m *models.CustomerSetter) {
 func (o *CustomerTemplate) insertOptRels(ctx context.Context, exec bob.Executor, m *models.Customer) error {
 	var err error
 
+	isJoinLocationLocationDone, _ := customerRelJoinLocationLocationCtx.Value(ctx)
+	if !isJoinLocationLocationDone && o.r.JoinLocationLocation != nil {
+		ctx = customerRelJoinLocationLocationCtx.WithValue(ctx, true)
+		if o.r.JoinLocationLocation.o.alreadyPersisted {
+			m.R.JoinLocationLocation = o.r.JoinLocationLocation.o.Build()
+		} else {
+			var rel0 *models.Location
+			rel0, err = o.r.JoinLocationLocation.o.Create(ctx, exec)
+			if err != nil {
+				return err
+			}
+			err = m.AttachJoinLocationLocation(ctx, exec, rel0)
+			if err != nil {
+				return err
+			}
+		}
+
+	}
+
+	isLastLocationLocationDone, _ := customerRelLastLocationLocationCtx.Value(ctx)
+	if !isLastLocationLocationDone && o.r.LastLocationLocation != nil {
+		ctx = customerRelLastLocationLocationCtx.WithValue(ctx, true)
+		if o.r.LastLocationLocation.o.alreadyPersisted {
+			m.R.LastLocationLocation = o.r.LastLocationLocation.o.Build()
+		} else {
+			var rel1 *models.Location
+			rel1, err = o.r.LastLocationLocation.o.Create(ctx, exec)
+			if err != nil {
+				return err
+			}
+			err = m.AttachLastLocationLocation(ctx, exec, rel1)
+			if err != nil {
+				return err
+			}
+		}
+
+	}
+
 	isOrdersDone, _ := customerRelOrdersCtx.Value(ctx)
 	if !isOrdersDone && o.r.Orders != nil {
 		ctx = customerRelOrdersCtx.WithValue(ctx, true)
@@ -199,12 +283,12 @@ func (o *CustomerTemplate) insertOptRels(ctx context.Context, exec bob.Executor,
 			if r.o.alreadyPersisted {
 				m.R.Orders = append(m.R.Orders, r.o.Build())
 			} else {
-				rel0, err := r.o.CreateMany(ctx, exec, r.number)
+				rel2, err := r.o.CreateMany(ctx, exec, r.number)
 				if err != nil {
 					return err
 				}
 
-				err = m.AttachOrders(ctx, exec, rel0...)
+				err = m.AttachOrders(ctx, exec, rel2...)
 				if err != nil {
 					return err
 				}
@@ -309,6 +393,9 @@ func (m customerMods) RandomizeAllColumns(f *faker.Faker) CustomerMod {
 		CustomerMods.RandomPhone(f),
 		CustomerMods.RandomEmail(f),
 		CustomerMods.RandomMarketingOptIn(f),
+		CustomerMods.RandomExternalID(f),
+		CustomerMods.RandomJoinLocationID(f),
+		CustomerMods.RandomLastLocationID(f),
 		CustomerMods.RandomCreatedAt(f),
 		CustomerMods.RandomUpdatedAt(f),
 	}
@@ -536,6 +623,165 @@ func (m customerMods) RandomMarketingOptInNotNull(f *faker.Faker) CustomerMod {
 }
 
 // Set the model columns to this value
+func (m customerMods) ExternalID(val null.Val[string]) CustomerMod {
+	return CustomerModFunc(func(_ context.Context, o *CustomerTemplate) {
+		o.ExternalID = func() null.Val[string] { return val }
+	})
+}
+
+// Set the Column from the function
+func (m customerMods) ExternalIDFunc(f func() null.Val[string]) CustomerMod {
+	return CustomerModFunc(func(_ context.Context, o *CustomerTemplate) {
+		o.ExternalID = f
+	})
+}
+
+// Clear any values for the column
+func (m customerMods) UnsetExternalID() CustomerMod {
+	return CustomerModFunc(func(_ context.Context, o *CustomerTemplate) {
+		o.ExternalID = nil
+	})
+}
+
+// Generates a random value for the column using the given faker
+// if faker is nil, a default faker is used
+// The generated value is sometimes null
+func (m customerMods) RandomExternalID(f *faker.Faker) CustomerMod {
+	return CustomerModFunc(func(_ context.Context, o *CustomerTemplate) {
+		o.ExternalID = func() null.Val[string] {
+			if f == nil {
+				f = &defaultFaker
+			}
+
+			val := random_string(f, "12")
+			return null.From(val)
+		}
+	})
+}
+
+// Generates a random value for the column using the given faker
+// if faker is nil, a default faker is used
+// The generated value is never null
+func (m customerMods) RandomExternalIDNotNull(f *faker.Faker) CustomerMod {
+	return CustomerModFunc(func(_ context.Context, o *CustomerTemplate) {
+		o.ExternalID = func() null.Val[string] {
+			if f == nil {
+				f = &defaultFaker
+			}
+
+			val := random_string(f, "12")
+			return null.From(val)
+		}
+	})
+}
+
+// Set the model columns to this value
+func (m customerMods) JoinLocationID(val null.Val[int64]) CustomerMod {
+	return CustomerModFunc(func(_ context.Context, o *CustomerTemplate) {
+		o.JoinLocationID = func() null.Val[int64] { return val }
+	})
+}
+
+// Set the Column from the function
+func (m customerMods) JoinLocationIDFunc(f func() null.Val[int64]) CustomerMod {
+	return CustomerModFunc(func(_ context.Context, o *CustomerTemplate) {
+		o.JoinLocationID = f
+	})
+}
+
+// Clear any values for the column
+func (m customerMods) UnsetJoinLocationID() CustomerMod {
+	return CustomerModFunc(func(_ context.Context, o *CustomerTemplate) {
+		o.JoinLocationID = nil
+	})
+}
+
+// Generates a random value for the column using the given faker
+// if faker is nil, a default faker is used
+// The generated value is sometimes null
+func (m customerMods) RandomJoinLocationID(f *faker.Faker) CustomerMod {
+	return CustomerModFunc(func(_ context.Context, o *CustomerTemplate) {
+		o.JoinLocationID = func() null.Val[int64] {
+			if f == nil {
+				f = &defaultFaker
+			}
+
+			val := random_int64(f)
+			return null.From(val)
+		}
+	})
+}
+
+// Generates a random value for the column using the given faker
+// if faker is nil, a default faker is used
+// The generated value is never null
+func (m customerMods) RandomJoinLocationIDNotNull(f *faker.Faker) CustomerMod {
+	return CustomerModFunc(func(_ context.Context, o *CustomerTemplate) {
+		o.JoinLocationID = func() null.Val[int64] {
+			if f == nil {
+				f = &defaultFaker
+			}
+
+			val := random_int64(f)
+			return null.From(val)
+		}
+	})
+}
+
+// Set the model columns to this value
+func (m customerMods) LastLocationID(val null.Val[int64]) CustomerMod {
+	return CustomerModFunc(func(_ context.Context, o *CustomerTemplate) {
+		o.LastLocationID = func() null.Val[int64] { return val }
+	})
+}
+
+// Set the Column from the function
+func (m customerMods) LastLocationIDFunc(f func() null.Val[int64]) CustomerMod {
+	return CustomerModFunc(func(_ context.Context, o *CustomerTemplate) {
+		o.LastLocationID = f
+	})
+}
+
+// Clear any values for the column
+func (m customerMods) UnsetLastLocationID() CustomerMod {
+	return CustomerModFunc(func(_ context.Context, o *CustomerTemplate) {
+		o.LastLocationID = nil
+	})
+}
+
+// Generates a random value for the column using the given faker
+// if faker is nil, a default faker is used
+// The generated value is sometimes null
+func (m customerMods) RandomLastLocationID(f *faker.Faker) CustomerMod {
+	return CustomerModFunc(func(_ context.Context, o *CustomerTemplate) {
+		o.LastLocationID = func() null.Val[int64] {
+			if f == nil {
+				f = &defaultFaker
+			}
+
+			val := random_int64(f)
+			return null.From(val)
+		}
+	})
+}
+
+// Generates a random value for the column using the given faker
+// if faker is nil, a default faker is used
+// The generated value is never null
+func (m customerMods) RandomLastLocationIDNotNull(f *faker.Faker) CustomerMod {
+	return CustomerModFunc(func(_ context.Context, o *CustomerTemplate) {
+		o.LastLocationID = func() null.Val[int64] {
+			if f == nil {
+				f = &defaultFaker
+			}
+
+			val := random_int64(f)
+			return null.From(val)
+		}
+	})
+}
+
+// Set the model columns to this value
 func (m customerMods) CreatedAt(val null.Val[time.Time]) CustomerMod {
 	return CustomerModFunc(func(_ context.Context, o *CustomerTemplate) {
 		o.CreatedAt = func() null.Val[time.Time] { return val }
@@ -647,6 +893,76 @@ func (m customerMods) WithParentsCascading() CustomerMod {
 			return
 		}
 		ctx = customerWithParentsCascadingCtx.WithValue(ctx, true)
+		{
+
+			related := o.f.NewLocationWithContext(ctx, LocationMods.WithParentsCascading())
+			m.WithJoinLocationLocation(related).Apply(ctx, o)
+		}
+		{
+
+			related := o.f.NewLocationWithContext(ctx, LocationMods.WithParentsCascading())
+			m.WithLastLocationLocation(related).Apply(ctx, o)
+		}
+	})
+}
+
+func (m customerMods) WithJoinLocationLocation(rel *LocationTemplate) CustomerMod {
+	return CustomerModFunc(func(ctx context.Context, o *CustomerTemplate) {
+		o.r.JoinLocationLocation = &customerRJoinLocationLocationR{
+			o: rel,
+		}
+	})
+}
+
+func (m customerMods) WithNewJoinLocationLocation(mods ...LocationMod) CustomerMod {
+	return CustomerModFunc(func(ctx context.Context, o *CustomerTemplate) {
+		related := o.f.NewLocationWithContext(ctx, mods...)
+
+		m.WithJoinLocationLocation(related).Apply(ctx, o)
+	})
+}
+
+func (m customerMods) WithExistingJoinLocationLocation(em *models.Location) CustomerMod {
+	return CustomerModFunc(func(ctx context.Context, o *CustomerTemplate) {
+		o.r.JoinLocationLocation = &customerRJoinLocationLocationR{
+			o: o.f.FromExistingLocation(em),
+		}
+	})
+}
+
+func (m customerMods) WithoutJoinLocationLocation() CustomerMod {
+	return CustomerModFunc(func(ctx context.Context, o *CustomerTemplate) {
+		o.r.JoinLocationLocation = nil
+	})
+}
+
+func (m customerMods) WithLastLocationLocation(rel *LocationTemplate) CustomerMod {
+	return CustomerModFunc(func(ctx context.Context, o *CustomerTemplate) {
+		o.r.LastLocationLocation = &customerRLastLocationLocationR{
+			o: rel,
+		}
+	})
+}
+
+func (m customerMods) WithNewLastLocationLocation(mods ...LocationMod) CustomerMod {
+	return CustomerModFunc(func(ctx context.Context, o *CustomerTemplate) {
+		related := o.f.NewLocationWithContext(ctx, mods...)
+
+		m.WithLastLocationLocation(related).Apply(ctx, o)
+	})
+}
+
+func (m customerMods) WithExistingLastLocationLocation(em *models.Location) CustomerMod {
+	return CustomerModFunc(func(ctx context.Context, o *CustomerTemplate) {
+		o.r.LastLocationLocation = &customerRLastLocationLocationR{
+			o: o.f.FromExistingLocation(em),
+		}
+	})
+}
+
+func (m customerMods) WithoutLastLocationLocation() CustomerMod {
+	return CustomerModFunc(func(ctx context.Context, o *CustomerTemplate) {
+		o.r.LastLocationLocation = nil
 	})
 }
 

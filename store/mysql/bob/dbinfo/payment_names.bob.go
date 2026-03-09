@@ -62,6 +62,19 @@ var PaymentNames = Table[
 		},
 	},
 	Indexes: paymentNameIndexes{
+		IdxPaymentNamesName: index{
+			Type: "BTREE",
+			Name: "idx_payment_names_name",
+			Columns: []indexColumn{
+				{
+					Name:         "name",
+					Desc:         null.FromCond(false, true),
+					IsExpression: false,
+				},
+			},
+			Unique:  false,
+			Comment: "",
+		},
 		PRIMARY: index{
 			Type: "BTREE",
 			Name: "PRIMARY",
@@ -100,12 +113,13 @@ func (c paymentNameColumns) AsSlice() []column {
 }
 
 type paymentNameIndexes struct {
-	PRIMARY index
+	IdxPaymentNamesName index
+	PRIMARY             index
 }
 
 func (i paymentNameIndexes) AsSlice() []index {
 	return []index{
-		i.PRIMARY,
+		i.IdxPaymentNamesName, i.PRIMARY,
 	}
 }
 
