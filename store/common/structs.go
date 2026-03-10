@@ -66,10 +66,12 @@ type OrderPayment struct {
 	PaymentInfo OrderPaymentInfo `json:"payment_info"`
 }
 type OrderPaymentInfo struct {
-	CardNumber    string `json:"card_number"`
-	CardType      string `json:"card_type"`
-	CardExpiry    string `json:"card_expiry"`
-	PurchaseOrder string `json:"purchase_order"`
+	CardNumber        string `json:"card_number"`
+	CardType          string `json:"card_type"`
+	CardExpiry        string `json:"card_expiry"`
+	PurchaseOrder     string `json:"purchase_order"`
+	TransactionID     string `json:"transaction_id"`
+	TransactionResult string `json:"transaction_result"`
 }
 type ItemSummary struct {
 	Name          string    `json:"name" db:"name"`
@@ -107,4 +109,30 @@ type WeeklySaleReport struct {
 	OrderCount  int64   `json:"order_count" db:"order_count"`
 	Quantity    int64   `json:"quantity" db:"quantity"`
 	TotalSales  float64 `json:"total_sales" db:"total_sales"`
+}
+
+type SaleSearch struct {
+	CustomerName string  `json:"customer_name"`
+	StartDate    string  `json:"start_date"`
+	EndDate      string  `json:"end_date"`
+	OrderType    string  `json:"order_type"`
+	MinTotal     float64 `json:"min_total"`
+	MaxTotal     float64 `json:"max_total"`
+	LocationID   int64   `json:"location_id"`
+}
+
+type SalesByCardType struct {
+	OrderID    []int64 `json:"order_id" db:"order_id"`
+	TotalSales float64 `json:"total_sales" db:"total_sales"`
+	OrderCount int64   `json:"order_count" db:"order_count"`
+}
+
+type LocationPaymentInfo struct {
+	LocationID          int64              `json:"location_id" db:"location_id"`
+	TotalSales          float64            `json:"total_sales" db:"total_sales"`
+	SalesByPaymentType  map[string]float64 `json:"sales_by_payment_type" db:"sales_by_payment_type"`
+	SalesByCardType     map[string]float64 `json:"sales_by_card_type" db:"sales_by_card_type"`
+	OrderCount          int64              `json:"order_count" db:"order_count"`
+	OrdersByPaymentType map[string]int64   `json:"orders_by_payment_type" db:"orders_by_payment_type"`
+	OrdersByCardType    map[string]int64   `json:"orders_by_card_type" db:"orders_by_card_type"`
 }

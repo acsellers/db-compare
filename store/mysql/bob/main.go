@@ -45,7 +45,7 @@ func main() {
 	http.HandleFunc("POST /05/customers/update", CustomerUpdate)
 	http.HandleFunc("POST /05/customers/update2", CustomerUpdate2)
 
-	http.HandleFunc("GET /06/customers/payment_cards/", JSONQuery)
+	http.HandleFunc("GET /06/customers/sales_by_card_type/", JSONQuery)
 	http.HandleFunc("GET /06/webhook/update_payment", JSONUpdate)
 	http.HandleFunc("GET /06/locations/payments", JSONReport)
 

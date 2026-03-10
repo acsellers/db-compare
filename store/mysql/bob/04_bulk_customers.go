@@ -24,30 +24,58 @@ func BulkLoadCustomers(w http.ResponseWriter, r *http.Request) {
 	args := []bob.Expression{}
 	cr := csv.NewReader(file)
 	row, err := cr.Read()
+	rows := 0
+	inserted := int64(0)
 	for err == nil {
+		rows++
+		if len(row) < 3 {
+			row, err = cr.Read()
+			continue
+		}
 		args = append(args, mysql.Arg(row[0], row[1], row[2]))
 		row, err = cr.Read()
+		if rows == 1000 {
+			result, err := mysql.Insert(
+				im.Into(
+					models.Customers.Name().String(),
+					models.Customers.Columns.Name.String(),
+					models.Customers.Columns.Email.String(),
+					models.Customers.Columns.Phone.String(),
+				),
+				im.Values(args...),
+			).Exec(r.Context(), db)
+			if err != nil {
+				http.Error(w, "Invalid file", http.StatusBadRequest)
+				return
+			}
+			ri, _ := result.RowsAffected()
+			inserted += ri
+			rows = 0
+			args = []bob.Expression{}
+		}
 	}
 	if err != io.EOF {
 		http.Error(w, "Invalid file", http.StatusBadRequest)
 		return
 	}
-
-	result, err := mysql.Insert(
-		im.Into(
-			models.Customers.Name().String(),
-			models.Customers.Columns.Name.String(),
-			models.Customers.Columns.Email.String(),
-			models.Customers.Columns.Phone.String(),
-		),
-		im.Values(args...),
-	).Exec(r.Context(), db)
-	if err != nil {
-		http.Error(w, "Invalid file", http.StatusBadRequest)
-		return
+	if rows > 0 {
+		result, err := mysql.Insert(
+			im.Into(
+				models.Customers.Name().String(),
+				models.Customers.Columns.Name.String(),
+				models.Customers.Columns.Email.String(),
+				models.Customers.Columns.Phone.String(),
+			),
+			im.Values(args...),
+		).Exec(r.Context(), db)
+		if err != nil {
+			http.Error(w, "Invalid file", http.StatusBadRequest)
+			return
+		}
+		ri, _ := result.RowsAffected()
+		inserted += ri
 	}
 
 	w.WriteHeader(http.StatusCreated)
-	rows, _ := result.RowsAffected()
-	json.NewEncoder(w).Encode(rows)
+	json.NewEncoder(w).Encode(inserted)
 }

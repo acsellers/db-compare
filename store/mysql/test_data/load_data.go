@@ -15,7 +15,11 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-var OrderCount = 30_000_000
+var (
+	OrderCount = 30000
+	StartDate  = time.Date(2025, time.January, 1, 0, 0, 0, 0, time.UTC)
+	EndDate    = time.Date(2026, time.January, 1, 0, 0, 0, 0, time.UTC)
+)
 
 type LocationData struct {
 	ID      int
@@ -66,6 +70,11 @@ func main() {
 	if os.Getenv("DATABASE_URL") == "" {
 		log.Fatal("DATABASE_URL is not set")
 	}
+	if os.Getenv("MODE") == "benchmark" {
+		OrderCount = 30_000_000
+		StartDate = time.Date(2020, time.January, 1, 0, 0, 0, 0, time.UTC)
+
+	}
 	db, err := sql.Open("mysql", os.Getenv("DATABASE_URL"))
 	if err != nil {
 		log.Fatal(err)
@@ -100,11 +109,16 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	_, err = db.Exec("DELETE FROM dim_date")
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	LoadLocations(db)
 	LoadProducts(db)
 	LoadDiscounts(db)
 	LoadCustomers(db)
+	LoadDimDate(db)
 	GenerateOrders(db, OrderCount)
 }
 
@@ -313,14 +327,60 @@ func LoadCustomers(db *sql.DB) {
 	}
 }
 
-func GenerateOrders(db *sql.DB, count int) {
-	startDate := time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC)
-	endDate := time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC)
-	perDay := 1 + count/int(endDate.Sub(startDate).Hours()/24)
+func LoadDimDate(db *sql.DB) {
+	query := "INSERT INTO dim_date (date, month, year, quarter, day_of_week, day_of_month, day_of_year, week_of_year, week_of_month) VALUES (?, ?,?,?, ?,?,?, ?,?)"
+	current := StartDate
+	ending := time.Now().AddDate(1, 0, 0)
+	yearWeek := 52
+	monthWeek := 5
+	for current.Before(ending) {
+		if current.Weekday() == time.Monday {
+			if current.Month() == time.January && current.Day() == 1 && yearWeek >= 10 {
+				yearWeek = 1
+			} else {
+				yearWeek++
+			}
+			if current.Day() <= 7 {
+				monthWeek = 1
+			} else {
+				monthWeek++
+			}
+		}
+		quarter := 1
+		if current.Month() >= time.April && current.Month() < time.July {
+			quarter = 2
+		} else if current.Month() >= time.July && current.Month() < time.October {
+			quarter = 3
+		} else if current.Month() >= time.October && current.Month() < time.January {
+			quarter = 4
+		}
 
-	for startDate.Before(endDate) {
-		generateOrdersForDay(db, startDate, perDay)
-		startDate = startDate.AddDate(0, 0, 1)
+		args := []any{
+			current,
+			current.Month(),
+			current.Year(),
+			quarter,
+			current.Weekday(),
+			current.Day(),
+			current.YearDay(),
+			yearWeek,
+			monthWeek,
+		}
+		_, err := db.Exec(query, args...)
+		if err != nil {
+			log.Fatal(err)
+		}
+		current = current.AddDate(0, 0, 1)
+	}
+}
+func GenerateOrders(db *sql.DB, count int) {
+	current := StartDate
+
+	perDay := 1 + count/int(EndDate.Sub(StartDate).Hours()/24)
+
+	for current.Before(EndDate) {
+		generateOrdersForDay(db, current, perDay)
+		current = current.AddDate(0, 0, 1)
 	}
 	db.Exec("ALTER TABLE orders AUTO_INCREMENT = " + strconv.Itoa(orderId+1))
 }
@@ -395,6 +455,9 @@ func genOrderData(date time.Time) *orderData {
 		if src.Intn(10) < 8 {
 			od.locationID = customerLookup[ci-1]
 		} else {
+			od.locationID = src.Intn(len(locationLookup)) + 1
+		}
+		if od.locationID == 0 {
 			od.locationID = src.Intn(len(locationLookup)) + 1
 		}
 	} else {

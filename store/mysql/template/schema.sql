@@ -1,8 +1,3 @@
-create user 'service_store'@'%' identified by 'gopher';
-create database store;
-grant all on store.* to 'service_store'@'%';
-flush privileges;
-
 CREATE TABLE products (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     name varchar(255) NOT NULL,
@@ -106,7 +101,7 @@ ALTER TABLE order_items ADD FOREIGN KEY (discount_id) REFERENCES discounts(id);
 CREATE TABLE order_payments (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     order_id BIGINT NOT NULL,
-    payment_type varchar(1) NOT NULL,
+    payment_type varchar(24) NOT NULL,
     amount DECIMAL(20,2) NOT NULL,
     payment_info json COMMENT 'payments.Info',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -123,7 +118,26 @@ create table reporting_order (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
-
+INSERT INTO reporting_order (id, category, order_type, report_order, title)
+VALUES 
+(1, 'pc', 'members', 1, 'Member PC Items'),
+(2, 'phone', 'members', 2, 'Member Phone & Wearable Items'),
+(3, 'audio', 'members', 3, 'Member Audio Items'),
+(4, 'taxes', 'members', 4, 'Member Tax Items'),
+(5, 'discounts', 'members', 5, 'Member Discounts'),
+(6, 'payments', 'members', 6, 'Member Payments'),
+(7, 'pc', 'non-members', 7, 'Non-Member PC Items'),
+(8, 'phone', 'non-members', 8, 'Non-Member Phone & Wearable Items'),
+(9, 'audio', 'non-members', 9, 'Non-Member Audio Items'),
+(10, 'taxes', 'non-members', 10, 'Non-Member Tax Items'),
+(11, 'discounts', 'non-members', 11, 'Non-Member Discounts'),
+(12, 'payments', 'non-members', 12, 'Non-Member Payments'),
+(13, 'pc', 'general', 1, 'PC Items'),
+(14, 'phone', 'general', 2, 'Phone & Wearable Items'),
+(15, 'audio', 'general', 3, 'Audio Items'),
+(16, 'taxes', 'general', 4, 'Tax Items'),
+(17, 'discounts', 'general', 5, 'Discounts'),
+(18, 'payments', 'general', 6, 'Payments');
 
 create table dim_date (
     date DATE PRIMARY KEY,

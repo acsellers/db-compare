@@ -30,6 +30,9 @@ if args.MaxTotal != "" {
 if args.CustomerName != "" {
     filters = append(filters, db.Orders.Customers.Name.Like(args.CustomerName))
 }
+if args.LocationID != 0 {
+    filters = append(filters, db.Orders.LocationID.EQ(args.LocationID))
+}
 
 sales, err := db.Orders.Query(
     db.Orders.Joins.Customers,
