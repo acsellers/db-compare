@@ -15,6 +15,93 @@ import (
 	testutils "github.com/stephenafamo/bob/test/utils"
 )
 
+func TestDailyRevenue(t *testing.T) {
+	t.Run("Base", func(t *testing.T) {
+		var sb strings.Builder
+
+		query := DailyRevenue(random_time_Time(nil), random_time_Time(nil))
+
+		if _, err := query.WriteQuery(t.Context(), &sb, 1); err != nil {
+			t.Fatal(err)
+		}
+
+		if diff := cmp.Diff(dailyRevenueSQL, sb.String()); diff != "" {
+			t.Fatalf("unexpected result (-got +want):\n%s", diff)
+		}
+	})
+
+	t.Run("Mod", func(t *testing.T) {
+		var sb strings.Builder
+
+		query := DailyRevenue(random_time_Time(nil), random_time_Time(nil))
+
+		if _, err := mysql.Select(query).WriteQuery(t.Context(), &sb, 1); err != nil {
+			t.Fatal(err)
+		}
+
+		queryDiff, err := testutils.QueryDiff(dailyRevenueSQL, sb.String(), formatQuery)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if queryDiff != "" {
+			fmt.Println(sb.String())
+			t.Fatalf("unexpected result (-got +want):\n%s", queryDiff)
+		}
+	})
+
+	t.Run("Scanning", func(t *testing.T) {
+		if testDB == nil {
+			t.Skip("skipping test, no DSN provided")
+		}
+
+		ctxTx, cancel := context.WithCancel(t.Context())
+		defer cancel()
+
+		tx, err := testDB.Begin(ctxTx)
+		if err != nil {
+			t.Fatalf("Error starting transaction: %v", err)
+		}
+
+		defer func() {
+			if err := tx.Rollback(ctxTx); err != nil {
+				t.Fatalf("Error rolling back transaction: %v", err)
+			}
+		}()
+
+		query, args, err := bob.Build(ctxTx, mysql.Select(DailyRevenue(random_time_Time(nil), random_time_Time(nil))))
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		rows, err := tx.QueryContext(ctxTx, query, args...)
+		if err != nil {
+			t.Fatal(err)
+		}
+		defer rows.Close()
+
+		columns, err := rows.Columns()
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		if len(columns) != 3 {
+			t.Fatalf("expected %d columns, got %d", 3, len(columns))
+		}
+
+		if columns[0] != "order_type" {
+			t.Fatalf("expected column %d to be %s, got %s", 0, "order_type", columns[0])
+		}
+
+		if columns[1] != "order_date" {
+			t.Fatalf("expected column %d to be %s, got %s", 1, "order_date", columns[1])
+		}
+
+		if columns[2] != "total_revenue" {
+			t.Fatalf("expected column %d to be %s, got %s", 2, "total_revenue", columns[2])
+		}
+	})
+}
+
 func TestCustomerSales(t *testing.T) {
 	t.Run("Base", func(t *testing.T) {
 		var sb strings.Builder

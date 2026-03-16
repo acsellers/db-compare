@@ -19,7 +19,10 @@ func TypedSales(w http.ResponseWriter, r *http.Request) {
 		startDate, _ = time.Parse("2006-01-02", r.URL.Query().Get("start_date"))
 	}
 
-	results, err := queries.TypedSales(startDate, endDate).All(r.Context(), db)
+	results, err := queries.WeeklyTypedSales(
+		startDate.Format("2006-01-02"),
+		endDate.Format("2006-01-02"),
+	).All(r.Context(), db)
 
 	if err != nil {
 		fmt.Println(err)

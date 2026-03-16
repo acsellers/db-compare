@@ -21,7 +21,95 @@ import (
 //go:embed queries.bob.sql
 var formattedQueries_queries string
 
-var customerSalesSQL = formattedQueries_queries[152:440]
+var dailyRevenueSQL = formattedQueries_queries[151:351]
+
+type DailyRevenueQuery = orm.ModQuery[*dialect.SelectQuery, dailyRevenue, DailyRevenueRow, []DailyRevenueRow, dailyRevenueTransformer]
+
+func DailyRevenue(StartDate time.Time, EndDate time.Time) *DailyRevenueQuery {
+	var expressionTypArgs dailyRevenue
+
+	expressionTypArgs.StartDate = mysql.Arg(StartDate)
+	expressionTypArgs.EndDate = mysql.Arg(EndDate)
+
+	return &DailyRevenueQuery{
+		Query: orm.Query[dailyRevenue, DailyRevenueRow, []DailyRevenueRow, dailyRevenueTransformer]{
+			ExecQuery: orm.ExecQuery[dailyRevenue]{
+				BaseQuery: bob.BaseQuery[dailyRevenue]{
+					Expression: expressionTypArgs,
+					Dialect:    dialect.Dialect,
+					QueryType:  bob.QueryTypeSelect,
+				},
+			},
+			Scanner: func(context.Context, []string) (func(*scan.Row) (any, error), func(any) (DailyRevenueRow, error)) {
+				return func(row *scan.Row) (any, error) {
+						var t DailyRevenueRow
+						row.ScheduleScanByIndex(0, &t.OrderType)
+						row.ScheduleScanByIndex(1, &t.OrderDate)
+						row.ScheduleScanByIndex(2, &t.TotalRevenue)
+						return &t, nil
+					}, func(v any) (DailyRevenueRow, error) {
+						return *(v.(*DailyRevenueRow)), nil
+					}
+			},
+		},
+		Mod: bob.ModFunc[*dialect.SelectQuery](func(q *dialect.SelectQuery) {
+			q.AppendSelect(expressionTypArgs.subExpr(7, 66))
+			q.SetTable(expressionTypArgs.subExpr(72, 80))
+			q.AppendWhere(expressionTypArgs.subExpr(87, 127))
+			q.AppendGroup(expressionTypArgs.subExpr(137, 164))
+			q.CombinedOrder.AppendOrder(expressionTypArgs.subExpr(173, 200))
+		}),
+	}
+}
+
+type DailyRevenueRow = struct {
+	OrderType    string    `db:"order_type"`
+	OrderDate    time.Time `db:"order_date"`
+	TotalRevenue string    `db:"total_revenue"`
+}
+
+type dailyRevenueTransformer = bob.SliceTransformer[DailyRevenueRow, []DailyRevenueRow]
+
+type dailyRevenue struct {
+	StartDate bob.Expression
+	EndDate   bob.Expression
+}
+
+func (o dailyRevenue) args() iter.Seq[orm.ArgWithPosition] {
+	return func(yield func(arg orm.ArgWithPosition) bool) {
+		if !yield(orm.ArgWithPosition{
+			Name:       "startDate",
+			Start:      103,
+			Stop:       104,
+			Expression: o.StartDate,
+		}) {
+			return
+		}
+
+		if !yield(orm.ArgWithPosition{
+			Name:       "endDate",
+			Start:      126,
+			Stop:       127,
+			Expression: o.EndDate,
+		}) {
+			return
+		}
+	}
+}
+
+func (o dailyRevenue) raw(from, to int) string {
+	return dailyRevenueSQL[from:to]
+}
+
+func (o dailyRevenue) subExpr(from, to int) bob.Expression {
+	return orm.ArgsToExpression(dailyRevenueSQL, from, to, o.args())
+}
+
+func (o dailyRevenue) WriteSQL(ctx context.Context, w io.StringWriter, d bob.Dialect, start int) ([]any, error) {
+	return o.subExpr(0, len(dailyRevenueSQL)).WriteSQL(ctx, w, d, start)
+}
+
+var customerSalesSQL = formattedQueries_queries[371:659]
 
 type CustomerSalesQuery = orm.ModQuery[*dialect.SelectQuery, customerSales, CustomerSalesRow, []CustomerSalesRow, customerSalesTransformer]
 
@@ -111,14 +199,14 @@ func (o customerSales) WriteSQL(ctx context.Context, w io.StringWriter, d bob.Di
 	return o.subExpr(0, len(customerSalesSQL)).WriteSQL(ctx, w, d, start)
 }
 
-var dailySoldItemsSQL = formattedQueries_queries[461:675]
+var dailySoldItemsSQL = formattedQueries_queries[680:900]
 
 type DailySoldItemsQuery = orm.ModQuery[*dialect.SelectQuery, dailySoldItems, DailySoldItemsRow, []DailySoldItemsRow, dailySoldItemsTransformer]
 
-func DailySoldItems(OrderDate string) *DailySoldItemsQuery {
+func DailySoldItems(Arg string) *DailySoldItemsQuery {
 	var expressionTypArgs dailySoldItems
 
-	expressionTypArgs.OrderDate = mysql.Arg(OrderDate)
+	expressionTypArgs.Arg = mysql.Arg(Arg)
 
 	return &DailySoldItemsQuery{
 		Query: orm.Query[dailySoldItems, DailySoldItemsRow, []DailySoldItemsRow, dailySoldItemsTransformer]{
@@ -146,9 +234,9 @@ func DailySoldItems(OrderDate string) *DailySoldItemsQuery {
 		Mod: bob.ModFunc[*dialect.SelectQuery](func(q *dialect.SelectQuery) {
 			q.AppendSelect(expressionTypArgs.subExpr(7, 111))
 			q.SetTable(expressionTypArgs.subExpr(117, 133))
-			q.AppendWhere(expressionTypArgs.subExpr(140, 156))
-			q.AppendGroup(expressionTypArgs.subExpr(165, 188))
-			q.CombinedOrder.AppendOrder(expressionTypArgs.subExpr(197, 214))
+			q.AppendWhere(expressionTypArgs.subExpr(140, 162))
+			q.AppendGroup(expressionTypArgs.subExpr(171, 194))
+			q.CombinedOrder.AppendOrder(expressionTypArgs.subExpr(203, 220))
 		}),
 	}
 }
@@ -164,16 +252,16 @@ type DailySoldItemsRow = struct {
 type dailySoldItemsTransformer = bob.SliceTransformer[DailySoldItemsRow, []DailySoldItemsRow]
 
 type dailySoldItems struct {
-	OrderDate bob.Expression
+	Arg bob.Expression
 }
 
 func (o dailySoldItems) args() iter.Seq[orm.ArgWithPosition] {
 	return func(yield func(arg orm.ArgWithPosition) bool) {
 		if !yield(orm.ArgWithPosition{
-			Name:       "orderDate",
-			Start:      155,
-			Stop:       156,
-			Expression: o.OrderDate,
+			Name:       "arg",
+			Start:      161,
+			Stop:       162,
+			Expression: o.Arg,
 		}) {
 			return
 		}
@@ -192,15 +280,15 @@ func (o dailySoldItems) WriteSQL(ctx context.Context, w io.StringWriter, d bob.D
 	return o.subExpr(0, len(dailySoldItemsSQL)).WriteSQL(ctx, w, d, start)
 }
 
-var generalSalesSQL = formattedQueries_queries[694:1152]
+var generalSalesSQL = formattedQueries_queries[919:1379]
 
 type GeneralSalesQuery = orm.ModQuery[*dialect.SelectQuery, generalSales, GeneralSalesRow, []GeneralSalesRow, generalSalesTransformer]
 
-func GeneralSales(OrderDate string, OrderDate2 string) *GeneralSalesQuery {
+func GeneralSales(StartDate string, EndDate string) *GeneralSalesQuery {
 	var expressionTypArgs generalSales
 
-	expressionTypArgs.OrderDate = mysql.Arg(OrderDate)
-	expressionTypArgs.OrderDate2 = mysql.Arg(OrderDate2)
+	expressionTypArgs.StartDate = mysql.Arg(StartDate)
+	expressionTypArgs.EndDate = mysql.Arg(EndDate)
 
 	return &GeneralSalesQuery{
 		Query: orm.Query[generalSales, GeneralSalesRow, []GeneralSalesRow, generalSalesTransformer]{
@@ -229,9 +317,9 @@ func GeneralSales(OrderDate string, OrderDate2 string) *GeneralSalesQuery {
 		Mod: bob.ModFunc[*dialect.SelectQuery](func(q *dialect.SelectQuery) {
 			q.AppendSelect(expressionTypArgs.subExpr(7, 176))
 			q.SetTable(expressionTypArgs.subExpr(182, 307))
-			q.AppendWhere(expressionTypArgs.subExpr(314, 361))
-			q.AppendGroup(expressionTypArgs.subExpr(370, 416))
-			q.CombinedOrder.AppendOrder(expressionTypArgs.subExpr(426, 458))
+			q.AppendWhere(expressionTypArgs.subExpr(314, 362))
+			q.AppendGroup(expressionTypArgs.subExpr(372, 418))
+			q.CombinedOrder.AppendOrder(expressionTypArgs.subExpr(428, 460))
 		}),
 	}
 }
@@ -248,26 +336,26 @@ type GeneralSalesRow = struct {
 type generalSalesTransformer = bob.SliceTransformer[GeneralSalesRow, []GeneralSalesRow]
 
 type generalSales struct {
-	OrderDate  bob.Expression
-	OrderDate2 bob.Expression
+	StartDate bob.Expression
+	EndDate   bob.Expression
 }
 
 func (o generalSales) args() iter.Seq[orm.ArgWithPosition] {
 	return func(yield func(arg orm.ArgWithPosition) bool) {
 		if !yield(orm.ArgWithPosition{
-			Name:       "orderDate",
+			Name:       "startDate",
 			Start:      334,
 			Stop:       335,
-			Expression: o.OrderDate,
+			Expression: o.StartDate,
 		}) {
 			return
 		}
 
 		if !yield(orm.ArgWithPosition{
-			Name:       "orderDate2",
-			Start:      360,
-			Stop:       361,
-			Expression: o.OrderDate2,
+			Name:       "endDate",
+			Start:      361,
+			Stop:       362,
+			Expression: o.EndDate,
 		}) {
 			return
 		}
@@ -286,7 +374,7 @@ func (o generalSales) WriteSQL(ctx context.Context, w io.StringWriter, d bob.Dia
 	return o.subExpr(0, len(generalSalesSQL)).WriteSQL(ctx, w, d, start)
 }
 
-var weeklyTypedSalesSQL = formattedQueries_queries[1175:1802]
+var weeklyTypedSalesSQL = formattedQueries_queries[1402:2029]
 
 type WeeklyTypedSalesQuery = orm.ModQuery[*dialect.SelectQuery, weeklyTypedSales, WeeklyTypedSalesRow, []WeeklyTypedSalesRow, weeklyTypedSalesTransformer]
 

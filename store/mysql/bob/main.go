@@ -51,16 +51,17 @@ func main() {
 
 	http.HandleFunc("GET /07/generic_report", WithQuery)
 
-	http.HandleFunc("GET /08/reports/daily-revenue/", DailyRevenue)
-	http.HandleFunc("GET /08/reports/customer-sales/", CustomerSales)
-	http.HandleFunc("GET /08/reports/customer-sales/alt", CustomerSales2)
-	http.HandleFunc("GET /08/reports/daily-sold-items/", DailySoldItems)
-	http.HandleFunc("GET /08/reports/daily-sold-items/alt", DailySoldItems2)
+	http.HandleFunc("GET /08/daily-revenue/", DailyRevenue)
+	http.HandleFunc("GET /08/daily-revenue/alt", DailyRevenueAlt)
+	http.HandleFunc("GET /08/customer-sales/", CustomerSales)
+	http.HandleFunc("GET /08/customer-sales/alt", CustomerSales2)
+	http.HandleFunc("GET /08/daily-sold-items/", DailySoldItems)
+	http.HandleFunc("GET /08/daily-sold-items/alt", DailySoldItems2)
 
-	http.HandleFunc("GET /09/reports/general-sales/", GeneralSales)
-	http.HandleFunc("GET /09/reports/general-sales/alt", GeneralSales2)
-	http.HandleFunc("GET /09/reports/weekly-sales/", TypedSales)
-	http.HandleFunc("GET /09reports/weekly-sales/alt", TypedSales2)
+	http.HandleFunc("GET /09/general-sales/", GeneralSales)
+	http.HandleFunc("GET /09/general-sales/alt", GeneralSales2)
+	http.HandleFunc("GET /09/weekly-sales/", TypedSales)
+	http.HandleFunc("GET /09/weekly-sales/alt", TypedSales2)
 
 	port := "8080"
 	if os.Getenv("PORT") != "" {

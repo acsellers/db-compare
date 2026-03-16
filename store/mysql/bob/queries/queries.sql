@@ -1,3 +1,10 @@
+-- DailyRevenue
+select order_type, order_date, sum(total) as total_revenue
+from orders
+where order_date >= ? /* start_date */ and order_date <= ? /* end_date */
+group by order_type, order_date
+order by order_date, order_type;
+
 -- CustomerSales
 select c.id, c.name, sum(o.total) as total_sales, count(o.id) as total_orders
 from customers c
@@ -11,7 +18,7 @@ select id, name, category,
 sum(total_quantity) as total_quantity, 
 sum(total_sales) as total_sales
 from item_summaries
-where order_date = ?
+where DATE(order_date) = ?
 group by id, name, category
 order by category, name;
 
@@ -22,7 +29,7 @@ sum(t.total_quantity) as quantity,
 sum(t.total_sales) as total_sales
 from item_summaries t 
 inner join reporting_order ro on ro.order_type = 'general' and ro.category = t.category
-where t.order_date >= ? and t.order_date <= ?
+where t.order_date >= ? /* start_date */ and t.order_date <= ? /* end_date */
 group by ro.title, ro.report_order, t.name 
 order by ro.report_order, t.name;
 

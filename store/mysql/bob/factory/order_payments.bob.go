@@ -181,7 +181,7 @@ func ensureCreatableOrderPayment(m *models.OrderPaymentSetter) {
 		m.OrderID = omit.From(val)
 	}
 	if !(m.PaymentType.IsValue()) {
-		val := random_string(nil, "1")
+		val := random_string(nil, "24")
 		m.PaymentType = omit.From(val)
 	}
 	if !(m.Amount.IsValue()) {
@@ -405,7 +405,7 @@ func (m orderPaymentMods) UnsetPaymentType() OrderPaymentMod {
 func (m orderPaymentMods) RandomPaymentType(f *faker.Faker) OrderPaymentMod {
 	return OrderPaymentModFunc(func(_ context.Context, o *OrderPaymentTemplate) {
 		o.PaymentType = func() string {
-			return random_string(f, "1")
+			return random_string(f, "24")
 		}
 	})
 }
